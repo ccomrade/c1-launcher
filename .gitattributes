@@ -1,0 +1,4 @@
+Code/CryEngine/* linguist-vendored
+
+*.h    linguist-language=C++
+*.h.in linguist-language=C++
