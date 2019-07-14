@@ -73,27 +73,29 @@ Bin64\b64.dll                    <-- additional SecuROM crap used by 64-bit CryS
 This project uses the incomplete CryEngine headers (`Code/CryEngine`) from the **Crysis Mod SDK v1.2** released by Crytek. All
 the header files have been converted to UTF-8 with LF line endings. In addition, there is only one modification - added content
 of the `SSystemInitParams` structure in `CryCommon/ISystem.h` file. This structure is used to launch the game, but it's empty in
-the original file, so its content has been partially reverse engineered. The following code is the new structure definition as
-you can see it in the modified `CryCommon/ISystem.h` file. Names of its members are inspired by the source code of the latest
-[CryEngine V](https://github.com/CRYTEK/CRYENGINE). Reserved members contain unknown data.
+the original file, so its content has been reverse engineered. The following code is the new structure definition as you can see
+it in the modified `CryCommon/ISystem.h` file. Names of its members are inspired by the source code of the latest
+[CryEngine V](https://github.com/CRYTEK/CRYENGINE).
 
 ```c++
 struct SSystemInitParams
 {
-	void *hInstance;             // executable handle
-	void *hWnd;                  // window handle
-	void *RESERVED1[2];          // ??
-	ILog *pLog;                  // optional custom log
-	const char *sLogFileName;    // name of the log file (usually "Game.log" or "Server.log")
-	void *RESERVED2[1];          // ??
-	char szSystemCmdLine[2048];  // process command line obtained with GetCommandLineA
-	char RESERVED3[256];         // ??
-	bool bEditor;                // editor mode
-	bool bMinimal;               // skip localization
-	bool bTesting;               // test mode
-	bool bDedicatedServer;       // launch dedicated server
-	ISystem *pSystem;            // initialized by IGameStartup::Init
-	void *RESERVED4[11];         // ??
+	void *hInstance;                     // executable handle
+	void *hWnd;                          // optional window handle
+	ILog *pLog;                          // optional custom log
+	ILogCallback *pLogCallback;          // optional log callback
+	ISystemUserCallback *pUserCallback;  // optional engine callback
+	const char *sLogFileName;            // usually "Game.log" or "Server.log"
+	IValidator *pValidator;              // optional custom validator
+	char szSystemCmdLine[2048];          // process command line obtained with GetCommandLineA
+	char szUserPath[256];                // optional custom user folder in %USERPROFILE%\Documents
+	bool bEditor;                        // editor mode
+	bool bMinimal;                       // minimal mode - skip initialization of some subsystems
+	bool bTesting;                       // test mode
+	bool bDedicatedServer;               // launch dedicated server
+	ISystem *pSystem;                    // initialized by IGameStartup::Init
+	void *pCheckFunc;                    // not used
+	void *pProtectedFunctions[10];       // probably not used
 };
 ```
 
