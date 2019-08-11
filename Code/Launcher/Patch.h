@@ -20,5 +20,6 @@ int PatchDuplicateCDKey( void *libCryNetwork, int gameVersion );
 int Patch64BitSecuROM( void *libCrySystem, int gameVersion );
 int PatchDX9VeryHighSpec( void *libCrySystem, int gameVersion );
 int PatchMultipleInstances( void *libCrySystem, int gameVersion );
+int PatchUnhandledExceptions( void *libCrySystem, int gameVersion );
 int PatchDisable3DNow( void *libCrySystem, int gameVersion );
 

@@ -82,6 +82,9 @@ static int InstallMemoryPatches( int version, void *libCryNetwork, void *libCryS
 
 	// CrySystem
 
+	if ( PatchUnhandledExceptions( libCrySystem, version ) < 0 )
+		return -1;
+
 	if ( HasAMDProcessor() && ! Is3DNowSupported() )
 	{
 		// dedicated server usually doesn't execute any code with 3DNow! instructions

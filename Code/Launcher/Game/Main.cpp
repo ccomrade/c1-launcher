@@ -113,6 +113,9 @@ static int InstallMemoryPatches( int version, void *libCryGame, void *libCryActi
 	if ( PatchMultipleInstances( libCrySystem, version ) < 0 )
 		return -1;
 
+	if ( PatchUnhandledExceptions( libCrySystem, version ) < 0 )
+		return -1;
+
 	if ( HasAMDProcessor() && ! Is3DNowSupported() )
 	{
 		if ( PatchDisable3DNow( libCrySystem, version ) < 0 )

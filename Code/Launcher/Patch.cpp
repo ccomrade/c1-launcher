@@ -577,6 +577,97 @@ int PatchMultipleInstances( void *libCrySystem, int gameVersion )
 }
 
 /**
+ * @brief Disables custom handling of unhandled exceptions.
+ * This patch prevents the engine from enabling its own unhandled exception callback via SetUnhandledExceptionFilter function.
+ * The callback is used to do various things after crash, such as calling ReportFault function or creating minidump. It depends
+ * on value of sys_WER cvar (0, 1, 2). However, everything done in this callback is completely useless and causes only problems.
+ * Even MSDN documentation recommends that applications shouldn't try do such things at their own. Instead, they should let
+ * operating system handle fatal errors for them.
+ * @param libCrySystem CrySystem DLL handle.
+ * @param gameVersion Game build number.
+ * @return 0 if no error occurred, otherwise -1.
+ */
+int PatchUnhandledExceptions( void *libCrySystem, int gameVersion )
+{
+	switch ( gameVersion )
+	{
+	#ifdef BUILD_64BIT
+		case 5767:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x22986, 0x6  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x22992, 0x7  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x45C8A, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
+		case 5879:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x232C6, 0x6  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x232D2, 0x7  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x4725A, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6115:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x22966, 0x6  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x22972, 0x7  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x466E9, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6156:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x22946, 0x6  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x22952, 0x7  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x467A5, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
+	#else
+		case 5767:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x182B7, 0x5  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x182C2, 0xC  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x59F58, 0x13 ) < 0 )
+				return -1;
+			break;
+		}
+		case 5879:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x18437, 0x5  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x18442, 0xC  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x5A4D8, 0x13 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6115:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x18217, 0x5  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x18222, 0xC  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x5A2B8, 0x13 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6156:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x17D67, 0x5  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x17D72, 0xC  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x59DF8, 0x13 ) < 0 )
+				return -1;
+			break;
+		}
+	#endif
+		default:
+		{
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+/**
  * @brief Disables use of 3DNow! instructions.
  * This patch fixes the well known crash of 32-bit Crysis on modern AMD processors.
  * @param libCrySystem CrySystem DLL handle.
