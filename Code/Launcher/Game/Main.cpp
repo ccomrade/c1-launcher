@@ -170,6 +170,7 @@ int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 		case 5879:
 		case 6115:
 		case 6156:
+		case 6729:  // Crysis Wars
 		{
 			if ( InstallMemoryPatches( gameVersion, libCryGame, libCryAction, libCryNetwork, libCrySystem ) < 0 )
 			{

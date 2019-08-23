@@ -50,6 +50,13 @@ int PatchDX9ImmersiveMultiplayer( void *libCryAction, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryAction + 0x2B6F3D, 0x1E ) < 0
+			  || FillNOP( (PBYTE) libCryAction + 0x2B9BF1, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -76,6 +83,13 @@ int PatchDX9ImmersiveMultiplayer( void *libCryAction, int gameVersion )
 		{
 			if ( FillNOP( (PBYTE) libCryAction + 0x1D698A, 0x1A ) < 0
 			  || FillNOP( (PBYTE) libCryAction + 0x1D89FC, 0x15 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryAction + 0x1D9F6A, 0x1A ) < 0
+			  || FillNOP( (PBYTE) libCryAction + 0x1DBF5C, 0x15 ) < 0 )
 				return -1;
 			break;
 		}
@@ -124,6 +138,12 @@ int PatchSkipIntros( void *libCryGame, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryGame + 0x3291A2, 0x10 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -150,6 +170,13 @@ int PatchSkipIntros( void *libCryGame, int gameVersion )
 		{
 			if ( FillNOP( (PBYTE) libCryGame + 0x220BFD, 0xD ) < 0
 			  || FillNOP( (PBYTE) libCryGame + 0x220C0B, 0x2 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryGame + 0x23EEE0, 0xC ) < 0
+			  || FillNOP( (PBYTE) libCryGame + 0x23EEEF, 0x2 ) < 0 )
 				return -1;
 			break;
 		}
@@ -199,6 +226,12 @@ int PatchCanJoinDX10Servers( void *libCryGame, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryGame + 0x34D047, 0x18 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -221,6 +254,12 @@ int PatchCanJoinDX10Servers( void *libCryGame, int gameVersion )
 		case 6156:
 		{
 			if ( FillNOP( (PBYTE) libCryGame + 0x242F1C, 0xF ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryGame + 0x252E10, 0xF ) < 0 )
 				return -1;
 			break;
 		}
@@ -279,6 +318,13 @@ int PatchFlashMenuDX10( void *libCryGame, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillMem( (PBYTE) libCryGame + 0x30CBA1, (void*) code, sizeof code ) < 0
+			  || FillMem( (PBYTE) libCryGame + 0x30D1D7, (void*) code, sizeof code ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -305,6 +351,13 @@ int PatchFlashMenuDX10( void *libCryGame, int gameVersion )
 		{
 			if ( FillMem( (PBYTE) libCryGame + 0x22029A, (void*) code, sizeof code ) < 0
 			  || FillMem( (PBYTE) libCryGame + 0x2206E2, (void*) code, sizeof code ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillMem( (PBYTE) libCryGame + 0x22E64E, (void*) code, sizeof code ) < 0
+			  || FillMem( (PBYTE) libCryGame + 0x22EA92, (void*) code, sizeof code ) < 0 )
 				return -1;
 			break;
 		}
@@ -354,6 +407,12 @@ int PatchDuplicateCDKey( void *libCryNetwork, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryNetwork + 0xDFE48, 0x47 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -376,6 +435,12 @@ int PatchDuplicateCDKey( void *libCryNetwork, int gameVersion )
 		case 6156:
 		{
 			if ( FillNOP( (PBYTE) libCryNetwork + 0x606A5, 0x4 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCryNetwork + 0x60CF9, 0x4 ) < 0 )
 				return -1;
 			break;
 		}
@@ -423,6 +488,11 @@ int Patch64BitSecuROM( void *libCrySystem, int gameVersion )
 		{
 			if ( FillNOP( (PBYTE) libCrySystem + 0x470B9, 0x16 ) < 0 )
 				return -1;
+			break;
+		}
+		case 6729:
+		{
+			// CrySystem in Crysis Wars doesn't contain any SecuROM crap
 			break;
 		}
 		default:
@@ -496,6 +566,11 @@ int PatchDX9VeryHighSpec( void *libCrySystem, int gameVersion )
 			break;
 		}
 	#endif
+		case 6729:
+		{
+			// Crysis Wars allows Very High settings in DX9 mode
+			break;
+		}
 		default:
 		{
 			return -1;
@@ -541,6 +616,12 @@ int PatchMultipleInstances( void *libCrySystem, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x46EEF, 0x68 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -563,6 +644,12 @@ int PatchMultipleInstances( void *libCrySystem, int gameVersion )
 		case 6156:
 		{
 			if ( FillNOP( (PBYTE) libCrySystem + 0x5794F, 0x58 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x595DF, 0x58 ) < 0 )
 				return -1;
 			break;
 		}
@@ -624,6 +711,14 @@ int PatchUnhandledExceptions( void *libCrySystem, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x253B3, 0x6  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x253BF, 0x7  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x4AAA0, 0x16 ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -654,6 +749,14 @@ int PatchUnhandledExceptions( void *libCrySystem, int gameVersion )
 			if ( FillNOP( (PBYTE) libCrySystem + 0x17D67, 0x5  ) < 0
 			  || FillNOP( (PBYTE) libCrySystem + 0x17D72, 0xC  ) < 0
 			  || FillNOP( (PBYTE) libCrySystem + 0x59DF8, 0x13 ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillNOP( (PBYTE) libCrySystem + 0x19617, 0x5  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x19622, 0xC  ) < 0
+			  || FillNOP( (PBYTE) libCrySystem + 0x5B8EC, 0x13 ) < 0 )
 				return -1;
 			break;
 		}
@@ -705,6 +808,12 @@ int PatchDisable3DNow( void *libCrySystem, int gameVersion )
 				return -1;
 			break;
 		}
+		case 6729:
+		{
+			if ( FillMem( (PBYTE) libCrySystem + 0xA32F, (void*) &flags, sizeof flags ) < 0 )
+				return -1;
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -727,6 +836,12 @@ int PatchDisable3DNow( void *libCrySystem, int gameVersion )
 		case 6156:
 		{
 			if ( FillMem( (PBYTE) libCrySystem + 0x93E2, (void*) &flags, sizeof flags ) < 0 )
+				return -1;
+			break;
+		}
+		case 6729:
+		{
+			if ( FillMem( (PBYTE) libCrySystem + 0x9412, (void*) &flags, sizeof flags ) < 0 )
 				return -1;
 			break;
 		}
