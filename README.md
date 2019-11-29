@@ -24,9 +24,10 @@ are supported, including both 32-bit and 64-bit architecture.
 
 **Question:** How to use it?
 
-**Answer:** Compile the source code (see below for instructions) or download directly the EXE files from release section. Then
-just replace original `Bin32\Crysis.exe` and `Bin64\Crysis.exe` with 32-bit and 64-bit version of this launcher. Note that you
-should always use legal copy of Crysis. If you don't have one, you can buy it on [GoG](https://www.gog.com/game/crysis),
+**Answer:** Compile the source code (see below for instructions) or download directly the EXE files from
+[release section](https://github.com/ccomrade/c1-launcher/releases). Then just replace original `Bin32\Crysis.exe` and
+`Bin64\Crysis.exe` with 32-bit and 64-bit version of this launcher. Note that you should always use legal copy of Crysis.
+If you don't have one, you can buy it on [GoG](https://www.gog.com/game/crysis),
 [Steam](https://store.steampowered.com/app/17300/Crysis/), DVD, or Origin.
 
 ---
