@@ -2,16 +2,14 @@
 
 #include <winver.h>
 
-// Launcher headers
-#include "DedicatedServer/Resources.h"
-
+#include "Launcher/DedicatedServer/Resources.h"
 #include "config.h"
 
-IDI_ICON ICON "DedicatedServerIcon.ico"
+LAUNCHER_ICON ICON "DedicatedServerIcon.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     C1LAUNCHER_VERSION_MAJOR,C1LAUNCHER_VERSION_MINOR,0,0
-PRODUCTVERSION  C1LAUNCHER_VERSION_MAJOR,C1LAUNCHER_VERSION_MINOR,0,0
+FILEVERSION     C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
+PRODUCTVERSION  C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -19,16 +17,16 @@ BEGIN
 	BEGIN
 		BLOCK "040904E4"
 		BEGIN
-		#ifdef BUILD_64BIT
-			VALUE "FileDescription",  "Crysis 64-bit Dedicated Server Launcher"
-		#else
-			VALUE "FileDescription",  "Crysis 32-bit Dedicated Server Launcher"
-		#endif
-			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
-			VALUE "InternalName",     "CrysisDedicatedServer"
-			VALUE "OriginalFilename", "CrysisDedicatedServer.exe"
 			VALUE "ProductName",      "C1-Launcher"
 			VALUE "ProductVersion",   C1LAUNCHER_VERSION_STRING
+			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
+		#ifdef BUILD_64BIT
+			VALUE "FileDescription",  "Crysis Dedicated Server (64-bit)"
+		#else
+			VALUE "FileDescription",  "Crysis Dedicated Server (32-bit)"
+		#endif
+			VALUE "InternalName",     "CrysisDedicatedServer"
+			VALUE "OriginalFilename", "CrysisDedicatedServer.exe"
 		END
 	END
 

@@ -5,5 +5,4 @@
 
 #pragma once
 
-#define IDI_ICON  101
-
+#define LAUNCHER_ICON 101

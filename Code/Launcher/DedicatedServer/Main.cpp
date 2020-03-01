@@ -3,161 +3,130 @@
  * @brief Dedicated server launcher.
  */
 
-// CryEngine headers
-#include "CryModuleDefs.h"
-#include "platform_impl.h"
-#include "platform.h"
-#include "IGameStartup.h"
+#include <cstdlib>
 
-// Launcher headers
-#include "Patch.h"
-#include "Util.h"
+#include "CryCommon/ISystem.h"
 
-static void ErrorBox( const char *msg )
+#include "Launcher/Launcher.h"
+#include "Launcher/DLL.h"
+#include "Launcher/CPU.h"
+#include "Launcher/Patch.h"
+#include "Launcher/Util.h"
+
+struct CrysisLibs
 {
-	MessageBoxA( NULL, msg, "Error", MB_OK | MB_DEFAULT_DESKTOP_ONLY );
-}
+	DLL CryGame;
+	DLL CryNetwork;
+	DLL CrySystem;
 
-static int RunServer( HMODULE libCryGame )
-{
-	IGameStartup::TEntryFunction fCreateGameStartup;
-
-	fCreateGameStartup = (IGameStartup::TEntryFunction) GetProcAddress( libCryGame, "CreateGameStartup" );
-	if ( fCreateGameStartup == NULL )
+	bool load()
 	{
-		ErrorBox( "The CryGame DLL is not valid!" );
-		return 1;
+		// some Crysis DLLs can cause crash when being unloaded
+		// so NO_RELEASE flag is used here to disable explicit unloading of the DLLs
+
+		if (!CryGame.load("CryGame.dll", DLL::NO_RELEASE))
+		{
+			Util::ErrorBox("Failed to load the CryGame DLL!");
+			return false;
+		}
+
+		if (!CrySystem.load("CrySystem.dll", DLL::NO_RELEASE))
+		{
+			Util::ErrorBox("Failed to load the CrySystem DLL!");
+			return false;
+		}
+
+		if (!CryNetwork.load("CryNetwork.dll", DLL::NO_RELEASE))
+		{
+			Util::ErrorBox("Failed to load the CryNetwork DLL!");
+			return false;
+		}
+
+		return true;
 	}
+};
 
-	IGameStartup *pGameStartup = fCreateGameStartup();
-	if ( pGameStartup == NULL )
-	{
-		ErrorBox( "Unable to create the GameStartup interface!" );
-		return 1;
-	}
-
-	const char *cmdLine = GetCommandLineA();
-	const size_t cmdLineLength = strlen( cmdLine );
-
-	SSystemInitParams params;
-	memset( &params, 0, sizeof params );
-
-	params.hInstance = GetModuleHandle( NULL );
-	params.sLogFileName = "Server.log";
-	params.bDedicatedServer = true;
-
-	if ( cmdLineLength < sizeof params.szSystemCmdLine )
-	{
-		strcpy( params.szSystemCmdLine, cmdLine );
-	}
-	else
-	{
-		ErrorBox( "Command line is too long!" );
-		return 1;
-	}
-
-	// init engine
-	IGameRef gameRef = pGameStartup->Init( params );
-	if ( gameRef == NULL )
-	{
-		ErrorBox( "Game initialization failed!" );
-		pGameStartup->Shutdown();
-		return 1;
-	}
-
-	// enter update loop
-	pGameStartup->Run( NULL );
-
-	pGameStartup->Shutdown();
-
-	return 0;
-}
-
-static int InstallMemoryPatches( int version, void *libCryNetwork, void *libCrySystem )
+static bool InstallMemoryPatches(int gameVersion, const CrysisLibs & libs)
 {
 	// CryNetwork
+	{
+		void *pCryNetwork = libs.CryNetwork.getHandle();
 
-	if ( PatchDuplicateCDKey( libCryNetwork, version ) < 0 )
-		return -1;
+		if (!Patch::AllowSameCDKeys(pCryNetwork, gameVersion))
+			return false;
+	}
 
 	// CrySystem
-
-	if ( PatchUnhandledExceptions( libCrySystem, version ) < 0 )
-		return -1;
-
-	if ( HasAMDProcessor() && ! Is3DNowSupported() )
 	{
-		// dedicated server usually doesn't execute any code with 3DNow! instructions
-		// but we should still make sure that ISystem::GetCPUFlags always returns correct flags
+		void *pCrySystem = libs.CrySystem.getHandle();
 
-		if ( PatchDisable3DNow( libCrySystem, version ) < 0 )
-			return -1;
+		if (!Patch::UnhandledExceptions(pCrySystem, gameVersion))
+			return false;
+
+		if (CPU::IsAMD() && !CPU::Has3DNow())
+		{
+			// dedicated server usually doesn't execute any code with 3DNow! instructions
+			// but we should still make sure that ISystem::GetCPUFlags always returns correct flags
+
+			if (!Patch::Disable3DNow(pCrySystem, gameVersion))
+				return false;
+		}
 	}
 
-	return 0;
+	return true;
 }
 
-int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
 {
-	HMODULE libCryGame = LoadLibraryA( "CryGame.dll" );
-	if ( libCryGame == NULL )
+	CrysisLibs libs;
+
+	if (!libs.load())
 	{
-		ErrorBox( "Unable to load the CryGame DLL!" );
-		return 1;
+		return EXIT_FAILURE;
 	}
 
-	HMODULE libCryNetwork = LoadLibraryA( "CryNetwork.dll" );
-	if ( libCryNetwork == NULL )
+	const int gameVersion = Util::GetCrysisGameBuild(libs.CrySystem.getHandle());
+	if (gameVersion < 0)
 	{
-		ErrorBox( "Unable to load the CryNetwork DLL!" );
-		return 1;
+		Util::ErrorBox("Failed to obtain game version!");
+		return EXIT_FAILURE;
 	}
 
-	HMODULE libCrySystem = LoadLibraryA( "CrySystem.dll" );
-	if ( libCrySystem == NULL )
+	// make sure all versions listed here are also supported in Patch.cpp
+	switch (gameVersion)
 	{
-		ErrorBox( "Unable to load the CrySystem DLL!" );
-		return 1;
-	}
-
-	// obtain game build number from CrySystem DLL
-	int gameVersion = GetCrysisGameVersion( libCrySystem );
-	if ( gameVersion < 0 )
-	{
-		ErrorBox( "Unable to obtain game version from the CrySystem DLL!" );
-		return 1;
-	}
-
-	// check vesion of the game and apply memory patches
-	switch ( gameVersion )
-	{
+		// Crysis
 		case 5767:
 		case 5879:
 		case 6115:
 		case 6156:
-		case 6729:  // Crysis Wars
+		// Crysis Wars
+		case 6729:
 		{
-			if ( InstallMemoryPatches( gameVersion, libCryNetwork, libCrySystem ) < 0 )
+			if (!InstallMemoryPatches(gameVersion, libs))
 			{
-				ErrorBox( "Unable to apply memory patch!" );
-				return 1;
+				Util::ErrorBox("Failed to apply memory patch!");
+				return EXIT_FAILURE;
 			}
+
 			break;
 		}
 		default:
 		{
-			ErrorBox( "Unsupported version of the game!" );
-			return 1;
+			Util::ErrorBox("Unsupported version of the game!");
+			return EXIT_FAILURE;
 		}
 	}
 
+	SSystemInitParams params;
+	if (!Launcher::InitEngineParams(params, hInstance, "Server.log"))
+	{
+		return EXIT_FAILURE;
+	}
+
+	// original launcher uses hidden "-dedicated" command line parameter instead
+	params.bDedicatedServer = true;
+
 	// launch the server
-	int status = RunServer( libCryGame );
-
-	FreeLibrary( libCrySystem );
-	FreeLibrary( libCryNetwork );
-	FreeLibrary( libCryGame );
-
-	return status;
+	return Launcher::Run(libs.CryGame, params) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

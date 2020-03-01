@@ -2,22 +2,20 @@
 
 #include <winver.h>
 
-// Launcher headers
-#include "Game/Resources.h"
-
+#include "Launcher/Game/Resources.h"
 #include "config.h"
 
-IDI_ICON ICON "GameIcon.ico"
+LAUNCHER_ICON ICON "GameIcon.ico"
 
-IDC_CURSOR_AMBER CURSOR "CursorAmber.cur"
-IDC_CURSOR_BLUE  CURSOR "CursorBlue.cur"
-IDC_CURSOR_GREEN CURSOR "CursorGreen.cur"
-IDC_CURSOR_RED   CURSOR "CursorRed.cur"
-IDC_CURSOR_WHITE CURSOR "CursorWhite.cur"
+LAUNCHER_CURSOR_AMBER CURSOR "CursorAmber.cur"
+LAUNCHER_CURSOR_BLUE  CURSOR "CursorBlue.cur"
+LAUNCHER_CURSOR_GREEN CURSOR "CursorGreen.cur"
+LAUNCHER_CURSOR_RED   CURSOR "CursorRed.cur"
+LAUNCHER_CURSOR_WHITE CURSOR "CursorWhite.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     C1LAUNCHER_VERSION_MAJOR,C1LAUNCHER_VERSION_MINOR,0,0
-PRODUCTVERSION  C1LAUNCHER_VERSION_MAJOR,C1LAUNCHER_VERSION_MINOR,0,0
+FILEVERSION     C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
+PRODUCTVERSION  C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -25,16 +23,16 @@ BEGIN
 	BEGIN
 		BLOCK "040904E4"
 		BEGIN
-		#ifdef BUILD_64BIT
-			VALUE "FileDescription",  "Crysis 64-bit Game Launcher"
-		#else
-			VALUE "FileDescription",  "Crysis 32-bit Game Launcher"
-		#endif
-			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
-			VALUE "InternalName",     "Crysis"
-			VALUE "OriginalFilename", "Crysis.exe"
 			VALUE "ProductName",      "C1-Launcher"
 			VALUE "ProductVersion",   C1LAUNCHER_VERSION_STRING
+			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
+		#ifdef BUILD_64BIT
+			VALUE "FileDescription",  "Crysis (64-bit)"
+		#else
+			VALUE "FileDescription",  "Crysis (32-bit)"
+		#endif
+			VALUE "InternalName",     "Crysis"
+			VALUE "OriginalFilename", "Crysis.exe"
 		END
 	END
 

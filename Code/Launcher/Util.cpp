@@ -1,58 +1,14 @@
-/**
- * @file
- * @brief Implementation of utilities.
- */
+#include <cstring>
 
 #define WIN32_LEAN_AND_MEAN
-
 #include <windows.h>
-#include <intrin.h>  // __cpuid
 
-// Launcher headers
 #include "Util.h"
+#include "StringBuffer.h"
 
-/**
- * @brief Fills read-only memory region with x86 NOP instruction.
- * @param address Memory region address.
- * @param length Memory region size in bytes.
- * @return 0 if no error occurred, otherwise -1.
- */
-int FillNOP( void *address, size_t length )
+const char *Util::GetCmdLine()
 {
-	DWORD oldProtection;
-
-	if ( VirtualProtect( address, length, PAGE_EXECUTE_READWRITE, &oldProtection ) == 0 )
-		return -1;
-
-	// 0x90 is opcode of NOP instruction for both x86 and x86_64
-	memset( address, '\x90', length );
-
-	if ( VirtualProtect( address, length, oldProtection, &oldProtection ) == 0 )
-		return -1;
-
-	return 0;
-}
-
-/**
- * @brief Fills read-only memory region with custom data.
- * @param address Memory region address.
- * @param data The data copied to the memory region.
- * @param length Size of the data in bytes.
- * @return 0 if no error occurred, otherwise -1.
- */
-int FillMem( void *address, void *data, size_t length )
-{
-	DWORD oldProtection;
-
-	if ( VirtualProtect( address, length, PAGE_EXECUTE_READWRITE, &oldProtection ) == 0 )
-		return -1;
-
-	memcpy( address, data, length );
-
-	if ( VirtualProtect( address, length, oldProtection, &oldProtection ) == 0 )
-		return -1;
-
-	return 0;
+	return GetCommandLineA();
 }
 
 /**
@@ -61,58 +17,108 @@ int FillMem( void *address, void *data, size_t length )
  * @param lib Handle to any loaded Crysis DLL.
  * @return Game build number or -1 if some error occurred.
  */
-int GetCrysisGameVersion( void *lib )
+int Util::GetCrysisGameBuild(void *lib)
 {
+	HMODULE module = static_cast<HMODULE>(lib);
+	if (!module)
+		return -1;
+
 	// VERSIONINFO resource always has ID 1
-	HRSRC versionResInfo = FindResource( (HMODULE) lib, MAKEINTRESOURCE( 1 ), RT_VERSION );
-	if ( versionResInfo == NULL )
+	HRSRC versionResInfo = FindResource(module, MAKEINTRESOURCE(1), RT_VERSION);
+	if (!versionResInfo)
 		return -1;
 
-	HGLOBAL versionResData = LoadResource( (HMODULE) lib, versionResInfo );
-	if ( versionResData == NULL )
+	HGLOBAL versionResData = LoadResource(module, versionResInfo);
+	if (!versionResData)
 		return -1;
 
-	void *versionRes = LockResource( versionResData );  // this function does nothing
-	if ( versionRes == NULL )
+	void *versionRes = LockResource(versionResData);  // this function does nothing
+	if (!versionRes)
 		return -1;
 
-	if ( memcmp( (PBYTE) versionRes + 0x6, L"VS_VERSION_INFO", 0x20 ) != 0 )
+	if (std::memcmp(RVA(versionRes, 0x6), L"VS_VERSION_INFO", 0x20) != 0)
 		return -1;
 
-	VS_FIXEDFILEINFO *pFileInfo = (VS_FIXEDFILEINFO*) ((PBYTE) versionRes + 0x6 + 0x20 + 0x2);
-	if ( pFileInfo->dwSignature != 0xFEEF04BD )
+	VS_FIXEDFILEINFO *pFileInfo = static_cast<VS_FIXEDFILEINFO*>(RVA(versionRes, 0x6 + 0x20 + 0x2));
+	if (pFileInfo->dwSignature != 0xFEEF04BD)
 		return -1;
 
-	return LOWORD( pFileInfo->dwFileVersionLS );
+	return LOWORD(pFileInfo->dwFileVersionLS);
 }
 
 /**
- * @brief Checks if AMD processor is being used.
- * @return True if we are running on AMD processor, otherwise false.
+ * @brief Shows message box with error message and blocks until user closes it.
+ * It also shows current last-error code and its description.
+ * @param msg The error message to show.
  */
-bool HasAMDProcessor()
+void Util::ErrorBox(const char *msg)
 {
-	const char *vendorID = "AuthenticAMD";
+	DWORD errorCode = GetLastError();
 
-	int cpuInfo[4];
-	__cpuid( cpuInfo, 0x0 );
+	StringBuffer<1024> buffer;
 
-	const int *id = reinterpret_cast<const int*>( vendorID );
+	buffer += msg;
+	buffer += '\n';
 
-	return cpuInfo[1] == id[0]   // first part is in EBX register
-	    && cpuInfo[3] == id[1]   // second part is in EDX register
-	    && cpuInfo[2] == id[2];  // third part is in ECX register
+	if (errorCode)
+	{
+		buffer += "Error";
+		buffer += ' ';
+		buffer += errorCode;
+
+		char errorMsgBuffer[512];
+		if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, errorCode,
+		                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), errorMsgBuffer, sizeof errorMsgBuffer, NULL))
+		{
+			buffer += ": ";
+			buffer += errorMsgBuffer;
+		}
+	}
+
+	MessageBoxA(NULL, buffer.get(), "Error", MB_OK | MB_ICONERROR);
 }
 
 /**
- * @brief Checks if processor supports 3DNow! instructions.
- * @return True if 3DNow! instruction set is available, otherwise false.
+ * @brief Fills read-only memory region with x86 NOP instruction.
+ * @param address Address of the memory region.
+ * @param length Size of the memory region in bytes.
+ * @return True if no error occurred, otherwise false.
  */
-bool Is3DNowSupported()
+bool Util::FillNOP(void *address, size_t length)
 {
-	int cpuInfo[4];
-	__cpuid( cpuInfo, 0x80000001 );
+	DWORD oldProtection;
 
-	return (cpuInfo[3] & (1 << 31)) != 0;  // check bit 31 in EDX register
+	if (VirtualProtect(address, length, PAGE_EXECUTE_READWRITE, &oldProtection) == 0)
+		return false;
+
+	// 0x90 is opcode of NOP instruction on both x86 and x86-64
+	std::memset(address, '\x90', length);
+
+	if (VirtualProtect(address, length, oldProtection, &oldProtection) == 0)
+		return false;
+
+	return true;
 }
 
+/**
+ * @brief Fills read-only memory region with custom data.
+ * The memory region and the data must not overlap.
+ * @param address Address of the memory region.
+ * @param data Address of the data.
+ * @param length Size of the data in bytes.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Util::FillMem(void *address, const void *data, size_t length)
+{
+	DWORD oldProtection;
+
+	if (VirtualProtect(address, length, PAGE_EXECUTE_READWRITE, &oldProtection) == 0)
+		return false;
+
+	std::memcpy(address, data, length);
+
+	if (VirtualProtect(address, length, oldProtection, &oldProtection) == 0)
+		return false;
+
+	return true;
+}

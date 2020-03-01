@@ -5,21 +5,23 @@
 
 #pragma once
 
-// CryAction
-int PatchDX9ImmersiveMultiplayer( void *libCryAction, int gameVersion );
+namespace Patch
+{
+	// CryAction
+	bool AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion);
 
-// CryGame
-int PatchSkipIntros( void *libCryGame, int gameVersion );
-int PatchCanJoinDX10Servers( void *libCryGame, int gameVersion );
-int PatchFlashMenuDX10( void *libCryGame, int gameVersion );
+	// CryGame
+	bool DisableIntros(void *pCryGame, int gameVersion);
+	bool CanJoinDX10Servers(void *pCryGame, int gameVersion);
+	bool EnableDX10Menu(void *pCryGame, int gameVersion);
 
-// CryNetwork
-int PatchDuplicateCDKey( void *libCryNetwork, int gameVersion );
+	// CryNetwork
+	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
 
-// CrySystem
-int Patch64BitSecuROM( void *libCrySystem, int gameVersion );
-int PatchDX9VeryHighSpec( void *libCrySystem, int gameVersion );
-int PatchMultipleInstances( void *libCrySystem, int gameVersion );
-int PatchUnhandledExceptions( void *libCrySystem, int gameVersion );
-int PatchDisable3DNow( void *libCrySystem, int gameVersion );
-
+	// CrySystem
+	bool RemoveSecuROM(void *pCrySystem, int gameVersion);
+	bool AllowDX9VeryHighSpec(void *pCrySystem, int gameVersion);
+	bool AllowMultipleInstances(void *pCrySystem, int gameVersion);
+	bool UnhandledExceptions(void *pCrySystem, int gameVersion);
+	bool Disable3DNow(void *pCrySystem, int gameVersion);
+}
