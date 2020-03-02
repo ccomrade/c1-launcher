@@ -16,6 +16,7 @@ namespace Patch
 	bool EnableDX10Menu(void *pCryGame, int gameVersion);
 
 	// CryNetwork
+	bool EnablePreordered(void *pCryNetwork, int gameVersion);
 	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
 
 	// CrySystem

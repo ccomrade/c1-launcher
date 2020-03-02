@@ -17,6 +17,7 @@ are supported, including both 32-bit and 64-bit architecture.
 - Servers started via this launcher don't kick players with the same CD key
 - It's possible to run multiple Crysis instances at once
 - Fixed crash of 32-bit Crysis on modern AMD processors
+- Advantages of pre-ordered version are available for everyone
 
 ### FAQ
 

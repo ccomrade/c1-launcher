@@ -81,6 +81,9 @@ static bool InstallMemoryPatches(int gameVersion, const CrysisLibs & libs)
 	{
 		void *pCryNetwork = libs.CryNetwork.getHandle();
 
+		if (!Patch::EnablePreordered(pCryNetwork, gameVersion))
+			return false;
+
 		if (!Patch::AllowSameCDKeys(pCryNetwork, gameVersion))  // useful for non-dedicated servers
 			return false;
 	}
