@@ -1,11 +1,14 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 
 using std::size_t;
 
 namespace Util
 {
+	std::string NumberToString(unsigned long number, int base = 10, bool upperCase = true);
+
 	const char *GetCmdLine();
 
 	int GetCrysisGameBuild(void *lib);

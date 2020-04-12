@@ -54,7 +54,6 @@ add_library(LauncherBase STATIC
   Code/Launcher/Launcher.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Launcher/StringBuffer.h
   Code/Launcher/Util.cpp
   Code/Launcher/Util.h
 )

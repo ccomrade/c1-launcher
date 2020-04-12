@@ -1,10 +1,37 @@
 #include <cstring>
+#include <algorithm>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include "Util.h"
-#include "StringBuffer.h"
+
+std::string Util::NumberToString(unsigned long number, int base, bool upperCase)
+{
+	if (base < 2 || base > 36)
+	{
+		return std::string();
+	}
+
+	const char firstLetter = (upperCase) ? 'A' : 'a';
+
+	std::string result;
+
+	do
+	{
+		const int digit = number % base;
+		const char ch = (digit < 10) ? '0' + digit : firstLetter + (digit - 10);
+
+		result += ch;
+
+		number /= base;
+	}
+	while (number);
+
+	std::reverse(result.begin(), result.end());
+
+	return result;
+}
 
 const char *Util::GetCmdLine()
 {
@@ -55,27 +82,27 @@ void Util::ErrorBox(const char *msg)
 {
 	DWORD errorCode = GetLastError();
 
-	StringBuffer<1024> buffer;
+	std::string result;
 
-	buffer += msg;
-	buffer += '\n';
+	result += msg;
+	result += '\n';
 
 	if (errorCode)
 	{
-		buffer += "Error";
-		buffer += ' ';
-		buffer += errorCode;
+		result += "Error";
+		result += ' ';
+		result += Util::NumberToString(errorCode);
 
 		char errorMsgBuffer[512];
 		if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, errorCode,
 		                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), errorMsgBuffer, sizeof errorMsgBuffer, NULL))
 		{
-			buffer += ": ";
-			buffer += errorMsgBuffer;
+			result += ": ";
+			result += errorMsgBuffer;
 		}
 	}
 
-	MessageBoxA(NULL, buffer.get(), "Error", MB_OK | MB_ICONERROR);
+	MessageBoxA(NULL, result.c_str(), "Error", MB_OK | MB_ICONERROR);
 }
 
 /**
