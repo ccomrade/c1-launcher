@@ -594,6 +594,9 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 		log.printf("CrashLogger: DebugHelper initialization failed with error code %lu", GetLastError());
 	}
 
+	log.write("Command line:");
+	log.write(Util::GetCmdLine());
+
 	log.write("================================================================================");
 }
 
