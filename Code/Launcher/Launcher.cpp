@@ -9,6 +9,7 @@
 #include "CryCommon/IGameStartup.h"
 
 #include "Launcher.h"
+#include "CrashLogger.h"
 #include "DLL.h"
 #include "Util.h"
 
@@ -35,6 +36,8 @@ bool Launcher::InitEngineParams(SSystemInitParams & params, void *hInstance, con
 
 bool Launcher::Run(const DLL & libCryGame, SSystemInitParams & params)
 {
+	CrashLogger::Init(params.sLogFileName);
+
 	IGameStartup::TEntryFunction pEntry = libCryGame.getSymbol<IGameStartup::TEntryFunction>("CreateGameStartup");
 	if (!pEntry)
 	{

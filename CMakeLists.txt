@@ -30,8 +30,12 @@ add_library(LauncherBase STATIC
   Code/CryCommon/IGameRef.h
   Code/CryCommon/IGameStartup.h
   Code/CryCommon/ISystem.h
+  Code/Launcher/CmdLine.cpp
+  Code/Launcher/CmdLine.h
   Code/Launcher/CPU.cpp
   Code/Launcher/CPU.h
+  Code/Launcher/CrashLogger.cpp
+  Code/Launcher/CrashLogger.h
   Code/Launcher/DLL.cpp
   Code/Launcher/DLL.h
   Code/Launcher/Launcher.cpp

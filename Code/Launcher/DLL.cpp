@@ -5,18 +5,12 @@
 
 void DLL::release()
 {
-	if (m_handle && !(m_flags & NO_LOAD) && !(m_flags & NO_RELEASE))
-	{
-		FreeLibrary(static_cast<HMODULE>(m_handle));
-	}
-
-	m_handle = NULL;
-	m_flags = 0;
+	FreeLibrary(static_cast<HMODULE>(m_handle));
 }
 
 bool DLL::load(const char *file, int flags)
 {
-	release();
+	unload();
 
 	m_flags = flags;
 	m_handle = (flags & NO_LOAD) ? GetModuleHandleA(file) : LoadLibraryA(file);

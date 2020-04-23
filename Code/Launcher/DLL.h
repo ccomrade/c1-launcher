@@ -14,6 +14,8 @@ private:
 	void *m_handle;
 	int m_flags;
 
+	void release();
+
 	// disable implicit copy constructor and copy assignment operator
 	DLL(const DLL &);
 	DLL & operator=(const DLL &);
@@ -27,12 +29,21 @@ public:
 
 	~DLL()
 	{
-		release();
+		unload();
 	}
 
-	void release();
-
 	bool load(const char *file, int flags = 0);
+
+	void unload()
+	{
+		if (isLoaded() && !(m_flags & NO_LOAD) && !(m_flags & NO_RELEASE))
+		{
+			release();
+		}
+
+		m_handle = NULL;
+		m_flags = 0;
+	}
 
 	bool isLoaded() const
 	{

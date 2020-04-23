@@ -7,7 +7,7 @@ using std::size_t;
 
 namespace Util
 {
-	std::string NumberToString(unsigned long number, int base = 10, bool upperCase = true);
+	std::string NumberToString(size_t number, int base = 10, bool upperCase = true);
 
 	const char *GetCmdLine();
 

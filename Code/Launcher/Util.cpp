@@ -6,7 +6,7 @@
 
 #include "Util.h"
 
-std::string Util::NumberToString(unsigned long number, int base, bool upperCase)
+std::string Util::NumberToString(size_t number, int base, bool upperCase)
 {
 	if (base < 2 || base > 36)
 	{
