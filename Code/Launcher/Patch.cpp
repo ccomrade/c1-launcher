@@ -835,12 +835,7 @@ bool Patch::AllowMultipleInstances(void *pCrySystem, int gameVersion)
 }
 
 /**
- * @brief Disables custom handling of unhandled exceptions.
- * This patch prevents the engine from enabling its own unhandled exception callback via SetUnhandledExceptionFilter
- * function. The callback is used to do various things after crash, such as calling ReportFault function or creating
- * minidump. It depends on value of sys_WER cvar (0, 1, 2). However, everything done in this callback is completely useless
- * and causes only problems. Even MSDN documentation recommends that applications shouldn't try do such things at their own.
- * Instead, they should let operating system handle fatal errors for them.
+ * @brief Prevents the engine from installing its own broken unhandled exceptions handler.
  * @param pCrySystem CrySystem DLL handle.
  * @param gameVersion Game build number.
  * @return True if no error occurred, otherwise false.

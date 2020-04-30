@@ -17,20 +17,6 @@
 
 #include "config.h"
 
-#ifdef BUILD_64BIT
-#define LAUNCHER_VERSION_INFO "C1-Launcher " C1LAUNCHER_VERSION_STRING " 64-bit"
-#else
-#define LAUNCHER_VERSION_INFO "C1-Launcher " C1LAUNCHER_VERSION_STRING " 32-bit"
-#endif
-
-static void AddTrailingSlash(std::string & path)
-{
-	if (!path.empty() && path[path.length()-1] != '\\' && path[path.length()-1] != '/')
-	{
-		path += '\\';
-	}
-}
-
 class Log
 {
 	std::FILE *m_file;
@@ -48,11 +34,16 @@ public:
 
 	bool open(const char *defaultFileName)
 	{
-		std::string name = CmdLine::GetArgValue("-logfile", defaultFileName);
 		std::string path = CmdLine::GetArgValue("-root");
 
-		AddTrailingSlash(path);
-		path += name;
+		if (!path.empty() && path[path.length()-1] != '\\' && path[path.length()-1] != '/')
+		{
+			// append trailing slash
+			path += '\\';
+		}
+
+		// append the log file name
+		path += CmdLine::GetArgValue("-logfile", defaultFileName);
 
 		if (isOpen())
 		{
@@ -62,6 +53,15 @@ public:
 		m_file = std::fopen(path.c_str(), "a");
 
 		return isOpen();
+	}
+
+	void close()
+	{
+		if (isOpen())
+		{
+			std::fclose(m_file);
+			m_file = NULL;
+		}
 	}
 
 	bool isOpen() const
@@ -92,15 +92,6 @@ public:
 			std::vfprintf(m_file, format, args);
 			std::fputc('\n', m_file);
 			va_end(args);
-		}
-	}
-
-	void close()
-	{
-		if (isOpen())
-		{
-			std::fclose(m_file);
-			m_file = NULL;
 		}
 	}
 };
@@ -461,7 +452,7 @@ public:
 		return result;
 	}
 
-	std::vector<Module> getAllModules() const
+	std::vector<Module> getLoadedModules() const
 	{
 		std::vector<Module> result;
 
@@ -559,7 +550,7 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 {
 	log.write("================================ CRASH DETECTED ================================");
 
-	log.write(LAUNCHER_VERSION_INFO);
+	log.write(C1LAUNCHER_VERSION_DESCRIPTION);
 
 	WriteExceptionInfo(log, pExceptionInfo->ExceptionRecord);
 	DumpRegisters(log, pExceptionInfo->ContextRecord);
@@ -575,7 +566,7 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 			log.write(callstack[i].toString());
 		}
 
-		std::vector<Module> modules = dbghelp.getAllModules();
+		std::vector<Module> modules = dbghelp.getLoadedModules();
 
 		log.printf("Modules (%u):", modules.size());
 		for (size_t i = 0; i < modules.size(); i++)

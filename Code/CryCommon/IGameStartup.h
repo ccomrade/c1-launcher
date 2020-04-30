@@ -8,7 +8,6 @@ struct SSystemInitParams;
 
 struct IGameStartup
 {
-
 	/**
 	 * @brief Entry function used to create a new instance of the game.
 	 */

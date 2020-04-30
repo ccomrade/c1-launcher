@@ -5,8 +5,6 @@
 
 #include <cstdlib>
 
-#include "CryCommon/ISystem.h"
-
 #include "Launcher/Launcher.h"
 #include "Launcher/DLL.h"
 #include "Launcher/CPU.h"
@@ -46,7 +44,7 @@ struct CrysisLibs
 	}
 };
 
-static bool InstallMemoryPatches(int gameVersion, const CrysisLibs & libs)
+static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 {
 	// CryNetwork
 	{
@@ -68,8 +66,8 @@ static bool InstallMemoryPatches(int gameVersion, const CrysisLibs & libs)
 
 		if (CPU::IsAMD() && !CPU::Has3DNow())
 		{
-			// dedicated server usually doesn't execute any code with 3DNow! instructions
-			// but we should still make sure that ISystem::GetCPUFlags always returns correct flags
+			// Dedicated server usually doesn't execute any code with 3DNow! instructions.
+			// However, we should still make sure that ISystem::GetCPUFlags always returns correct flags.
 
 			if (!Patch::Disable3DNow(pCrySystem, gameVersion))
 				return false;
@@ -88,8 +86,8 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 		return EXIT_FAILURE;
 	}
 
-	const int gameVersion = Util::GetCrysisGameBuild(libs.CrySystem.getHandle());
-	if (gameVersion < 0)
+	const int gameVersion = Util::GetCrysisGameBuild(libs.CrySystem);
+	if (!gameVersion)
 	{
 		Util::ErrorBox("Failed to obtain game version!");
 		return EXIT_FAILURE;
@@ -106,7 +104,7 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 		// Crysis Wars
 		case 6729:
 		{
-			if (!InstallMemoryPatches(gameVersion, libs))
+			if (!InstallMemoryPatches(libs, gameVersion))
 			{
 				Util::ErrorBox("Failed to apply memory patch!");
 				return EXIT_FAILURE;
@@ -121,15 +119,11 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 		}
 	}
 
-	SSystemInitParams params;
-	if (!Launcher::InitEngineParams(params, hInstance, "Server.log"))
-	{
-		return EXIT_FAILURE;
-	}
+	Launcher launcher;
 
-	// original launcher uses hidden "-dedicated" command line parameter instead
-	params.bDedicatedServer = true;
+	launcher.setAppInstance(hInstance);
+	launcher.setLogFileName("Server.log");
+	launcher.setDedicatedServer(true);
 
-	// launch the server
-	return Launcher::Run(libs.CryGame, params) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return launcher.run(libs.CryGame) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

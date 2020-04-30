@@ -5,12 +5,36 @@
 
 #pragma once
 
+#include "CryCommon/ISystem.h"
+
 struct DLL;
-struct SSystemInitParams;  // ISystem.h
 
-namespace Launcher
+class Launcher
 {
-	bool InitEngineParams(SSystemInitParams & params, void *hInstance, const char *logFileName);
+	SSystemInitParams m_params;
 
-	bool Run(const DLL & libCryGame, SSystemInitParams & params);
-}
+	bool initCmdLine();
+
+public:
+	Launcher()
+	: m_params()
+	{
+	}
+
+	void setAppInstance(void *hInstance)
+	{
+		m_params.hInstance = hInstance;
+	}
+
+	void setLogFileName(const char *logFileName)
+	{
+		m_params.logFileName = logFileName;
+	}
+
+	void setDedicatedServer(bool isDedicatedServer)
+	{
+		m_params.isDedicatedServer = isDedicatedServer;
+	}
+
+	bool run(const DLL & libCryGame);
+};

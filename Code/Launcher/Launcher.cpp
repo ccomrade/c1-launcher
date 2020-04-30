@@ -5,7 +5,6 @@
 
 #include <cstring>
 
-#include "CryCommon/ISystem.h"
 #include "CryCommon/IGameStartup.h"
 
 #include "Launcher.h"
@@ -13,30 +12,32 @@
 #include "DLL.h"
 #include "Util.h"
 
-bool Launcher::InitEngineParams(SSystemInitParams & params, void *hInstance, const char *logFileName)
+#include "config.h"
+
+bool Launcher::initCmdLine()
 {
-	std::memset(&params, 0, sizeof params);
-
-	params.hInstance = hInstance;
-	params.sLogFileName = logFileName;
-
 	const char *cmdLine = Util::GetCmdLine();
 	const size_t cmdLineLength = std::strlen(cmdLine);
 
-	if (cmdLineLength >= sizeof params.szSystemCmdLine)
+	if (cmdLineLength >= sizeof m_params.cmdLine)
 	{
 		Util::ErrorBox("Command line is too long!");
 		return false;
 	}
 
-	std::memcpy(params.szSystemCmdLine, cmdLine, cmdLineLength + 1);
+	std::memcpy(m_params.cmdLine, cmdLine, cmdLineLength + 1);
 
 	return true;
 }
 
-bool Launcher::Run(const DLL & libCryGame, SSystemInitParams & params)
+bool Launcher::run(const DLL & libCryGame)
 {
-	CrashLogger::Init(params.sLogFileName);
+	CrashLogger::Init(m_params.logFileName);
+
+	if (!initCmdLine())
+	{
+		return false;
+	}
 
 	IGameStartup::TEntryFunction pEntry = libCryGame.getSymbol<IGameStartup::TEntryFunction>("CreateGameStartup");
 	if (!pEntry)
@@ -53,7 +54,7 @@ bool Launcher::Run(const DLL & libCryGame, SSystemInitParams & params)
 	}
 
 	// initialize CryEngine
-	if (!pGameStartup->Init(params))
+	if (!pGameStartup->Init(m_params))
 	{
 		Util::ErrorBox("Game initialization failed!");
 		pGameStartup->Shutdown();

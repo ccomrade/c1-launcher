@@ -52,22 +52,26 @@ using std::size_t;
  */
 struct SSystemInitParams
 {
-	void *hInstance;                     // executable handle
-	void *hWnd;                          // optional window handle
-	ILog *pLog;                          // optional custom log
-	ILogCallback *pLogCallback;          // optional log callback
-	ISystemUserCallback *pUserCallback;  // optional engine callback
-	const char *sLogFileName;            // usually "Game.log" or "Server.log"
-	IValidator *pValidator;              // optional custom validator
-	char szSystemCmdLine[2048];          // application command line obtained with GetCommandLineA
-	char szUserPath[256];                // optional custom user folder in %USERPROFILE%\Documents
-	bool bEditor;                        // editor mode
-	bool bMinimal;                       // minimal mode - skip initialization of some subsystems
-	bool bTesting;                       // test mode
-	bool bDedicatedServer;               // launch dedicated server
-	ISystem *pSystem;                    // initialized by IGameStartup::Init
-	void *pCheckFunc;                    // not used
-	void *pProtectedFunctions[10];       // probably not used
+	void *hInstance;                     //!< Executable handle.
+	void *hWnd;                          //!< Optional window handle.
+	ILog *pLog;                          //!< Optional custom log.
+	ILogCallback *pLogCallback;          //!< Optional log callback.
+	ISystemUserCallback *pUserCallback;  //!< Optional engine callback.
+	const char *logFileName;             //!< Name of the log file.
+	IValidator *pValidator;              //!< Optional custom validator.
+
+	char cmdLine[2048];                  //!< Application command line obtained with GetCommandLineA.
+	char userPath[256];                  //!< Optional custom user folder in %USERPROFILE%\Documents.
+
+	bool isEditor;                       //!< Editor mode.
+	bool isMinimal;                      //!< Minimal mode.
+	bool isTesting;                      //!< Test mode.
+	bool isDedicatedServer;              //!< Dedicated server mode.
+
+	ISystem *pSystem;                    //!< Initialized by IGameStartup::Init.
+
+	void *pCheckFunc;                    //!< Not used.
+	void *pProtectedFunctions[10];       //!< Not used.
 };
 
 /**

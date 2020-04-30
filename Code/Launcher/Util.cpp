@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include "Util.h"
+#include "DLL.h"
 
 std::string Util::NumberToString(size_t number, int base, bool upperCase)
 {
@@ -41,34 +42,34 @@ const char *Util::GetCmdLine()
 /**
  * @brief Obtains game version from any Crysis DLL.
  * It parses version resource of the specified file.
- * @param lib Handle to any loaded Crysis DLL.
- * @return Game build number or -1 if some error occurred.
+ * @param dll Any loaded Crysis DLL.
+ * @return Game build number or 0 if some error occurred.
  */
-int Util::GetCrysisGameBuild(void *lib)
+int Util::GetCrysisGameBuild(const DLL & dll)
 {
-	HMODULE module = static_cast<HMODULE>(lib);
+	HMODULE module = static_cast<HMODULE>(dll.getHandle());
 	if (!module)
-		return -1;
+		return 0;
 
 	// VERSIONINFO resource always has ID 1
 	HRSRC versionResInfo = FindResource(module, MAKEINTRESOURCE(1), RT_VERSION);
 	if (!versionResInfo)
-		return -1;
+		return 0;
 
 	HGLOBAL versionResData = LoadResource(module, versionResInfo);
 	if (!versionResData)
-		return -1;
+		return 0;
 
 	void *versionRes = LockResource(versionResData);  // this function does nothing
 	if (!versionRes)
-		return -1;
+		return 0;
 
 	if (std::memcmp(RVA(versionRes, 0x6), L"VS_VERSION_INFO", 0x20) != 0)
-		return -1;
+		return 0;
 
 	VS_FIXEDFILEINFO *pFileInfo = static_cast<VS_FIXEDFILEINFO*>(RVA(versionRes, 0x6 + 0x20 + 0x2));
 	if (pFileInfo->dwSignature != 0xFEEF04BD)
-		return -1;
+		return 0;
 
 	return LOWORD(pFileInfo->dwFileVersionLS);
 }
