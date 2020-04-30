@@ -29,6 +29,7 @@ configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 add_library(LauncherBase STATIC
   Code/CryCommon/IGameRef.h
   Code/CryCommon/IGameStartup.h
+  Code/CryCommon/ILog.h
   Code/CryCommon/ISystem.h
   Code/Launcher/CmdLine.cpp
   Code/Launcher/CmdLine.h
