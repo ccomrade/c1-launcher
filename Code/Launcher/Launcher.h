@@ -14,6 +14,7 @@ class Launcher
 	SSystemInitParams m_params;
 
 	bool initCmdLine();
+	void logInfo(const char *format, ...);
 
 public:
 	Launcher()

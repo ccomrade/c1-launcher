@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include "CryCommon/IGameStartup.h"
+#include "CryCommon/ILog.h"
 
 #include "Launcher.h"
 #include "CrashLogger.h"
@@ -28,6 +29,17 @@ bool Launcher::initCmdLine()
 	std::memcpy(m_params.cmdLine, cmdLine, cmdLineLength + 1);
 
 	return true;
+}
+
+void Launcher::logInfo(const char *format, ...)
+{
+	// CryEngine must be initialized
+	ILog *pLog = m_params.pSystem->GetILog();
+
+	va_list args;
+	va_start(args, format);
+	pLog->LogV(ILog::eAlways, format, args);
+	va_end(args);
 }
 
 bool Launcher::run(const DLL & libCryGame)
@@ -60,6 +72,8 @@ bool Launcher::run(const DLL & libCryGame)
 		pGameStartup->Shutdown();
 		return false;
 	}
+
+	logInfo(C1LAUNCHER_VERSION_DESCRIPTION);
 
 	// enter game update loop
 	int status = pGameStartup->Run(NULL);
