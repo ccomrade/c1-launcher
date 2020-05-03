@@ -1,6 +1,6 @@
 # cw-launcher
 
-CW-Launcher is an open-source replacement of the original [Crysis Wars](https://en.wikipedia.org/wiki/Crysis_Warhead#Crysis_Wars))
+CW-Launcher is an open-source replacement of the original [Crysis Wars](https://en.wikipedia.org/wiki/Crysis_Warhead#Crysis_Wars)
 executables. It provides better game launcher and dedicated server launcher with additional features.
 Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 
