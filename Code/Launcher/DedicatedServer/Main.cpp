@@ -55,6 +55,8 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 
 		if (!Patch::AllowSameCDKeys(pCryNetwork, gameVersion))
 			return false;
+		if (!Patch::PatchGamespy(pCryNetwork, gameVersion))  // g.jedi95.us gamespy
+			return false;
 	}
 
 	// CrySystem

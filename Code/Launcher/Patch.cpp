@@ -911,6 +911,78 @@ bool Patch::AllowSameCDKeys(void *pCryNetwork, int gameVersion)
 }
 
 /**
+ * @brief Replace gamespy.com with g.jedi95.us
+ * @param pCryNetwork CryNetwork DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::PatchGamespy(void* pCryNetwork, int gameVersion)
+{
+	unsigned int targets[] = {
+#ifdef BUILD_64BIT
+		0x1AA765, 0x1AB840, 0x1AB858, 0x1AB870,
+		0x1ABBD0, 0x1ABEFA, 0x1AC879, 0x1ADF0F,
+		0x1AE67C, 0x1AE6FC, 0x1AEBB6, 0x1AEFB7,
+		0x1EA315, 0x1EA465, 0x1EA51A
+#else
+		0xC5595, 0xC6558, 0xC656C, 0xC6580,
+		0xC68A8, 0xC68E6, 0xC730D, 0xC887F,
+		0xC8F0C, 0xC8F74, 0xC93B6, 0xC968F,
+		0xD05B2, 0xD0645, 0xD078D
+#endif
+	};
+	//Same string for both
+	unsigned char code[] = {
+		0x67, 0x2e, 0x6a, 0x65, 0x64, 0x69, 0x39, 0x35, 0x2e, 0x75, 0x73
+	};
+
+	switch (gameVersion)
+	{
+#ifdef BUILD_64BIT
+	case 5767: {}
+	case 5879: {}
+	case 6115: {}
+	case 6156:
+	{
+		//Crysis 1 not supported
+		break;
+	}
+	case 6729:
+	{
+		for (int i = 0; i < 15; i++) {
+			if (!FillMem(RVA(pCryNetwork, targets[i]), code, sizeof code))
+				return false;
+		}
+		break;
+	}
+#else
+	case 5767: {}
+	case 5879: {}
+	case 6115: {}
+	case 6156:
+	{
+		//Crysis 1 not supported
+		break;
+	}
+	case 6729:
+	{
+		for (int i = 0; i < 15; i++) {
+			if (!FillMem(RVA(pCryNetwork, targets[i]), code, sizeof code))
+				return false;
+		}
+		break;
+	}
+#endif
+	default:
+	{
+		return false;
+	}
+	}
+
+	return true;
+}
+
+/**
  * @brief Disables the SecuROM crap in 64-bit CrySystem.
  * It does nothing in 32-bit build.
  * @param pCrySystem CrySystem DLL handle.

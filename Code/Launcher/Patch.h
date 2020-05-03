@@ -18,6 +18,7 @@ namespace Patch
 	// CryNetwork
 	bool EnablePreordered(void *pCryNetwork, int gameVersion);
 	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
+	bool PatchGamespy(void* pCryNetwork, int gameVersion);
 
 	// CrySystem
 	bool RemoveSecuROM(void *pCrySystem, int gameVersion);
