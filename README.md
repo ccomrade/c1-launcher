@@ -1,23 +1,20 @@
-# c1-launcher
+# cw-launcher
 
-C1-Launcher is an open-source replacement of the original [Crysis 1](https://en.wikipedia.org/wiki/Crysis_(video_game))
-executables. It provides better game launcher and dedicated server launcher with additional features. All versions of Crysis 1
-are supported, including both 32-bit and 64-bit architecture.
+CW-Launcher is an open-source replacement of the original [Crysis Wars](https://en.wikipedia.org/wiki/Crysis_Warhead#Crysis_Wars))
+executables. It provides better game launcher and dedicated server launcher with additional features.
+Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 
 ### Features
 
 - Full source code is available
-- Supports all game versions in one EXE file
 - Completely DRM-free launcher (no broken SecuROM crap inside)
 - No compatibility mode is required to make the game work on modern systems
 - Smaller files (especially game launcher)
-- Annoying startup videos are automatically skipped
 - Very High settings are available in DX9 mode
 - Game started in DX9 mode can connect to DX10 servers (everything works just like in DX10 game)
 - Servers started via this launcher don't kick players with the same CD key
-- It's possible to run multiple Crysis instances at once
-- Fixed crash of 32-bit Crysis on modern AMD processors
-- Advantages of pre-ordered version are available for everyone
+- It's possible to run multiple Crysis Wars instances at once
+- Fixed crash of 32-bit Crysis Wars on modern AMD processors
 
 ### FAQ
 
@@ -25,11 +22,12 @@ are supported, including both 32-bit and 64-bit architecture.
 
 **Question:** How to use it?
 
-**Answer:** Compile the source code (see below for instructions) or download directly the EXE files from
-[release section](https://github.com/ccomrade/c1-launcher/releases). Then just replace original `Bin32\Crysis.exe` and
-`Bin64\Crysis.exe` with 32-bit and 64-bit version of this launcher. Note that you should always use legal copy of Crysis.
-If you don't have one, you can buy it on [GoG](https://www.gog.com/game/crysis),
-[Steam](https://store.steampowered.com/app/17300/Crysis/), DVD, or Origin.
+**Answer:** Download the the EXE files from [release section](https://github.com/jedi95/c1-launcher/releases).
+Then just replace original `Bin32\Crysis.exe` and `Bin64\Crysis.exe` with 32-bit and 64-bit version of this launcher.
+Alternatively, you can compile the source code (see below for instructions)
+If you do not have the game, you can download the Crysis Wars trial for free.
+This is a full copy of the game, but it does not come with a CD key.
+The replacement Gamespy combined with this launcher means that CD keys are not checked.
 
 ---
 
@@ -40,15 +38,16 @@ executables.
 
 ---
 
-**Question:** How can I play Crysis 1 multiplayer?
+**Question:** How can I play Crysis Wars multiplayer?
 
 **Answer:** Official multiplayer doesn't work anymore because of
-[GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown). However, there are community projects that provide their own
-multiplayer services. The most successful one is [CryMP Network](https://crymp.net).
+[GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown). However, a Gamespy replacement is included!
+You can host servers and play multiplayer just like before. The only difference is that you will need to make a new account,
+which can be done within the game's multiplayer menu.
 
 ---
 
-**Question:** How can I run Crysis in DX9 mode instead of default DX10 mode?
+**Question:** How can I run Crysis Wars in DX9 mode instead of default DX10 mode?
 
 **Answer:** Just launch it with `-dx9` command line parameter.
 
@@ -58,14 +57,11 @@ multiplayer services. The most successful one is [CryMP Network](https://crymp.n
 
 **Answer:** Yes, you can safely delete the following files if you don't plan to use the original executables anymore:
 ```
-Bin32\Crysis.exe                 <-- 32-bit game launcher
-Bin32\CrysisDedicatedServer.exe  <-- 32-bit dedicated server launcher
+Bin32\Crysis.exe                      <-- 32-bit game launcher
+Bin32\CrysisWarsDedicatedServer.exe   <-- 32-bit dedicated server launcher
 
-Bin64\Crysis.exe                 <-- SecuROM crap that starts 'crysis64.exe'
-Bin64\Crysis.ini
-Bin64\crysis64.exe               <-- 64-bit game launcher
-Bin64\CrysisDedicatedServer.exe  <-- 64-bit dedicated server launcher
-Bin64\b64.dll                    <-- additional SecuROM crap used by 64-bit CrySystem DLL
+Bin64\Crysis.exe                      <-- 64-bit game launcher
+Bin64\CrysisWarsDedicatedServer.exe   <-- 64-bit dedicated server launcher
 ```
 
 ---
@@ -106,7 +102,7 @@ struct SSystemInitParams
 #### Required tools
 
 To build the source code you need **CMake**, which is lightweight build manager, and **Microsoft Visual C++** compiler (MSVC).
-No other compilers are supported because Crysis was built with MSVC, so the same ABI is required. There are 2 ways how to get
+No other compilers are supported because Crysis Wars was built with MSVC, so the same ABI is required. There are 2 ways how to get
 MSVC. The first way is Visual Studio (VS2005 or higher is required). You can use it if you already have it on your computer, but
 it's not recommended way, because Visual Studio is highly bloated software and installing it just for building some project is
 really bad idea. The second way is Windows SDK. It contains MSVC compiler and since Windows Vista it also fully supports C++ so
