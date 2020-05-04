@@ -536,7 +536,7 @@ static void DumpRegisters(Log & log, const CONTEXT *ctx)
 #ifdef BUILD_64BIT
 	log.printf("RIP: %016I64X RSP: %016I64X RBP: %016I64X EFLAGS: %08X", ctx->Rip, ctx->Rsp, ctx->Rbp, ctx->EFlags);
 	log.printf("RAX: %016I64X RBX: %016I64X RCX: %016I64X RDX: %016I64X", ctx->Rax, ctx->Rbx, ctx->Rcx, ctx->Rdx);
-	log.printf("RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X ", ctx->Rsi, ctx->Rdi, ctx->R8, ctx->R9);
+	log.printf("RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X", ctx->Rsi, ctx->Rdi, ctx->R8, ctx->R9);
 	log.printf("R10: %016I64X R11: %016I64X R12: %016I64X R13: %016I64X", ctx->R10, ctx->R11, ctx->R12, ctx->R13);
 	log.printf("R14: %016I64X R15: %016I64X", ctx->R14, ctx->R15);
 #else
