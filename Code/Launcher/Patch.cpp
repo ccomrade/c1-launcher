@@ -53,6 +53,36 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x2B06AD), 0x1E)
+			 || !FillNOP(RVA(pCryAction, 0x2B3EAA), 0x16))
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x2B529D), 0x1E)
+			 || !FillNOP(RVA(pCryAction, 0x2B7F7A), 0x16))
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x2B39FD), 0x1E)
+			 || !FillNOP(RVA(pCryAction, 0x2B66DA), 0x16))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x2B6F6D), 0x1E)
+			 || !FillNOP(RVA(pCryAction, 0x2B9C21), 0x16))
+				return false;
+
+			break;
+		}
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCryAction, 0x2B6F3D), 0x1E)
@@ -91,6 +121,42 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 			if (!FillNOP(RVA(pCryAction, 0x1D698A), 0x1A)
 			 || !FillNOP(RVA(pCryAction, 0x1D89FC), 0x15))
 				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x1D854A), 0x1A)
+			 || !FillNOP(RVA(pCryAction, 0x1DA5BC), 0x15))
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x1F09AA), 0x1A)
+			 || !FillNOP(RVA(pCryAction, 0x1F2DEC), 0x15))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x1D81DA), 0x1A)
+			 || !FillNOP(RVA(pCryAction, 0x1DA1CC), 0x15))
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x1D826A), 0x1A)
+			 || !FillNOP(RVA(pCryAction, 0x1DA25C), 0x15))
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryAction, 0x1D9FCA), 0x1A)
+			 || !FillNOP(RVA(pCryAction, 0x1DBFBC), 0x15))
 
 			break;
 		}
@@ -151,6 +217,34 @@ bool Patch::DisableIntros(void *pCryGame, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x336402), 0x10))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x3274E2), 0x10))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x3275B2), 0x10))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x327CC2), 0x10))
+				return false;
+
+			break;
+		}
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCryGame, 0x3291A2), 0x10))
@@ -187,6 +281,45 @@ bool Patch::DisableIntros(void *pCryGame, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryGame, 0x220BFD), 0xD)
 			 || !FillNOP(RVA(pCryGame, 0x220C0B), 0x2))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x23C9F0), 0xC)
+			 || !FillNOP(RVA(pCryGame, 0x23C9FF), 0x2))
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x24D101), 0xC)
+			 || !FillNOP(RVA(pCryGame, 0x24D110), 0x2))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x23D650), 0xC)
+			 || !FillNOP(RVA(pCryGame, 0x23D65F), 0x2))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x23D250), 0xC)
+			 || !FillNOP(RVA(pCryGame, 0x23D25F), 0x2))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x23D760), 0xC)
+			 || !FillNOP(RVA(pCryGame, 0x23D76F), 0x2))
 				return false;
 
 			break;
@@ -249,6 +382,34 @@ bool Patch::CanJoinDX10Servers(void *pCryGame, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x35BC57), 0x18))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x34B4F7), 0x18))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x34B097), 0x18))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x34B9A7), 0x18))
+				return false;
+
+			break;
+		}
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCryGame, 0x34D047), 0x18))
@@ -281,6 +442,41 @@ bool Patch::CanJoinDX10Servers(void *pCryGame, int gameVersion)
 		case 6156:
 		{
 			if (!FillNOP(RVA(pCryGame, 0x242F1C), 0xF))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x250E10), 0xF))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x262D50), 0xF))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x2514D0), 0xF))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x2510D0), 0xF))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryGame, 0x251960), 0xF))
 				return false;
 
 			break;
@@ -352,6 +548,38 @@ bool Patch::EnableDX10Menu(void *pCryGame, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillMem(RVA(pCryGame, 0x3150C1), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x3156F7), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillMem(RVA(pCryGame, 0x30AED1), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x30B507), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillMem(RVA(pCryGame, 0x30AF91), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x30B5C7), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillMem(RVA(pCryGame, 0x30B6A1), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x30BCD7), code, sizeof code))
+				return false;
+
+			break;
+		}
 		case 6729:
 		{
 			if (!FillMem(RVA(pCryGame, 0x30CBA1), code, sizeof code)
@@ -389,6 +617,46 @@ bool Patch::EnableDX10Menu(void *pCryGame, int gameVersion)
 		{
 			if (!FillMem(RVA(pCryGame, 0x22029A), code, sizeof code)
 			 || !FillMem(RVA(pCryGame, 0x2206E2), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillMem(RVA(pCryGame, 0x22C35E), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x22C7A2), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillMem(RVA(pCryGame, 0x23936E), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x2397B2), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillMem(RVA(pCryGame, 0x22CEAE), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x22D2F2), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillMem(RVA(pCryGame, 0x22C9CE), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x22CE12), code, sizeof code))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillMem(RVA(pCryGame, 0x22CDCE), code, sizeof code)
+			 || !FillMem(RVA(pCryGame, 0x22D212), code, sizeof code))
 				return false;
 
 			break;
@@ -440,11 +708,6 @@ bool Patch::EnablePreordered(void *pCryNetwork, int gameVersion)
 		}
 		case 5879:
 		{
-			// it seems Crytek removed something from CNetChannel in 5879 build
-			// so the preordered flag is at slightly different offset
-			// but only in 64-bit build for some reason
-			// all later versions (including Wars) use the original 0xFA70 offset again
-			// really weird
 			code[2] = 0x68;  // 0xFA68 instead of 0xFA70
 
 			if (!FillMem(RVA(pCryNetwork, 0x1765F0), code, sizeof code))
@@ -496,6 +759,11 @@ bool Patch::EnablePreordered(void *pCryNetwork, int gameVersion)
 			break;
 		}
 	#endif
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
 		case 6729:
 		{
 			// Crysis Wars doesn't have pre-ordered version
@@ -550,6 +818,22 @@ bool Patch::AllowSameCDKeys(void *pCryNetwork, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0xE9034), 0x6B))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0xE0838), 0x47))
+				return false;
+
+			break;
+		}
+		case 6627:
+		case 6670:
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCryNetwork, 0xDFE48), 0x47))
@@ -582,6 +866,29 @@ bool Patch::AllowSameCDKeys(void *pCryNetwork, int gameVersion)
 		case 6156:
 		{
 			if (!FillNOP(RVA(pCryNetwork, 0x606A5), 0x4))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x60768), 0x4))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x73F90), 0x4))
+				return false;
+
+			break;
+		}
+		case 6586:
+		case 6627:
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x60CFE), 0x4))
 				return false;
 
 			break;
@@ -643,6 +950,10 @@ bool Patch::RemoveSecuROM(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
 		case 6729:
 		{
 			// CrySystem in Crysis Wars doesn't contain any SecuROM crap
@@ -697,6 +1008,27 @@ bool Patch::AllowDX9VeryHighSpec(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x4D7B5), 0x54))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x47DBB), 0x54))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x4A90B), 0x54))
+				return false;
+
+			break;
+		}
 	#else
 		case 5767:
 		{
@@ -726,10 +1058,39 @@ bool Patch::AllowDX9VeryHighSpec(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5A778), 0x4B))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5D1A9), 0x4B))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5A659), 0x4B))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5B5E9), 0x4B))
+				return false;
+
+			break;
+		}
 	#endif
+		case 6670:
 		case 6729:
 		{
-			// Crysis Wars allows Very High settings in DX9 mode
+			// Crysis Wars since 1.4 allows Very High settings in DX9 mode
 			break;
 		}
 		default:
@@ -781,6 +1142,28 @@ bool Patch::AllowMultipleInstances(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x49D1F), 0x68))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x4420F), 0x68))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x46D5F), 0x68))
+				return false;
+
+			break;
+		}
+		case 6670:
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCrySystem, 0x46EEF), 0x68))
@@ -813,6 +1196,41 @@ bool Patch::AllowMultipleInstances(void *pCrySystem, int gameVersion)
 		case 6156:
 		{
 			if (!FillNOP(RVA(pCrySystem, 0x5794F), 0x58))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5831F), 0x58))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5AC4F), 0x58))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x5834F), 0x58))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x592DF), 0x58))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x595CF), 0x58))
 				return false;
 
 			break;
@@ -881,6 +1299,34 @@ bool Patch::UnhandledExceptions(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x298AE), 0x6)
+			 || !FillNOP(RVA(pCrySystem, 0x298BA), 0x7)
+			 || !FillNOP(RVA(pCrySystem, 0x4D80E), 0x16))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x24026), 0x6)
+			 || !FillNOP(RVA(pCrySystem, 0x24032), 0x7)
+			 || !FillNOP(RVA(pCrySystem, 0x47E14), 0x16))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x25183), 0x6)
+			 || !FillNOP(RVA(pCrySystem, 0x2518F), 0x7)
+			 || !FillNOP(RVA(pCrySystem, 0x4A964), 0x16))
+				return false;
+
+			break;
+		}
+		case 6670:
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCrySystem, 0x253B3), 0x6)
@@ -923,6 +1369,51 @@ bool Patch::UnhandledExceptions(void *pCrySystem, int gameVersion)
 			if (!FillNOP(RVA(pCrySystem, 0x17D67), 0x5)
 			 || !FillNOP(RVA(pCrySystem, 0x17D72), 0xC)
 			 || !FillNOP(RVA(pCrySystem, 0x59DF8), 0x13))
+				return false;
+
+			break;
+		}
+		case 6527:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x18767), 0x5)
+			 || !FillNOP(RVA(pCrySystem, 0x18772), 0xC)
+			 || !FillNOP(RVA(pCrySystem, 0x5A7C8), 0x13))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x1AD57), 0x5)
+			 || !FillNOP(RVA(pCrySystem, 0x1AD62), 0xC)
+			 || !FillNOP(RVA(pCrySystem, 0x5D1F9), 0x13))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x18A27), 0x5)
+			 || !FillNOP(RVA(pCrySystem, 0x18A32), 0xC)
+			 || !FillNOP(RVA(pCrySystem, 0x5A6A9), 0x13))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x19327), 0x5)
+			 || !FillNOP(RVA(pCrySystem, 0x19332), 0xC)
+			 || !FillNOP(RVA(pCrySystem, 0x5B639), 0x13))
+				return false;
+
+			break;
+		}
+		case 6670:
+		{
+			if (!FillNOP(RVA(pCrySystem, 0x19607), 0x5)
+			 || !FillNOP(RVA(pCrySystem, 0x19612), 0xC)
+			 || !FillNOP(RVA(pCrySystem, 0x5B8DC), 0x13))
 				return false;
 
 			break;
@@ -988,6 +1479,28 @@ bool Patch::Disable3DNow(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6566:
+		{
+			if (!FillMem(RVA(pCrySystem, 0xAD3F), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillMem(RVA(pCrySystem, 0xA32F), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillMem(RVA(pCrySystem, 0xA26F), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6670:
 		case 6729:
 		{
 			if (!FillMem(RVA(pCrySystem, 0xA32F), &flags, sizeof flags))
@@ -1024,6 +1537,35 @@ bool Patch::Disable3DNow(void *pCrySystem, int gameVersion)
 
 			break;
 		}
+		case 6527:
+		{
+			if (!FillMem(RVA(pCrySystem, 0x9472), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6566:
+		{
+			if (!FillMem(RVA(pCrySystem, 0x9942), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6586:
+		{
+			if (!FillMem(RVA(pCrySystem, 0x93D2), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6627:
+		{
+			if (!FillMem(RVA(pCrySystem, 0x9402), &flags, sizeof flags))
+				return false;
+
+			break;
+		}
+		case 6670:
 		case 6729:
 		{
 			if (!FillMem(RVA(pCrySystem, 0x9412), &flags, sizeof flags))

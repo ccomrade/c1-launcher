@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- Support for Crysis Wars. Only the latest version 1.5 (6729 build) is supported.
+- Support for Crysis Wars.
 - Unlocked advantages of pre-ordered version. Both game launcher and server launcher are required for this to work.
 - Crash logger that writes crash info to the log file.
 - Launcher version info is now written to the log after engine initialization.

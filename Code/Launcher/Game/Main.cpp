@@ -137,6 +137,11 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 		case 6115:
 		case 6156:
 		// Crysis Wars
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
 		case 6729:
 		{
 			if (!InstallMemoryPatches(libs, gameVersion))
