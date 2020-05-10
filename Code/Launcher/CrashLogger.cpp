@@ -461,7 +461,11 @@ public:
 			return result;  // empty
 		}
 
-		m_pEnumerateLoadedModules(m_process, DebugHelper::EnumerateModulesCallback, &result);
+#ifdef BUILD_64BIT
+		m_pEnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK64)DebugHelper::EnumerateModulesCallback, &result);
+#else
+		m_pEnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK)DebugHelper::EnumerateModulesCallback, &result);
+#endif
 
 		std::sort(result.begin(), result.end());
 
