@@ -11,6 +11,49 @@ using Util::FillNOP;
 using Util::FillMem;
 
 /**
+ * @brief Enable FPS cap on client
+ * @param pCrySystem CrySystem DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion)
+{
+	switch (gameVersion)
+	{
+	case 5767: {}
+	case 5879: {}
+	case 6115: {}
+	case 6156:
+	{
+		//Crysis 1 not supported yet
+		break;
+	}
+#ifdef BUILD_64BIT
+	case 6729:
+	{
+		if (!FillNOP(RVA(pCrySystem, 0x3A752), 0x4)
+		 || !FillNOP(RVA(pCrySystem, 0x4AB5F), 0x4))
+			return false;
+		break;
+	}
+#else
+	case 6729:
+	{
+		if (!FillNOP(RVA(pCrySystem, 0x4E393), 0x4)
+		 || !FillNOP(RVA(pCrySystem, 0x5B933), 0x4))
+			return false;
+		break;
+	}
+#endif
+	default:
+	{
+		return false;
+	}
+	}
+	return true;
+}
+
+/**
  * @brief Allows connecting to DX10 servers with game running in DX9 mode.
  * @param pCryAction CryAction DLL handle.
  * @param gameVersion Game build number.

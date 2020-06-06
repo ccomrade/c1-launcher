@@ -93,6 +93,9 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 	{
 		void *pCrySystem = libs.CrySystem.getHandle();
 
+		if (!Patch::EnableFPSCap(pCrySystem, gameVersion))
+			return false;
+
 		if (!Patch::RemoveSecuROM(pCrySystem, gameVersion))
 			return false;
 
