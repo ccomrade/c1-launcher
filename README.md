@@ -15,6 +15,7 @@ Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 - Servers started via this launcher don't kick players with the same CD key
 - It's possible to run multiple Crysis Wars instances at once
 - Fixed crash of 32-bit Crysis Wars on modern AMD processors
+- Added engine based FPS cap for minimum input latency
 
 ### FAQ
 
@@ -67,6 +68,33 @@ Bin64\CrysisWarsDedicatedServer.exe   <-- 64-bit dedicated server launcher
 ---
 
 ### Notes
+
+The launcher implents an FPS limit in the game itself. This provides lower input latency compared to 3rd party FPS limiters
+such as RTSS or the options in the Nvidia/AMD drivers. This feature is disabled by default unless a mod enables it via the
+provided interface in ILauncher.h. The Falcon mod implements this interface in the on change callback of sys_MaxFPS.
+
+Sample code to add support to a 3rd party mod:
+```c++
+ILauncher *pLauncher = NULL;
+
+HMODULE hExe = GetModuleHandleA( NULL );
+ILauncher::TGetFunc pGetILauncher = (ILauncher::TGetFunc) GetProcAddress( hExe, "GetILauncher" );
+if ( pGetILauncher )
+{
+	pLauncher = pGetILauncher();
+}
+
+if ( pLauncher )
+{
+	// Launcher API is available
+	pLauncher->SetFPSCap(120);
+}
+else
+{
+	// Launcher API is not available
+}
+```
+
 
 This project uses the incomplete CryEngine headers (`Code/CryEngine`) from the **Crysis Mod SDK v1.2** released by Crytek. All
 the header files have been converted to UTF-8 with LF line endings. In addition, there is only one modification - added content
