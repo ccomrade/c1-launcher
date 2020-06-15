@@ -16,8 +16,21 @@ using Util::FillMem;
  * @param gameVersion Game build number.
  * @return True if no error occurred, otherwise false.
  */
-bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion)
+bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion, void *pWait)
 {
+#ifdef BUILD_64BIT
+	const unsigned char code[] = {
+		0x48, 0xB9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // movabs rcx, 0x0000000000000000
+		0xFF, 0xD1													// call rcx
+	};
+#else
+	const unsigned char code[] = {
+		0xB9, 0x00, 0x00, 0x00, 0x00, // mov  ecx, 0x00000000
+		0x90, 0x90, 0x90, 0x90,       // nop x 4
+		0xFF, 0xD1	                  // call ecx
+	};
+#endif
+
 	switch (gameVersion)
 	{
 	case 5767: {}
@@ -31,7 +44,8 @@ bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion)
 #ifdef BUILD_64BIT
 	case 6729:
 	{
-		if (!FillNOP(RVA(pCrySystem, 0x3A752), 0x4)
+		if (!FillMem(RVA(pCrySystem, 0x3A752), code, sizeof code)
+		 || !FillMem(RVA(pCrySystem, 0x3A754), &pWait, sizeof pWait)
 		 || !FillNOP(RVA(pCrySystem, 0x4AB5F), 0x4))
 			return false;
 		break;
@@ -39,7 +53,8 @@ bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion)
 #else
 	case 6729:
 	{
-		if (!FillNOP(RVA(pCrySystem, 0x4E393), 0x4)
+		if (!FillMem(RVA(pCrySystem, 0x4E393), code, sizeof code)
+		 || !FillMem(RVA(pCrySystem, 0x4E394), &pWait, sizeof pWait)
 		 || !FillNOP(RVA(pCrySystem, 0x5B933), 0x4))
 			return false;
 		break;
@@ -52,6 +67,7 @@ bool Patch::EnableFPSCap(void* pCrySystem, int gameVersion)
 	}
 	return true;
 }
+
 
 /**
  * @brief Allows connecting to DX10 servers with game running in DX9 mode.

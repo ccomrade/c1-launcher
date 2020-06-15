@@ -1,12 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.11)
 
 #################################################
-project(CW-Launcher VERSION 2.4 LANGUAGES CXX RC)
+project(CW-Launcher VERSION 2.5 LANGUAGES CXX RC)
 #################################################
-
-if(NOT MSVC)
-	message(FATAL_ERROR "MSVC is the only supported compiler!")
-endif()
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
 	# use statically linked MSVC runtime library
@@ -39,6 +35,7 @@ add_library(LauncherBase STATIC
   Code/Launcher/CrashLogger.h
   Code/Launcher/DLL.cpp
   Code/Launcher/DLL.h
+  Code/Launcher/ILauncher.h
   Code/Launcher/Launcher.cpp
   Code/Launcher/Launcher.h
   Code/Launcher/Patch.cpp
@@ -46,6 +43,7 @@ add_library(LauncherBase STATIC
   Code/Launcher/Util.cpp
   Code/Launcher/Util.h
 )
+
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 

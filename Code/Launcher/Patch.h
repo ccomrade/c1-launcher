@@ -21,7 +21,7 @@ namespace Patch
 	bool PatchGamespy(void* pCryNetwork, int gameVersion);
 
 	// CrySystem
-	bool EnableFPSCap(void *pCrySystem, int gameVersion);
+	bool EnableFPSCap(void *pCrySystem, int gameVersion, void *pWait);
 	bool RemoveSecuROM(void *pCrySystem, int gameVersion);
 	bool AllowDX9VeryHighSpec(void *pCrySystem, int gameVersion);
 	bool AllowMultipleInstances(void *pCrySystem, int gameVersion);

@@ -5,11 +5,21 @@
 
 #include <cstdlib>
 
+#include "config.h"
+#include "Launcher/ILauncher.h"
 #include "Launcher/Launcher.h"
 #include "Launcher/DLL.h"
 #include "Launcher/CPU.h"
 #include "Launcher/Patch.h"
 #include "Launcher/Util.h"
+#include <intrin.h>
+#include <windows.h>
+
+#pragma intrinsic(__rdtsc)
+
+int maxfps = 0;
+unsigned long long nextFrameStart = 0;
+double ticksPerNanosecond = 0.001f;
 
 struct CrysisLibs
 {
@@ -50,6 +60,18 @@ struct CrysisLibs
 		return true;
 	}
 };
+
+void WaitIfNeeded() {
+	if (maxfps > 0) {
+		unsigned long long current;
+		do  {
+			_mm_lfence();
+			current = __rdtsc();
+		} while (current < nextFrameStart);
+		double nanoseconds = 1000000000.0f / (double) maxfps;
+		nextFrameStart = current + (long long)(nanoseconds * ticksPerNanosecond);
+	}
+}
 
 static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 {
@@ -92,8 +114,9 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 	// CrySystem
 	{
 		void *pCrySystem = libs.CrySystem.getHandle();
+		void *pWait = &WaitIfNeeded;
 
-		if (!Patch::EnableFPSCap(pCrySystem, gameVersion))
+		if (!Patch::EnableFPSCap(pCrySystem, gameVersion, pWait))
 			return false;
 
 		if (!Patch::RemoveSecuROM(pCrySystem, gameVersion))
@@ -118,8 +141,101 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 	return true;
 }
 
-int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
+class LauncherAPI : public ILauncher
 {
+	static LauncherAPI *s_pInstance;
+public:
+	LauncherAPI()
+	{
+		s_pInstance = this;
+	}
+
+	~LauncherAPI()
+	{
+		s_pInstance = NULL;
+	}
+
+	static LauncherAPI *Get()
+	{
+		return s_pInstance;
+	}
+
+	const char *GetName() override
+	{
+		return "CW-Launcher";
+	}
+
+	int GetVersionMajor() override
+	{
+		return C1LAUNCHER_VERSION_MAJOR;
+	}
+
+	int GetVersionMinor() override
+	{
+		return C1LAUNCHER_VERSION_MINOR;
+	}
+	int GetFPSCap() {
+		return maxfps;
+	}
+	void SetFPSCap(int fps) {
+		maxfps = fps;
+	}
+};
+
+#define DLL_EXPORT __declspec(dllexport)
+
+LauncherAPI *LauncherAPI::s_pInstance = NULL;
+
+// request discrete graphics card
+extern "C"
+{
+	DLL_EXPORT ILauncher *GetILauncher()
+	{
+		return LauncherAPI::Get();
+	}
+
+	// nVidia
+	DLL_EXPORT unsigned long NvOptimusEnablement = 1;
+
+	// AMD
+	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
+}
+
+void calculateTSCTicksPerNanosecond() {
+	//Calculate TSC frequency
+	LARGE_INTEGER Frequency;
+	QueryPerformanceFrequency(&Frequency);
+
+	LARGE_INTEGER tStart;
+	LARGE_INTEGER tEnd;
+
+	QueryPerformanceCounter(&tStart);
+	unsigned long long start = __rdtsc();
+
+	//Sleep for a bit
+	Sleep(500);
+
+	QueryPerformanceCounter(&tEnd);
+	unsigned long long end = __rdtsc();
+
+	LONGLONG deltaQPC = tEnd.QuadPart - tStart.QuadPart;
+	unsigned long long deltaTSC = end - start;
+
+	//Duration in nanoseconds
+	double qpcDuration = (double)deltaQPC * 1000000000.0 / (double)Frequency.QuadPart;
+
+	//Calculate TSC ticks per nanosecond
+	ticksPerNanosecond = (double)deltaTSC / qpcDuration;
+}
+
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+//int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
+{
+	LauncherAPI api;
+
+	//Get TSC tickrate
+	calculateTSCTicksPerNanosecond();
+
 	CrysisLibs libs;
 
 	if (!libs.load())
@@ -171,16 +287,4 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 	launcher.setLogFileName("Game.log");
 
 	return launcher.run(libs.CryGame) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-#define DLL_EXPORT __declspec(dllexport)
-
-// request discrete graphics card
-extern "C"
-{
-	// nVidia
-	DLL_EXPORT unsigned long NvOptimusEnablement = 1;
-
-	// AMD
-	DLL_EXPORT int AmdPowerXpressRequestHighPerformance = 1;
 }
