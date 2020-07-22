@@ -554,7 +554,7 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 {
 	log.write("================================ CRASH DETECTED ================================");
 
-	log.write(C1LAUNCHER_VERSION_DESCRIPTION);
+	log.write(CWLAUNCHER_VERSION_DESCRIPTION);
 
 	WriteExceptionInfo(log, pExceptionInfo->ExceptionRecord);
 	DumpRegisters(log, pExceptionInfo->ContextRecord);

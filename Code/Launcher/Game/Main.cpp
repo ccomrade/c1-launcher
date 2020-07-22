@@ -13,6 +13,7 @@
 #include "Launcher/Patch.h"
 #include "Launcher/Util.h"
 #include <intrin.h>
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #pragma intrinsic(__rdtsc)
@@ -167,12 +168,12 @@ public:
 
 	int GetVersionMajor() override
 	{
-		return C1LAUNCHER_VERSION_MAJOR;
+		return CWLAUNCHER_VERSION_MAJOR;
 	}
 
 	int GetVersionMinor() override
 	{
-		return C1LAUNCHER_VERSION_MINOR;
+		return CWLAUNCHER_VERSION_MINOR;
 	}
 	int GetFPSCap() {
 		return maxfps;
@@ -229,7 +230,6 @@ void calculateTSCTicksPerNanosecond() {
 }
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-//int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
 {
 	LauncherAPI api;
 

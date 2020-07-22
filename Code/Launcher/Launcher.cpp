@@ -73,7 +73,7 @@ bool Launcher::run(const DLL & libCryGame)
 		return false;
 	}
 
-	logInfo(C1LAUNCHER_VERSION_DESCRIPTION);
+	logInfo(CWLAUNCHER_VERSION_DESCRIPTION);
 
 	// enter game update loop
 	int status = pGameStartup->Run(NULL);

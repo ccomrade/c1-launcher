@@ -14,8 +14,10 @@ namespace Patch
 	bool DisableIntros(void *pCryGame, int gameVersion);
 	bool CanJoinDX10Servers(void *pCryGame, int gameVersion);
 	bool EnableDX10Menu(void *pCryGame, int gameVersion);
+	bool DisableAutoexec(void *pCryGame, int gameVersion);
 
 	// CryNetwork
+	bool PatchServerProfiler(void *pCryNetwork, int gameVersion);
 	bool EnablePreordered(void *pCryNetwork, int gameVersion);
 	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
 	bool PatchGamespy(void* pCryNetwork, int gameVersion);

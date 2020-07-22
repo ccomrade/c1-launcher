@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.11)
 
 #################################################
-project(CW-Launcher VERSION 2.5 LANGUAGES CXX RC)
+project(CW-Launcher VERSION 2.7 LANGUAGES CXX RC)
 #################################################
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
-	# use statically linked MSVC runtime library
-	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  # use statically linked MSVC runtime library
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 # prevent modern MSVC from enabling ASLR
@@ -14,10 +14,10 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO")
 
 # detect 64-bit compiler
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(BUILD_64BIT TRUE)
-	message(STATUS "64-bit build")
+  set(BUILD_64BIT TRUE)
+  message(STATUS "64-bit build")
 else()
-	message(STATUS "32-bit build")
+  message(STATUS "32-bit build")
 endif()
 
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
@@ -44,11 +44,10 @@ add_library(LauncherBase STATIC
   Code/Launcher/Util.h
 )
 
-
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 
 if(BUILD_64BIT)
-	target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
+  target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
 endif()
 
 add_executable(Crysis WIN32
@@ -57,11 +56,11 @@ add_executable(Crysis WIN32
   Resources/GameLauncher.rc
 )
 
-add_executable(CrysisDedicatedServer WIN32
+add_executable(CrysisWarsDedicatedServer WIN32
   Code/Launcher/DedicatedServer/Main.cpp
   Code/Launcher/DedicatedServer/Resources.h
   Resources/DedicatedServerLauncher.rc
 )
 
 target_link_libraries(Crysis LauncherBase)
-target_link_libraries(CrysisDedicatedServer LauncherBase)
+target_link_libraries(CrysisWarsDedicatedServer LauncherBase)

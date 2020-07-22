@@ -14,8 +14,8 @@ LAUNCHER_CURSOR_RED   CURSOR "CursorRed.cur"
 LAUNCHER_CURSOR_WHITE CURSOR "CursorWhite.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
-PRODUCTVERSION  C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0
+FILEVERSION     CWLAUNCHER_VERSION_MAJOR, CWLAUNCHER_VERSION_MINOR, 0, 0
+PRODUCTVERSION  CWLAUNCHER_VERSION_MAJOR, CWLAUNCHER_VERSION_MINOR, 0, 0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -23,15 +23,15 @@ BEGIN
 	BEGIN
 		BLOCK "040904E4"
 		BEGIN
-			VALUE "ProductName",      "C1-Launcher"
-			VALUE "ProductVersion",   C1LAUNCHER_VERSION_STRING
-			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
+			VALUE "ProductName",      "CW-Launcher"
+			VALUE "ProductVersion",   CWLAUNCHER_VERSION_STRING
+			VALUE "FileVersion",      CWLAUNCHER_VERSION_STRING
 		#ifdef BUILD_64BIT
-			VALUE "FileDescription",  "Crysis (64-bit)"
+			VALUE "FileDescription",  "Crysis Wars (64-bit)"
 		#else
-			VALUE "FileDescription",  "Crysis (32-bit)"
+			VALUE "FileDescription",  "Crysis Wars (32-bit)"
 		#endif
-			VALUE "InternalName",     "Crysis"
+			VALUE "InternalName",     "Crysis Wars"
 			VALUE "OriginalFilename", "Crysis.exe"
 		END
 	END

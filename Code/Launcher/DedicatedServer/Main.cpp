@@ -5,11 +5,15 @@
 
 #include <cstdlib>
 
+#include "config.h"
+#include "Launcher/ILauncher.h"
 #include "Launcher/Launcher.h"
 #include "Launcher/DLL.h"
 #include "Launcher/CPU.h"
 #include "Launcher/Patch.h"
 #include "Launcher/Util.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 struct CrysisLibs
 {
@@ -46,13 +50,22 @@ struct CrysisLibs
 
 static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 {
+	// CryGame
+	{
+		void *pCryGame = libs.CryGame.getHandle();
+
+		if (!Patch::DisableAutoexec(pCryGame, gameVersion))
+			return false;
+	}
+
 	// CryNetwork
 	{
 		void *pCryNetwork = libs.CryNetwork.getHandle();
 
+		if (!Patch::PatchServerProfiler(pCryNetwork, gameVersion))
+			return false;
 		if (!Patch::EnablePreordered(pCryNetwork, gameVersion))
 			return false;
-
 		if (!Patch::AllowSameCDKeys(pCryNetwork, gameVersion))
 			return false;
 		if (!Patch::PatchGamespy(pCryNetwork, gameVersion))  // g.jedi95.us gamespy
@@ -79,7 +92,7 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 	return true;
 }
 
-int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	CrysisLibs libs;
 

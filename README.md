@@ -16,6 +16,8 @@ Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 - It's possible to run multiple Crysis Wars instances at once
 - Fixed crash of 32-bit Crysis Wars on modern AMD processors
 - Added engine based FPS cap for minimum input latency
+- Disabled server profiler for 32-bit dedicated servers'
+- Disabled autoexec.cfg for the dedicated server (enables sharing an install with a client)
 
 ### FAQ
 

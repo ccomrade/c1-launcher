@@ -1,2 +1,5 @@
 Build/
 build.sh
+x86/**
+x64/**
+*.aps

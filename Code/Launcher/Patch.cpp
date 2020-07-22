@@ -10,6 +10,7 @@ using Util::RVA;
 using Util::FillNOP;
 using Util::FillMem;
 
+
 /**
  * @brief Enable FPS cap on client
  * @param pCrySystem CrySystem DLL handle.
@@ -116,6 +117,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x2B06AD), 0x1E)
 			 || !FillNOP(RVA(pCryAction, 0x2B3EAA), 0x16))
+				return false;
 
 			break;
 		}
@@ -123,6 +125,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x2B529D), 0x1E)
 			 || !FillNOP(RVA(pCryAction, 0x2B7F7A), 0x16))
+				return false;
 
 			break;
 		}
@@ -187,6 +190,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x1D854A), 0x1A)
 			 || !FillNOP(RVA(pCryAction, 0x1DA5BC), 0x15))
+				return false;
 
 			break;
 		}
@@ -202,6 +206,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x1D81DA), 0x1A)
 			 || !FillNOP(RVA(pCryAction, 0x1DA1CC), 0x15))
+				return false;
 
 			break;
 		}
@@ -209,6 +214,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x1D826A), 0x1A)
 			 || !FillNOP(RVA(pCryAction, 0x1DA25C), 0x15))
+				return false;
 
 			break;
 		}
@@ -216,6 +222,7 @@ bool Patch::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryAction, 0x1D9FCA), 0x1A)
 			 || !FillNOP(RVA(pCryAction, 0x1DBFBC), 0x15))
+				return false;
 
 			break;
 		}
@@ -348,6 +355,7 @@ bool Patch::DisableIntros(void *pCryGame, int gameVersion)
 		{
 			if (!FillNOP(RVA(pCryGame, 0x23C9F0), 0xC)
 			 || !FillNOP(RVA(pCryGame, 0x23C9FF), 0x2))
+				return false;
 
 			break;
 		}
@@ -738,6 +746,119 @@ bool Patch::EnableDX10Menu(void *pCryGame, int gameVersion)
 	return true;
 }
 
+
+/**
+ * @brief Disables executing autoexec.cfg on startup.
+ * This is useful for running the dedicated server and client from the same install
+ * @param pCryGame CryGame DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::DisableAutoexec(void *pCryGame, int gameVersion)
+{
+	const unsigned char code[] = {
+		0x73, 0x79, 0x73, 0x5F, 0x72, 0x6F, 0x6F, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+	};
+
+	switch (gameVersion)
+	{
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		{
+			//Crysis 1 and old Crysis Wars not supported
+			break;
+		}
+		case 6729:
+		{
+#ifdef BUILD_64BIT
+			if (!FillMem(RVA(pCryGame, 0x3761C8), code, sizeof code))
+				return false;
+#else
+			if (!FillMem(RVA(pCryGame, 0x274E10), code, sizeof code))
+				return false;
+#endif
+			break;
+		}
+		default:
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * @brief Disables server profiler - "server_profile.txt" file.
+ * Only 32-bit version has server profiler.
+ * @param libCryNetwork CryNetwork DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::PatchServerProfiler(void *pCryNetwork, int gameVersion)
+{
+#ifndef BUILD_64BIT
+	switch ( gameVersion )
+	{
+		case 5767:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x9F435), 0x5))
+				return false;
+
+			break;
+		}
+		case 5879:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x9CA81), 0x5))
+				return false;
+
+			break;
+		}
+		case 6115:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x9C665), 0x5))
+				return false;
+
+			break;
+		}
+		case 6156:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x9BE2E), 0x5))
+				return false;
+
+			break;
+		}
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		{
+			//Old Crysis Wars versions not supported
+			return false;
+		}
+		case 6729:
+		{
+			if (!FillNOP(RVA(pCryNetwork, 0x9C4D7), 0x5))
+				return false;
+
+			break;
+		}
+		default:
+		{
+			return false;
+		}
+	}
+#endif
+
+	return true;
+}
 /**
  * @brief Unlocks advantages of pre-ordered version for everyone.
  * This is both server-side and client-side patch.
@@ -767,6 +888,11 @@ bool Patch::EnablePreordered(void *pCryNetwork, int gameVersion)
 		}
 		case 5879:
 		{
+			// it seems Crytek removed something from CNetChannel in 5879 build
+			// so the preordered flag is at slightly different offset
+			// but only in 64-bit build for some reason
+			// all later versions (including Wars) use the original 0xFA70 offset again
+			// really weird
 			code[2] = 0x68;  // 0xFA68 instead of 0xFA70
 
 			if (!FillMem(RVA(pCryNetwork, 0x1765F0), code, sizeof code))
@@ -891,8 +1017,8 @@ bool Patch::AllowSameCDKeys(void *pCryNetwork, int gameVersion)
 
 			break;
 		}
-		case 6627:
-		case 6670:
+		case 6627: //Same as 6729
+		case 6670: //Same as 6729
 		case 6729:
 		{
 			if (!FillNOP(RVA(pCryNetwork, 0xDFE48), 0x47))
@@ -1003,7 +1129,15 @@ bool Patch::PatchGamespy(void* pCryNetwork, int gameVersion)
 	case 6115: {}
 	case 6156:
 	{
-		//Crysis 1 not supported
+		//Crysis 1 not supported yet
+		break;
+	}
+	case 6566:
+	case 6586:
+	case 6627:
+	case 6670:
+	{
+		//Old Crysis Wars not supported
 		break;
 	}
 	case 6729:
@@ -1021,6 +1155,14 @@ bool Patch::PatchGamespy(void* pCryNetwork, int gameVersion)
 	case 6156:
 	{
 		//Crysis 1 not supported
+		break;
+	}
+	case 6566:
+	case 6586:
+	case 6627:
+	case 6670:
+	{
+		//Old Crysis Wars not supported
 		break;
 	}
 	case 6729:
