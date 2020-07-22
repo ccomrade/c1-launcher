@@ -9,6 +9,7 @@ Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 - Full source code is available
 - Completely DRM-free launcher (no broken SecuROM crap inside)
 - No compatibility mode is required to make the game work on modern systems
+- Multiplayer works via a Gamespy replacement
 - Smaller files (especially game launcher)
 - Very High settings are available in DX9 mode
 - Game started in DX9 mode can connect to DX10 servers (everything works just like in DX10 game)
