@@ -1,2 +1,5 @@
-Build/
+.vs/
+[Bb]uild*/
+
 build.sh
+build.bat

@@ -5,4 +5,4 @@
 
 #pragma once
 
-#define LAUNCHER_ICON 101
+#define DEDICATED_SERVER_ICON 101

@@ -37,14 +37,20 @@ add_library(LauncherBase STATIC
   Code/Launcher/CPU.h
   Code/Launcher/CrashLogger.cpp
   Code/Launcher/CrashLogger.h
+  Code/Launcher/CrysisLibs.cpp
+  Code/Launcher/CrysisLibs.h
   Code/Launcher/DLL.cpp
   Code/Launcher/DLL.h
+  Code/Launcher/Error.cpp
+  Code/Launcher/Error.h
+  Code/Launcher/Format.cpp
+  Code/Launcher/Format.h
   Code/Launcher/Launcher.cpp
   Code/Launcher/Launcher.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Launcher/Util.cpp
-  Code/Launcher/Util.h
+  Code/Launcher/System.cpp
+  Code/Launcher/System.h
 )
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})

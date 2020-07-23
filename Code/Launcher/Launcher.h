@@ -7,19 +7,23 @@
 
 #include "CryCommon/ISystem.h"
 
-struct DLL;
+struct CrysisLibs;
 
 class Launcher
 {
 	SSystemInitParams m_params;
-
-	bool initCmdLine();
-	void logInfo(const char *format, ...);
+	int m_exitCode;
 
 public:
 	Launcher()
-	: m_params()
+	: m_params(),
+	  m_exitCode(0)
 	{
+	}
+
+	int getExitCode() const
+	{
+		return m_exitCode;
 	}
 
 	void setAppInstance(void *hInstance)
@@ -37,5 +41,7 @@ public:
 		m_params.isDedicatedServer = isDedicatedServer;
 	}
 
-	bool run(const DLL & libCryGame);
+	void setCmdLine(const char *cmdLine);
+
+	void run(const CrysisLibs & libs);
 };

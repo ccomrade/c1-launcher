@@ -1,164 +1,178 @@
 # c1-launcher
 
-C1-Launcher is an open-source replacement of the original [Crysis 1](https://en.wikipedia.org/wiki/Crysis_(video_game))
-executables. It provides better game launcher and dedicated server launcher with additional features. All versions of Crysis 1
-are supported, including both 32-bit and 64-bit architecture.
+An open-source replacement of the original [Crysis](https://en.wikipedia.org/wiki/Crysis_(video_game)) executables.
+It provides a better game launcher and dedicated server launcher with additional features.
 
-### Features
+## Features
 
 - Full source code is available
-- Supports all game versions in one EXE file
+- Supports all game versions in one executable
 - Completely DRM-free launcher (no broken SecuROM crap inside)
 - No compatibility mode is required to make the game work on modern systems
-- Smaller files (especially game launcher)
-- Annoying startup videos are automatically skipped
+- Fixes all startup issues, including the well-known crash of 32-bit Crysis on modern AMD processors
+- Smaller files, especially game launcher
+- Annoying startup video ads are automatically skipped
 - Very High settings are available in DX9 mode
-- Game started in DX9 mode can connect to DX10 servers (everything works just like in DX10 game)
-- Servers started via this launcher don't kick players with the same CD key
+- Game running in DX9 mode can connect to DX10 servers and everything works just like in the DX10 game
+- Server doesn't kick players with the same CD key anymore
 - It's possible to run multiple Crysis instances at once
-- Fixed crash of 32-bit Crysis on modern AMD processors
-- Advantages of pre-ordered version are available for everyone
+- Advantages of pre-ordered version are available to everyone
+- Details of any game or server crash are automatically written to the log file
 
-### FAQ
+## Supported game versions
 
----
+### Crysis
 
-**Question:** How to use it?
+| Version | Build | 32-bit | 64-bit |
+| :-----: | :---: | :----: | :----: |
+| 1.0     | 5767  | Y      | Y      |
+| 1.1     | 5879  | Y      | Y      |
+| 1.2     | 6115  | Y      | Y      |
+| 1.2.1   | 6156  | Y      | Y      |
 
-**Answer:** Compile the source code (see below for instructions) or download directly the EXE files from
-[release section](https://github.com/ccomrade/c1-launcher/releases). Then just replace original `Bin32\Crysis.exe` and
-`Bin64\Crysis.exe` with 32-bit and 64-bit version of this launcher. Note that you should always use legal copy of Crysis.
-If you don't have one, you can buy it on [GoG](https://www.gog.com/game/crysis),
-[Steam](https://store.steampowered.com/app/17300/Crysis/), DVD, or Origin.
+### Crysis Wars
 
----
+| Version | Build | 32-bit | 64-bit |
+| :-----: | :---: | :----: | :----: |
+| 1.0     | 6527  | Y      | N/A    |
+| 1.1     | 6566  | Y      | Y      |
+| 1.2     | 6586  | Y      | Y      |
+| 1.3     | 6627  | Y      | Y      |
+| 1.4     | 6670  | Y      | Y      |
+| 1.5     | 6729  | Y      | Y      |
 
-**Question:** I don't want to replace the original executables. Is there any way?
+### Crysis Warhead (not supported yet)
 
-**Answer:** Yes, you can rename the EXE files of this launcher to whatever you want and use them next to untouched original
-executables.
+| Version | Build | 32-bit | 64-bit |
+| :-----: | :---: | :----: | :----: |
+| 1.0     | 687   | -      | N/A    |
+| 1.1     | 710   | -      | -      |
+| 1.1.1   | 711   | -      | -      |
 
----
+## FAQ
 
-**Question:** How can I play Crysis 1 multiplayer?
+### How to use it?
 
-**Answer:** Official multiplayer doesn't work anymore because of
-[GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown). However, there are community projects that provide their own
-multiplayer services. The most successful one is [CryMP Network](https://crymp.net).
+Get the executables from [release section](../../releases) and just replace the original files. That's it.
+You can also compile the source code yourself. See below for instructions.
 
----
+Note that you should always use a legal copy of Crysis. If you still don't have one, see below for where you can get it.
 
-**Question:** How can I run Crysis in DX9 mode instead of default DX10 mode?
+### I don't want to replace the original executables. Is there any way?
 
-**Answer:** Just launch it with `-dx9` command line parameter.
+Yes, you can rename the executables of this launcher to whatever you want and use them next to the original executables.
 
----
+### Where can I get the game?
 
-**Question:** Are there any files that are not needed if I use this launcher?
+#### Crysis
 
-**Answer:** Yes, you can safely delete the following files if you don't plan to use the original executables anymore:
+| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
+| DVD                                                               | 1.0     | 5767  | Y      | Y      | Y         |
+| [GOG](https://www.gog.com/game/crysis)                            | 1.2.1   | 6156  | Y      | Y      | Y         |
+| [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | -      | Y         |
+| Origin                                                            | 1.2.1   | 6156  | Y      | -      | Y         |
+
+#### Crysis Wars
+
+| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
+| DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
+| Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
+| [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | Y      | Y      | Y         |
+
+#### Crysis Warhead
+
+| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
+| DVD                                                               | 1.0     | 687   | Y      | -      | -         |
+| [GOG](https://www.gog.com/game/crysiswarhead)                     | 1.1.1   | 711   | -      | Y      | -         |
+| [Steam](https://store.steampowered.com/app/17330/Crysis_Warhead/) | 1.1.1   | 711   | Y      | Y      | -         |
+| Origin                                                            | 1.1.1   | 711   | Y      | Y      | -         |
+
+### Where can I get patches for the game?
+
+All official patches released by Crytek are listed below. Official download links are not working anymore.
+Patches marked with `*` require the previous patch to be installed.
+
+#### Crysis
+
+| Patch  | Link                                                          | SHA-1 Checksum                           |
+| :----: | :------------------------------------------------------------ | :--------------------------------------: |
+| 1.1    | https://crysis.nullptr.one/Crysis_Patch_1_1.exe               | 1b7c7c48d38623bb55802f5e29d0c6780ba3e208 |
+| 1.2    | https://crysis.nullptr.one/Crysis_Patch_1_2.exe               | 9ecb8947296a0356325bd73b28755fdabebfb67e |
+| 1.2.1* | https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe             | e600606c1068f139ef71d77988bc8516913e0636 |
+
+#### Crysis Wars
+
+| Patch  | Link                                                          | SHA-1 Checksum                           |
+| :----: | :------------------------------------------------------------ | :--------------------------------------: |
+| 1.1    | https://crysis.nullptr.one/CrysisWars_patch1.exe              | 8e41eec565487299a1c675b93467fbf9bcbfbaa3 |
+| 1.2    | https://crysis.nullptr.one/CrysisWars_patch2.exe              | e258bbc3cb6f5d455eb35b3d3c9830297ee9b183 |
+| 1.3    | https://crysis.nullptr.one/CrysisWars_patch3.exe              | dc6460d3cba7bb93820cc544881fe89eda2462b2 |
+| 1.4    | https://crysis.nullptr.one/CrysisWars_patch4.exe              | 1bcff249e679b2bd666a2a5772783af3ebd4e349 |
+| 1.5    | https://crysis.nullptr.one/CrysisWars_patch5.exe              | 4f368c09bbb551e2360d86d42cbd95f25b993e0f |
+
+#### Crysis Warhead
+
+| Patch  | Link                                                          | SHA-1 Checksum                           |
+| :----: | :------------------------------------------------------------ | :--------------------------------------: |
+| 1.1    | https://crysis.nullptr.one/CrysisWarhead_Patch1.exe           | 859f8fb8e3798124c7c4afa650a30b35dbcc65cf |
+| 1.1.1  | https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe         | 926a9380bd7b911d9eb89ec8e080174f4ca3209c |
+
+### How can I play Crysis multiplayer?
+
+Official multiplayer doesn't work anymore because of [GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown).
+However, there are community projects that provide their own multiplayer services.
+The most successful one is [CryMP Network](https://crymp.net).
+
+### How can I run Crysis in DX9 mode instead of the default DX10 mode?
+
+Just launch it with `-dx9` command line parameter.
+
+### Does Crysis support screen resolutions higher than 1080p?
+
+Yes, it does. There is a scrollbar in the resolution list.
+
+### Why does the Bin64 folder contain 2 executables?
+
+The original `Crysis.exe` file in the Bin64 folder is actually only a 32-bit SecuROM DRM launcher. It reads the `Crysis.ini`
+config file and runs `crysis64.exe`, which is the 64-bit game launcher. However, running directly the game launcher usually
+results in a crash during game startup. This is because the 64-bit game loads the `b64.dll` file, which contains additional
+SecuROM garbage that checks whether the game was launched using the SecuROM launcher or not, and if not, it crashes.
+
+If you use this launcher, you can safely delete all the files mentioned above.
+
+## Build instructions
+
+### Requirements
+
+- Microsoft Visual C++ compiler (MSVC) >= VS2005
+- CMake >= 3.15
+
+No other compilers are supported because Crysis was built using MSVC and the same ABI is required. You don't have to install
+highly bloated Visual Studio to get the MSVC compiler. All you need is the Windows SDK. If you have modern Visual Studio
+already installed, you probably don't need to install CMake because it's integrated there.
+
+### Building
+
+#### Using Windows SDK (recommended)
+
+Open the Windows SDK command prompt and move to the directory with the source code. Then execute the following commands:
+
 ```
-Bin32\Crysis.exe                 <-- 32-bit game launcher
-Bin32\CrysisDedicatedServer.exe  <-- 32-bit dedicated server launcher
-
-Bin64\Crysis.exe                 <-- SecuROM crap that starts 'crysis64.exe'
-Bin64\Crysis.ini
-Bin64\crysis64.exe               <-- 64-bit game launcher
-Bin64\CrysisDedicatedServer.exe  <-- 64-bit dedicated server launcher
-Bin64\b64.dll                    <-- additional SecuROM crap used by 64-bit CrySystem DLL
+mkdir Build
+cd Build
+cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release ..
+cmake --build .
 ```
 
----
+If you want both 32-bit and 64-bit executables, use the appropriate Windows SDK command prompt and another build directory.
 
-### Notes
+#### Using Visual Studio
 
-This project uses the incomplete CryEngine headers (`Code/CryEngine`) from the **Crysis Mod SDK v1.2** released by Crytek. All
-the header files have been converted to UTF-8 with LF line endings. In addition, there is only one modification - added content
-of the `SSystemInitParams` structure in `CryCommon/ISystem.h` file. This structure is used to launch the game, but it's empty in
-the original file, so its content has been reverse engineered. The following code is the new structure definition as you can see
-it in the modified `CryCommon/ISystem.h` file. Names of its members are inspired by the source code of the latest
-[CryEngine V](https://github.com/CRYTEK/CRYENGINE).
-
-```c++
-struct SSystemInitParams
-{
-	void *hInstance;                     // executable handle
-	void *hWnd;                          // optional window handle
-	ILog *pLog;                          // optional custom log
-	ILogCallback *pLogCallback;          // optional log callback
-	ISystemUserCallback *pUserCallback;  // optional engine callback
-	const char *sLogFileName;            // usually "Game.log" or "Server.log"
-	IValidator *pValidator;              // optional custom validator
-	char szSystemCmdLine[2048];          // process command line obtained with GetCommandLineA
-	char szUserPath[256];                // optional custom user folder in %USERPROFILE%\Documents
-	bool bEditor;                        // editor mode
-	bool bMinimal;                       // minimal mode - skip initialization of some subsystems
-	bool bTesting;                       // test mode
-	bool bDedicatedServer;               // launch dedicated server
-	ISystem *pSystem;                    // initialized by IGameStartup::Init
-	void *pCheckFunc;                    // not used
-	void *pProtectedFunctions[10];       // probably not used
-};
-```
-
-### Build instructions
-
-#### Required tools
-
-To build the source code you need **CMake**, which is lightweight build manager, and **Microsoft Visual C++** compiler (MSVC).
-No other compilers are supported because Crysis was built with MSVC, so the same ABI is required. There are 2 ways how to get
-MSVC. The first way is Visual Studio (VS2005 or higher is required). You can use it if you already have it on your computer, but
-it's not recommended way, because Visual Studio is highly bloated software and installing it just for building some project is
-really bad idea. The second way is Windows SDK. It contains MSVC compiler and since Windows Vista it also fully supports C++ so
-it's possible to use it here. Windows SDK is the recommended way to get MSVC.
-
-CMake can be downloaded here:
-* https://cmake.org/download/
-
-It doesn't matter if you use 32-bit or 64-bit version. These build instructions expect CMake in PATH, so if you use the CMake
-installer, you should say yes to add CMake *bin* directory to the PATH during installation. If you don't use the installer, you
-should add the directory to the PATH manually.
-
-Here are some download links for tested and well-working versions of Windows SDK:
-* https://www.microsoft.com/en-us/download/details.aspx?id=23719 (latest WinVista SDK, MSVC from VS2005)
-* https://www.microsoft.com/en-us/download/details.aspx?id=3138 (old Win7 SDK, MSVC from VS2008)
-* https://www.microsoft.com/en-us/download/details.aspx?id=8279 (lastest Win7 SDK, MSVC from VS2010)
-
-Note that you should use SDK version matching your version of Windows, so if you have some newer version of Windows, search for
-appropriate version of the Windows SDK. Don't forget to read its description first. Windows SDK installer prompts you to choose
-which parts of the SDK should be installed. For building projects like this one, you need just compilers, tools, headers, and
-libraries for both x86 and x64. Everything else, like .NET things and IA-64 compilers and libraries, is not required. SDKs for
-the newer versions of Windows also want to install some things for UWP and web development - you don't need these too.
-
-#### Preparation
-
-First of all, download the source code from this repository and unpack it somewhere. Then create 2 empty build directories. One
-for 32-bit version and the second one for 64-bit version. If you want only one version, you need only one build directory.
-
-#### Building
-
-- Using Windows SDK (recommended):
-    * Open Windows SDK x86 command prompt. If you want to build 64-bit version, use x64 command prompt instead.
-    * Execute `cmake-gui` in the command prompt. It should open CMake window.
-    * Select the directory with source code and the empty build directory in the CMake window.
-    * Press `Configure` button.
-    * Select **NMake Makefiles** generator.
-    * You can now change build options in the CMake window. Press `Configure` button again when you're done.
-    * Press `Generate` button.
-    * Use `cd` command in the command prompt to move to the build directory.
-    * Execute `nmake` in the command prompt.
-    * The resulting EXE files can be found in the build directory.
-    * If you want both 32-bit and 64-bit launchers, repeat all above steps with the second SDK command prompt.
-
-- Using Visual Studio:
-    * Open CMake (cmake-gui) and select the source code directory and the empty build directory.
-    * Press `Configure` button.
-    * Select generator matching your Visual Studio version. If you want to build 64-bit version, use Win64 generator.
-    * You can now change build options in the CMake window. Press `Configure` button again when you're done.
-    * Press `Generate` button.
-    * Press `Open Project` button. It should open Visual Studio with the generated solution.
-    * Select **Release** build in the Visual Studio.
-    * Build the solution.
-    * The resulting EXE files can be found in the build directory.
-    * If you want both 32-bit and 64-bit launchers, repeat all above steps with the second generator.
-
+With modern Visual Studio (VS2019) you can open directly the source code directory and compile the project as usual. Older
+versions of Visual Studio require manually generated solution files. To do this, you can either open any command prompt and
+use the same commands as above without the last command and with the appropriate generator matching your VS version, or use
+the `cmake-gui` tool, which allows you to easily do the same without the command prompt. In any case, don't forget to change
+the build type to `Release` and always use separate source and build directories.

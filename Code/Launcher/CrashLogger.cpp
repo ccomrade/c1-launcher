@@ -11,9 +11,9 @@
 #include <dbghelp.h>
 
 #include "CrashLogger.h"
+#include "Format.h"
 #include "CmdLine.h"
 #include "DLL.h"
-#include "Util.h"
 
 #include "config.h"
 
@@ -38,7 +38,7 @@ public:
 
 		if (!path.empty() && path[path.length()-1] != '\\' && path[path.length()-1] != '/')
 		{
-			// append trailing slash
+			// append missing trailing slash
 			path += '\\';
 		}
 
@@ -80,7 +80,11 @@ public:
 
 	void write(const std::string & msg)
 	{
-		write(msg.c_str());
+		if (isOpen())
+		{
+			std::fputs(msg.c_str(), m_file);
+			std::fputc('\n', m_file);
+		}
 	}
 
 	void printf(const char *format, ...)
@@ -100,7 +104,7 @@ struct CallStackEntry
 {
 	size_t address;
 	std::string name;
-	std::string module;
+	std::string moduleName;
 	std::string sourceFile;
 	unsigned int sourceLine;
 	unsigned int baseOffset;
@@ -108,7 +112,7 @@ struct CallStackEntry
 	CallStackEntry()
 	: address(),
 	  name(),
-	  module(),
+	  moduleName(),
 	  sourceFile(),
 	  sourceLine(),
 	  baseOffset()
@@ -119,9 +123,11 @@ struct CallStackEntry
 	{
 		std::string result;
 
-		result += "0x";
-		result += Util::NumberToString(address, 16);
-		result += ": ";
+	#ifdef BUILD_64BIT
+		result += Format("%016I64X: ", address);
+	#else
+		result += Format("%08X: ", address);
+	#endif
 
 		if (name.empty())
 		{
@@ -133,8 +139,7 @@ struct CallStackEntry
 
 			if (baseOffset)
 			{
-				result += " + 0x";
-				result += Util::NumberToString(baseOffset, 16);
+				result += Format(" + 0x%X", baseOffset);
 			}
 		}
 
@@ -146,21 +151,12 @@ struct CallStackEntry
 
 			if (sourceLine)
 			{
-				result += ":";
-				result += Util::NumberToString(sourceLine);
+				result += Format(":%u", sourceLine);
 			}
 		}
 
 		result += ") in ";
-
-		if (module.empty())
-		{
-			result += "?";
-		}
-		else
-		{
-			result += module;
-		}
+		result += moduleName.empty() ? "?" : moduleName;
 
 		return result;
 	}
@@ -183,6 +179,15 @@ struct Module
 	{
 		return address < other.address;
 	}
+
+	std::string toString() const
+	{
+	#ifdef BUILD_64BIT
+		return Format("%016I64X - %016I64X %s", address, address + size, name.c_str());
+	#else
+		return Format("%08X - %08X %s", address, address + size, name.c_str());
+	#endif
+	}
 };
 
 static const char *BaseName(const char *name)
@@ -200,9 +205,9 @@ static const char *BaseName(const char *name)
 	return name + offset;
 }
 
-static bool IsCrysisDLL(const IMAGEHLP_MODULE & module)
+static bool IsCrysisDLL(const IMAGEHLP_MODULE & moduleInfo)
 {
-	std::string name = module.ModuleName;
+	std::string name = moduleInfo.ModuleName;
 
 	// convert the DLL name to lowercase
 	std::transform(name.begin(), name.end(), name.begin(), std::tolower);
@@ -226,6 +231,24 @@ static bool IsCrysisDLL(const IMAGEHLP_MODULE & module)
 	    || name == "crysystem";
 }
 
+#ifdef BUILD_64BIT
+static BOOL CALLBACK EnumerateModulesCallback(PCSTR name, DWORD64 address, ULONG size, PVOID context)
+#else
+static BOOL CALLBACK EnumerateModulesCallback(PCSTR name, ULONG address, ULONG size, PVOID context)
+#endif
+{
+	std::vector<Module> *modules = static_cast<std::vector<Module>*>(context);
+
+	modules->resize(modules->size() + 1);
+
+	Module & result = modules->back();
+	result.name = name;
+	result.address = address;
+	result.size = size;
+
+	return TRUE;
+}
+
 class DebugHelper
 {
 	typedef BOOL (__stdcall *TSymInitialize)(HANDLE process, const char *userSearchPath, BOOL invadeProcess);
@@ -242,8 +265,10 @@ class DebugHelper
 	                                     PTRANSLATE_ADDRESS_ROUTINE pTranslateAddressRoutine);
 
 	DLL m_dll;
+
 	HANDLE m_process;
 	HANDLE m_thread;
+
 	TSymInitialize m_pSymInitialize;
 	TSymSetOptions m_pSymSetOptions;
 	TSymCleanup m_pSymCleanup;
@@ -252,23 +277,11 @@ class DebugHelper
 	TSymGetModuleInfo m_pSymGetModuleInfo;
 	TEnumerateLoadedModules m_pEnumerateLoadedModules;
 	TStackWalk m_pStackWalk;
+
 	PFUNCTION_TABLE_ACCESS_ROUTINE m_pSymFunctionTableAccess;
 	PGET_MODULE_BASE_ROUTINE m_pSymGetModuleBase;
+
 	bool m_isInitialized;
-
-	static BOOL __stdcall EnumerateModulesCallback(const char *name, ULONG_PTR address, unsigned long size, void *param)
-	{
-		std::vector<Module> *pResult = static_cast<std::vector<Module>*>(param);
-
-		pResult->resize(pResult->size() + 1);
-
-		Module & module = pResult->back();
-		module.name = name;
-		module.address = address;
-		module.size = size;
-
-		return TRUE;
-	}
 
 public:
 	DebugHelper()
@@ -409,12 +422,12 @@ public:
 			CallStackEntry & entry = result.back();
 			entry.address = address;
 
-			IMAGEHLP_MODULE module = {};
-			module.SizeOfStruct = sizeof (IMAGEHLP_MODULE);
+			IMAGEHLP_MODULE moduleInfo = {};
+			moduleInfo.SizeOfStruct = sizeof (IMAGEHLP_MODULE);
 
-			if (m_pSymGetModuleInfo(m_process, address, &module))
+			if (m_pSymGetModuleInfo(m_process, address, &moduleInfo))
 			{
-				entry.module = BaseName(module.ImageName);
+				entry.moduleName = BaseName(moduleInfo.ImageName);
 			}
 
 			unsigned char symbolBuffer[sizeof (SYMBOL_INFO) + MAX_SYM_NAME] = {};
@@ -426,7 +439,7 @@ public:
 
 			if (m_pSymFromAddr(m_process, address, &symbolOffset, pSymbol))
 			{
-				if (pSymbol->Flags & SYMFLAG_EXPORT && IsCrysisDLL(module))
+				if (pSymbol->Flags & SYMFLAG_EXPORT && IsCrysisDLL(moduleInfo))
 				{
 					// drop useless symbols obtained from export tables of Crysis DLLs
 				}
@@ -461,7 +474,7 @@ public:
 			return result;  // empty
 		}
 
-		m_pEnumerateLoadedModules(m_process, DebugHelper::EnumerateModulesCallback, &result);
+		m_pEnumerateLoadedModules(m_process, EnumerateModulesCallback, &result);
 
 		std::sort(result.begin(), result.end());
 
@@ -498,7 +511,7 @@ static const char *ExceptionCodeToString(unsigned int code)
 	return "Unknown";
 }
 
-static void WriteExceptionInfo(Log & log, const EXCEPTION_RECORD *exception)
+static void DumpExceptionInfo(Log & log, const EXCEPTION_RECORD *exception)
 {
 	const unsigned int code = exception->ExceptionCode;
 
@@ -552,7 +565,7 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 
 	log.write(C1LAUNCHER_VERSION_DESCRIPTION);
 
-	WriteExceptionInfo(log, pExceptionInfo->ExceptionRecord);
+	DumpExceptionInfo(log, pExceptionInfo->ExceptionRecord);
 	DumpRegisters(log, pExceptionInfo->ContextRecord);
 
 	DebugHelper dbghelp;
@@ -571,13 +584,7 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 		log.printf("Modules (%u):", modules.size());
 		for (size_t i = 0; i < modules.size(); i++)
 		{
-			const Module & dll = modules[i];
-
-		#ifdef BUILD_64BIT
-			log.printf("%016I64X - %016I64X %s", dll.address, dll.address + dll.size, dll.name.c_str());
-		#else
-			log.printf("%08X - %08X %s", dll.address, dll.address + dll.size, dll.name.c_str());
-		#endif
+			log.write(modules[i].toString());
 		}
 	}
 	else
@@ -586,18 +593,18 @@ static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 	}
 
 	log.write("Command line:");
-	log.write(Util::GetCmdLine());
+	log.write(GetCommandLineA());
 
 	log.write("================================================================================");
 }
 
-static const char *g_logFileName;
+static const char *g_defaultLogFileName;
 
 static LONG __stdcall CrashHandler(_EXCEPTION_POINTERS *pExceptionInfo)
 {
 	Log log;
 
-	if (log.open(g_logFileName))
+	if (log.open(g_defaultLogFileName))
 	{
 		LogCrash(log, pExceptionInfo);
 	}
@@ -605,9 +612,9 @@ static LONG __stdcall CrashHandler(_EXCEPTION_POINTERS *pExceptionInfo)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-void CrashLogger::Init(const char *logFileName)
+void CrashLogger::Init(const char *defaultLogFileName)
 {
-	g_logFileName = logFileName;
+	g_defaultLogFileName = defaultLogFileName;
 
 	SetUnhandledExceptionFilter(CrashHandler);
 }

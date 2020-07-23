@@ -2,67 +2,78 @@
 #include <cctype>
 
 #include "CmdLine.h"
-#include "Util.h"
+#include "System.h"
 
-static const char *GetCmdLineWithoutAppName()
+namespace
 {
-	const char *cmdLine = Util::GetCmdLine();
-
-	// skip program name
-	if (*cmdLine == '\"')
+	const char *GetCmdLineWithoutAppName()
 	{
-		// "C:\test with spaces.exe"
-		for (cmdLine++; *cmdLine && *cmdLine != '\"'; cmdLine++);
-	}
-	else if (*cmdLine == '\'')
-	{
-		// 'C:\test with spaces.exe'
-		for (cmdLine++; *cmdLine && *cmdLine != '\''; cmdLine++);
-	}
-	else
-	{
-		// C:\test_no_spaces.exe
-		for (cmdLine++; *cmdLine && !std::isspace(*cmdLine); cmdLine++);
-	}
+		const char *result = System::GetCmdLine();
 
-	while (std::isspace(*cmdLine))
-	{
-		cmdLine++;
-	}
-
-	return cmdLine;
-}
-
-static const char *GetArgValueBegin(const char *arg)
-{
-	const char *cmdLine = GetCmdLineWithoutAppName();
-
-	// find the argument
-	for (; *cmdLine; cmdLine++)
-	{
-		if (std::tolower(*cmdLine) == std::tolower(*arg))
+		// skip program name
+		if (*result == '\"')
 		{
-			const char *tmp = arg + 1;
-			for (cmdLine++; *cmdLine && *tmp; cmdLine++, tmp++)
-			{
-				if (std::tolower(*cmdLine) != std::tolower(*tmp))
-				{
-					break;
-				}
-			}
+			for (result++; *result && *result != '\"'; result++);
+		}
+		else if (*result == '\'')
+		{
+			for (result++; *result && *result != '\''; result++);
+		}
+		else
+		{
+			for (result++; *result && !std::isspace(*result); result++);
+		}
 
-			if (!*tmp)
+		// skip spaces after program name
+		while (std::isspace(*result))
+		{
+			result++;
+		}
+
+		return result;
+	}
+
+	const char *GetArgValueBegin(const char *arg)
+	{
+		const char *result = GetCmdLineWithoutAppName();
+
+		// find the argument
+		for (; *result; result++)
+		{
+			if (std::tolower(*result) == std::tolower(*arg))
 			{
-				// reached end of argument name
-				if (!*cmdLine || std::isspace(*cmdLine))
+				const char *name = arg + 1;  // the first letter already matches
+
+				for (result++; *result && *name; result++, name++)
 				{
-					return cmdLine;
+					if (std::tolower(*result) != std::tolower(*name))
+					{
+						// skip the rest of argument name
+						while (*result && !std::isspace(*result))
+						{
+							result++;
+						}
+
+						break;
+					}
+				}
+
+				// make sure the argument name really matches
+				if (!*name && (!*result || std::isspace(*result)))
+				{
+					// skip spaces before argument value
+					while (std::isspace(*result))
+					{
+						result++;
+					}
+
+					return result;
 				}
 			}
 		}
-	}
 
-	return NULL;
+		return NULL;
+	}
 }
 
 bool CmdLine::HasArg(const char *arg)
@@ -72,46 +83,41 @@ bool CmdLine::HasArg(const char *arg)
 
 std::string CmdLine::GetArgValue(const char *arg, const char *defaultValue)
 {
-	const char *valueBegin = GetArgValueBegin(arg);
-	if (valueBegin)
+	const char *value = GetArgValueBegin(arg);
+
+	if (value && *value)
 	{
-		while (std::isspace(*valueBegin))
+		const char *end = value;
+
+		if (*value == '\"')
 		{
-			valueBegin++;
+			value++;
+			end++;
+
+			while (*end && *end != '\"')
+			{
+				end++;
+			}
+		}
+		else if (*value == '\'')
+		{
+			value++;
+			end++;
+
+			while (*end && *end != '\'')
+			{
+				end++;
+			}
+		}
+		else
+		{
+			while (*end && !std::isspace(*end))
+			{
+				end++;
+			}
 		}
 
-		if (*valueBegin)
-		{
-			size_t i = 0;
-
-			if (*valueBegin == '\"')
-			{
-				valueBegin++;
-
-				while (valueBegin[i] && valueBegin[i] != '\"')
-				{
-					i++;
-				}
-			}
-			else if (*valueBegin == '\'')
-			{
-				valueBegin++;
-
-				while (valueBegin[i] && valueBegin[i] != '\'')
-				{
-					i++;
-				}
-			}
-			else
-			{
-				while (valueBegin[i] && !std::isspace(valueBegin[i]))
-				{
-					i++;
-				}
-			}
-
-			return std::string(valueBegin, i);
-		}
+		return std::string(value, end-value);
 	}
 
 	return (defaultValue) ? std::string(defaultValue) : std::string();
@@ -119,6 +125,7 @@ std::string CmdLine::GetArgValue(const char *arg, const char *defaultValue)
 
 int CmdLine::GetArgValueInt(const char *arg, int defaultValue)
 {
-	std::string value = GetArgValue(arg);
-	return (value.empty()) ? defaultValue : std::atoi(value.c_str());
+	const std::string value = GetArgValue(arg);
+
+	return value.empty() ? defaultValue : std::atoi(value.c_str());
 }

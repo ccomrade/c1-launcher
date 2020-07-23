@@ -6,8 +6,8 @@ struct DLL
 {
 	enum ELoadFlags
 	{
-		NO_RELEASE = (1 << 0),  //!< Do not unload the library.
-		NO_LOAD    = (1 << 1)   //!< Do not load and unload the library. Only obtain handle to it.
+		NO_RELEASE = (1 << 0),              //!< Do not unload the library.
+		NO_LOAD    = (1 << 1) | NO_RELEASE  //!< Do not load and unload the library. Only obtain handle to it.
 	};
 
 private:
@@ -36,7 +36,7 @@ public:
 
 	void unload()
 	{
-		if (isLoaded() && !(m_flags & NO_LOAD) && !(m_flags & NO_RELEASE))
+		if (isLoaded() && !(m_flags & NO_RELEASE))
 		{
 			release();
 		}
