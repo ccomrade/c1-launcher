@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - No more hangs after crash when running under Wine. Fixed by disabling broken unhandled exception handler in CrySystem.
+- Message boxes now have correct modern visual style.
+- Launcher is now fully DPI aware to prevent any blurring on high DPI screens.
 
 ## [2.3] - 2019-07-13
 ### Fixed

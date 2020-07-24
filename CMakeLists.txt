@@ -62,12 +62,14 @@ endif()
 add_executable(Crysis WIN32
   Code/Launcher/Game/Main.cpp
   Code/Launcher/Game/Resources.h
+  Resources/Launcher.manifest
   Resources/GameLauncher.rc
 )
 
 add_executable(CrysisDedicatedServer WIN32
   Code/Launcher/DedicatedServer/Main.cpp
   Code/Launcher/DedicatedServer/Resources.h
+  Resources/Launcher.manifest
   Resources/DedicatedServerLauncher.rc
 )
 
