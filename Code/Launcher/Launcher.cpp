@@ -44,6 +44,8 @@ void Launcher::logInfo(const char *format, ...)
 
 bool Launcher::run(const DLL & libCryGame)
 {
+	const int gameVersion = Util::GetCrysisGameBuild(libCryGame);
+
 	CrashLogger::Init(m_params.logFileName);
 
 	if (!initCmdLine())
@@ -74,6 +76,20 @@ bool Launcher::run(const DLL & libCryGame)
 	}
 
 	logInfo(CWLAUNCHER_VERSION_DESCRIPTION);
+
+	//Warping lag fix for Crysis Wars 1.5
+	if (gameVersion == 6729 && m_params.isDedicatedServer)
+	{
+#ifdef BUILD_64BIT
+		__int64 *pTimer = (__int64 *)(0x380BC0E8); //CryRenderNULL.dll+0xBC0E8
+		long long int* pValue = (long long int *)(*pTimer + 0x20);
+#else
+		__int32 *pTimer = (__int32 *)(0x380C8924); //CryRenderNULL.dll+0xC8924
+		long long int* pValue = (long long int *)(*pTimer + 0x18);
+#endif
+		*pValue = 3000000000000;
+		logInfo("Warping lag fix applied!");
+	}
 
 	// enter game update loop
 	int status = pGameStartup->Run(NULL);

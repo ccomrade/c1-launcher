@@ -1184,6 +1184,88 @@ bool Patch::PatchGamespy(void* pCryNetwork, int gameVersion)
 }
 
 /**
+ * @brief Removes the logspam: CWaitForEnabled: awaited object %s is not bound
+ * @param pCryNetwork CryNetwork DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::PatchSpamCWaitForEnabled(void *pCryNetwork, int gameVersion)
+{
+	switch (gameVersion)
+	{
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+			//Only Crysis Wars 1.5 is supported
+			break;
+		case 6729:
+		{
+#ifdef BUILD_64BIT
+			if (!FillNOP(RVA(pCryNetwork, 0x41861), 0x5))
+#else
+			if (!FillNOP(RVA(pCryNetwork, 0x11F4C), 0xB))
+#endif
+				return false;
+
+			break;
+		}
+		default:
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * @brief Removes the logspam: %s message with no entity id; discarding
+ * @param pCryNetwork CryNetwork DLL handle.
+ * @param gameVersion Game build number.
+ * @return True if no error occurred, otherwise false.
+ */
+bool Patch::PatchSpamSvRequestStopFire(void *pCryNetwork, int gameVersion)
+{
+	switch (gameVersion)
+	{
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+			//Only Crysis Wars 1.5 is supported
+			break;
+		case 6729:
+		{
+#ifdef BUILD_64BIT
+			if (!FillNOP(RVA(pCryNetwork, 0x1642CC), 0x5))
+#else
+			if (!FillNOP(RVA(pCryNetwork, 0x4998D), 0xF))
+#endif
+				return false;
+
+			break;
+		}
+		default:
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
  * @brief Disables the SecuROM crap in 64-bit CrySystem.
  * It does nothing in 32-bit build.
  * @param pCrySystem CrySystem DLL handle.

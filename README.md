@@ -9,7 +9,7 @@ Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 - Full source code is available
 - Completely DRM-free launcher (no broken SecuROM crap inside)
 - No compatibility mode is required to make the game work on modern systems
-- Multiplayer works via a Gamespy replacement
+- Multiplayer works via a Gamespy replacement (crysiswarsmp.com)
 - Smaller files (especially game launcher)
 - Very High settings are available in DX9 mode
 - Game started in DX9 mode can connect to DX10 servers (everything works just like in DX10 game)
@@ -19,6 +19,8 @@ Supports Crysis Wars patch 5 both 32-bit and 64-bit.
 - Added engine based FPS cap for minimum input latency
 - Disabled server profiler for 32-bit dedicated servers
 - Disabled autoexec.cfg for the dedicated server (enables sharing an install with a client)
+- Disabled some spam log messages to make Server.log more readable
+- Fixed warping lag issue for high ping players! https://www.youtube.com/watch?v=BUrUXef3n4Q
 
 ### FAQ
 

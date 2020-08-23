@@ -21,6 +21,8 @@ namespace Patch
 	bool EnablePreordered(void *pCryNetwork, int gameVersion);
 	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
 	bool PatchGamespy(void* pCryNetwork, int gameVersion);
+	bool PatchSpamCWaitForEnabled(void* pCryNetwork, int gameVersion);
+	bool PatchSpamSvRequestStopFire(void* pCryNetwork, int gameVersion);
 
 	// CrySystem
 	bool EnableFPSCap(void *pCrySystem, int gameVersion, void *pWait);

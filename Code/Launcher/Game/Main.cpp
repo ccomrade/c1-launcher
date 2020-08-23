@@ -110,6 +110,12 @@ static bool InstallMemoryPatches(const CrysisLibs & libs, int gameVersion)
 
 		if (!Patch::PatchGamespy(pCryNetwork, gameVersion))  // g.jedi95.us gamespy
 			return false;
+
+		if (!Patch::PatchSpamCWaitForEnabled(pCryNetwork, gameVersion))
+			return false;
+
+		if (!Patch::PatchSpamSvRequestStopFire(pCryNetwork, gameVersion))
+			return false;
 	}
 
 	// CrySystem
