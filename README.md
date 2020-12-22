@@ -56,7 +56,7 @@ It provides a better game launcher and dedicated server launcher with additional
 Get the executables from [release section](../../releases) and just replace the original files. That's it.
 You can also compile the source code yourself. See below for instructions.
 
-Note that you should always use a legal copy of Crysis. If you still don't have one, see below for where you can get it.
+You should always use a legal copy of Crysis. If you still don't have one, see below for where you can get it.
 
 ### I don't want to replace the original executables. Is there any way?
 
@@ -80,6 +80,8 @@ Yes, you can rename the executables of this launcher to whatever you want and us
 | DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
 | Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
 | [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | Y      | Y      | Y         |
+| Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
+| Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | Y      | Y         |
 
 #### Crysis Warhead
 
@@ -92,33 +94,33 @@ Yes, you can rename the executables of this launcher to whatever you want and us
 
 ### Where can I get patches for the game?
 
-All official patches released by Crytek are listed below. Official download links are not working anymore.
+All official patches released by Crytek are listed below.
 Patches marked with `*` require the previous patch to be installed.
 
 #### Crysis
 
-| Patch  | Link                                                          | SHA-1 Checksum                           |
-| :----: | :------------------------------------------------------------ | :--------------------------------------: |
-| 1.1    | https://crysis.nullptr.one/Crysis_Patch_1_1.exe               | 1b7c7c48d38623bb55802f5e29d0c6780ba3e208 |
-| 1.2    | https://crysis.nullptr.one/Crysis_Patch_1_2.exe               | 9ecb8947296a0356325bd73b28755fdabebfb67e |
-| 1.2.1* | https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe             | e600606c1068f139ef71d77988bc8516913e0636 |
+| Patch                                                          | SHA-1 Checksum                           |
+| :------------------------------------------------------------: | :--------------------------------------: |
+| [1.1](https://crysis.nullptr.one/Crysis_Patch_1_1.exe)         | 1b7c7c48d38623bb55802f5e29d0c6780ba3e208 |
+| [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe)         | 9ecb8947296a0356325bd73b28755fdabebfb67e |
+| [1.2.1*](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe)    | e600606c1068f139ef71d77988bc8516913e0636 |
 
 #### Crysis Wars
 
-| Patch  | Link                                                          | SHA-1 Checksum                           |
-| :----: | :------------------------------------------------------------ | :--------------------------------------: |
-| 1.1    | https://crysis.nullptr.one/CrysisWars_patch1.exe              | 8e41eec565487299a1c675b93467fbf9bcbfbaa3 |
-| 1.2    | https://crysis.nullptr.one/CrysisWars_patch2.exe              | e258bbc3cb6f5d455eb35b3d3c9830297ee9b183 |
-| 1.3    | https://crysis.nullptr.one/CrysisWars_patch3.exe              | dc6460d3cba7bb93820cc544881fe89eda2462b2 |
-| 1.4    | https://crysis.nullptr.one/CrysisWars_patch4.exe              | 1bcff249e679b2bd666a2a5772783af3ebd4e349 |
-| 1.5    | https://crysis.nullptr.one/CrysisWars_patch5.exe              | 4f368c09bbb551e2360d86d42cbd95f25b993e0f |
+| Patch                                                          | SHA-1 Checksum                           |
+| :------------------------------------------------------------: | :--------------------------------------: |
+| [1.1](https://crysis.nullptr.one/CrysisWars_patch1.exe)        | 8e41eec565487299a1c675b93467fbf9bcbfbaa3 |
+| [1.2](https://crysis.nullptr.one/CrysisWars_patch2.exe)        | e258bbc3cb6f5d455eb35b3d3c9830297ee9b183 |
+| [1.3](https://crysis.nullptr.one/CrysisWars_patch3.exe)        | dc6460d3cba7bb93820cc544881fe89eda2462b2 |
+| [1.4](https://crysis.nullptr.one/CrysisWars_patch4.exe)        | 1bcff249e679b2bd666a2a5772783af3ebd4e349 |
+| [1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe)        | 4f368c09bbb551e2360d86d42cbd95f25b993e0f |
 
 #### Crysis Warhead
 
-| Patch  | Link                                                          | SHA-1 Checksum                           |
-| :----: | :------------------------------------------------------------ | :--------------------------------------: |
-| 1.1    | https://crysis.nullptr.one/CrysisWarhead_Patch1.exe           | 859f8fb8e3798124c7c4afa650a30b35dbcc65cf |
-| 1.1.1  | https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe         | 926a9380bd7b911d9eb89ec8e080174f4ca3209c |
+| Patch                                                          | SHA-1 Checksum                           |
+| :------------------------------------------------------------: | :--------------------------------------: |
+| [1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1.exe)     | 859f8fb8e3798124c7c4afa650a30b35dbcc65cf |
+| [1.1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe) | 926a9380bd7b911d9eb89ec8e080174f4ca3209c |
 
 ### How can I play Crysis multiplayer?
 
@@ -136,12 +138,13 @@ Yes, it does. There is a scrollbar in the resolution list.
 
 ### Why does the Bin64 folder contain 2 executables?
 
-The original `Crysis.exe` file in the Bin64 folder is actually only a 32-bit SecuROM DRM launcher. It reads the `Crysis.ini`
-config file and runs `crysis64.exe`, which is the 64-bit game launcher. However, running directly the game launcher usually
-results in a crash during game startup. This is because the 64-bit game loads the `b64.dll` file, which contains additional
-SecuROM garbage that checks whether the game was launched using the SecuROM launcher or not, and if not, it crashes.
+The original `Bin64/Crysis.exe` file is actually only a 32-bit SecuROM DRM launcher. It reads the `Bin64/Crysis.ini` config
+file and runs `Bin64/crysis64.exe`, which is the 64-bit game launcher. However, running directly the game launcher usually
+results in a crash during game startup. This is because the 64-bit CrySystem loads the `Bin64/b64.dll` file, which contains
+additional SecuROM garbage. It checks whether the game was launched using the DRM launcher or not, and if not, the game
+crashes in a sneaky way.
 
-If you use this launcher, you can safely delete all the files mentioned above.
+All of this nonsense is deactivated by the launcher provided here. That means you can safely delete all the mentioned files.
 
 ## Build instructions
 
