@@ -57,7 +57,7 @@ struct IGameStartup
 
 	/**
 	 * @brief Initializes and controls the game loop.
-	 * @params autoStartLevelName Level to jump into or NULL for normal behaviour.
+	 * @param autoStartLevelName Level to jump into or NULL for normal behaviour.
 	 * @return Zero when the game terminated normally, otherwise non-zero.
 	 */
 	virtual int Run(const char *autoStartLevelName) = 0;
