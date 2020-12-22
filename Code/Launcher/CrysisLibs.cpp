@@ -4,6 +4,7 @@
  */
 
 #include "CrysisLibs.h"
+#include "EXELoader.h"
 #include "System.h"
 #include "Format.h"
 
@@ -29,13 +30,23 @@ void CrysisLibs::load()
 
 	if (isCrysisWarhead())
 	{
-		// TODO
-		throw Error("Crysis Warhead is not supported yet!");
-	}
+	#ifdef BUILD_64BIT
+		if (!m_CryGame.load("crysis64.exe", DLL::NO_RELEASE))
+		{
+			throw SystemError("Failed to load the original Crysis64 EXE!");
+		}
 
-	if (!m_CryGame.load("CryGame.dll", DLL::NO_RELEASE))
+		EXELoader::Init(m_CryGame);  // may throw Error exception
+	#else
+		throw Error("32-bit version of Crysis Warhead is not supported!");
+	#endif
+	}
+	else  // Crysis or Crysis Wars
 	{
-		throw SystemError("Failed to load the CryGame DLL!");
+		if (!m_CryGame.load("CryGame.dll", DLL::NO_RELEASE))
+		{
+			throw SystemError("Failed to load the CryGame DLL!");
+		}
 	}
 
 	if (!m_CryNetwork.load("CryNetwork.dll", DLL::NO_RELEASE))
@@ -43,9 +54,11 @@ void CrysisLibs::load()
 		throw SystemError("Failed to load the CryNetwork DLL!");
 	}
 
-	if (m_type == GAME && !isCrysisWarhead())  // Crysis Warhead doesn't have the CryAction DLL
+	// the following DLLs are not needed by dedicated server launcher
+	if (m_type == GAME)
 	{
-		if (!m_CryAction.load("CryAction.dll", DLL::NO_RELEASE))
+		// Crysis Warhead doesn't have the CryAction DLL
+		if (!isCrysisWarhead() && !m_CryAction.load("CryAction.dll", DLL::NO_RELEASE))
 		{
 			throw SystemError("Failed to load the CryAction DLL!");
 		}

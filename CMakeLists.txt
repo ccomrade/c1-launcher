@@ -43,6 +43,8 @@ add_library(LauncherBase STATIC
   Code/Launcher/DLL.h
   Code/Launcher/Error.cpp
   Code/Launcher/Error.h
+  Code/Launcher/EXELoader.cpp
+  Code/Launcher/EXELoader.h
   Code/Launcher/Format.cpp
   Code/Launcher/Format.h
   Code/Launcher/Launcher.cpp
@@ -51,6 +53,8 @@ add_library(LauncherBase STATIC
   Code/Launcher/Patch.h
   Code/Launcher/System.cpp
   Code/Launcher/System.h
+  Code/Launcher/Util.cpp
+  Code/Launcher/Util.h
 )
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})

@@ -205,6 +205,12 @@ namespace
 				FillNOP(RVA(pCryGame, 0x3291A2), 0x10);
 				break;
 			}
+			case 710:
+			case 711:
+			{
+				// TODO
+				break;
+			}
 		#else
 			case 5767:
 			{
@@ -266,14 +272,14 @@ namespace
 				FillNOP(RVA(pCryGame, 0x23EEEF), 0x2);
 				break;
 			}
-		#endif
 			case 687:
 			case 710:
 			case 711:
 			{
-				// TODO
+				// 32-bit version of Crysis Warhead is not supported
 				break;
 			}
+		#endif
 		}
 	}
 
@@ -927,6 +933,12 @@ namespace
 				FillNOP(RVA(pCrySystem, 0x46EEF), 0x68);
 				break;
 			}
+			case 710:
+			case 711:
+			{
+				// TODO
+				break;
+			}
 		#else
 			case 5767:
 			{
@@ -978,14 +990,14 @@ namespace
 				FillNOP(RVA(pCrySystem, 0x595DF), 0x58);
 				break;
 			}
-		#endif
 			case 687:
 			case 710:
 			case 711:
 			{
-				// TODO
+				// 32-bit version of Crysis Warhead is not supported
 				break;
 			}
+		#endif
 		}
 	}
 
@@ -1054,6 +1066,12 @@ namespace
 				FillNOP(RVA(pCrySystem, 0x253B3), 0x6);
 				FillNOP(RVA(pCrySystem, 0x253BF), 0x7);
 				FillNOP(RVA(pCrySystem, 0x4AAA0), 0x16);
+				break;
+			}
+			case 710:
+			case 711:
+			{
+				// TODO
 				break;
 			}
 		#else
@@ -1127,14 +1145,14 @@ namespace
 				FillNOP(RVA(pCrySystem, 0x5B8EC), 0x13);
 				break;
 			}
-		#endif
 			case 687:
 			case 710:
 			case 711:
 			{
-				// TODO
+				// 32-bit version of Crysis Warhead is not supported
 				break;
 			}
+		#endif
 		}
 	}
 
@@ -1192,6 +1210,12 @@ namespace
 				FillMem(RVA(pCrySystem, 0xA32F), &flags, sizeof flags);
 				break;
 			}
+			case 710:
+			case 711:
+			{
+				// TODO
+				break;
+			}
 		#else
 			case 5767:
 			{
@@ -1239,14 +1263,14 @@ namespace
 				FillMem(RVA(pCrySystem, 0x9412), &flags, sizeof flags);
 				break;
 			}
-		#endif
 			case 687:
 			case 710:
 			case 711:
 			{
-				// TODO
+				// 32-bit version of Crysis Warhead is not supported
 				break;
 			}
+		#endif
 		}
 	}
 }
