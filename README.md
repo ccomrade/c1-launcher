@@ -49,33 +49,20 @@ It provides a better game launcher and dedicated server launcher with additional
 | 1.1     | 710   | -      | -      |
 | 1.1.1   | 711   | -      | -      |
 
-## FAQ
+## Where to get the game
 
-### How to use it?
+### Crysis
 
-Get the executables from [release section](../../releases) and just replace the original files. That's it.
-You can also compile the source code yourself. See below for instructions.
-
-You should always use a legal copy of Crysis. If you still don't have one, see below for where you can get it.
-
-### I don't want to replace the original executables. Is there any way?
-
-Yes, you can rename the executables of this launcher to whatever you want and use them next to the original executables.
-
-### Where can I get the game?
-
-#### Crysis
-
-| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 5767  | Y      | Y      | Y         |
 | [GOG](https://www.gog.com/game/crysis)                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 | [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | -      | Y         |
 | Origin                                                            | 1.2.1   | 6156  | Y      | -      | Y         |
 
-#### Crysis Wars
+### Crysis Wars
 
-| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
 | Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
@@ -83,21 +70,20 @@ Yes, you can rename the executables of this launcher to whatever you want and us
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
 | Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | Y      | Y         |
 
-#### Crysis Warhead
+### Crysis Warhead
 
-| Source                                                            | Version | Build | 32-bit | 64-bit | Supported |
+| Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 687   | Y      | -      | -         |
 | [GOG](https://www.gog.com/game/crysiswarhead)                     | 1.1.1   | 711   | -      | Y      | -         |
 | [Steam](https://store.steampowered.com/app/17330/Crysis_Warhead/) | 1.1.1   | 711   | Y      | Y      | -         |
 | Origin                                                            | 1.1.1   | 711   | Y      | Y      | -         |
 
-### Where can I get patches for the game?
+## Official game patches
 
-All official patches released by Crytek are listed below.
 Patches marked with `*` require the previous patch to be installed.
 
-#### Crysis
+### Crysis
 
 | Patch                                                          | SHA-1 Checksum                           |
 | :------------------------------------------------------------: | :--------------------------------------: |
@@ -105,7 +91,7 @@ Patches marked with `*` require the previous patch to be installed.
 | [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe)         | 9ecb8947296a0356325bd73b28755fdabebfb67e |
 | [1.2.1*](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe)    | e600606c1068f139ef71d77988bc8516913e0636 |
 
-#### Crysis Wars
+### Crysis Wars
 
 | Patch                                                          | SHA-1 Checksum                           |
 | :------------------------------------------------------------: | :--------------------------------------: |
@@ -115,12 +101,25 @@ Patches marked with `*` require the previous patch to be installed.
 | [1.4](https://crysis.nullptr.one/CrysisWars_patch4.exe)        | 1bcff249e679b2bd666a2a5772783af3ebd4e349 |
 | [1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe)        | 4f368c09bbb551e2360d86d42cbd95f25b993e0f |
 
-#### Crysis Warhead
+### Crysis Warhead
 
 | Patch                                                          | SHA-1 Checksum                           |
 | :------------------------------------------------------------: | :--------------------------------------: |
 | [1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1.exe)     | 859f8fb8e3798124c7c4afa650a30b35dbcc65cf |
 | [1.1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe) | 926a9380bd7b911d9eb89ec8e080174f4ca3209c |
+
+## FAQ
+
+### How to use it?
+
+Get the executables from [release section](../../releases) and just replace the original files. That's it.
+You can also compile the source code yourself. See below for instructions.
+
+You should always use a legal copy of Crysis. If you still don't have one, see the list above for where you can get it.
+
+### I don't want to replace the original executables. Is there any way?
+
+Yes, you can rename the executables of this launcher to whatever you want and use them next to the original executables.
 
 ### How can I play Crysis multiplayer?
 
