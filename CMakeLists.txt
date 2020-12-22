@@ -13,8 +13,8 @@ if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
 	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-# prevent modern MSVC from enabling ASLR
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO")
+# prevent modern MSVC from enabling ASLR and unlock memory above 2 GB
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO /LARGEADDRESSAWARE")
 
 # detect 64-bit compiler
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
