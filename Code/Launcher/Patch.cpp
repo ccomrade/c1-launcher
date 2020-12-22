@@ -539,9 +539,9 @@ namespace
 	void InitRagdollPhysicsParams(bool isMultiplayer, unsigned int *params)
 	{
 		// the new code that unlocks ragdoll physics in singleplayer
-		unsigned int flagsOR = 0x205E;
+		unsigned int flagsOR = 0x205C;
 		unsigned int flagsAND = 0;
-		unsigned int flagsColliderOR = 0x20;
+		unsigned int flagsColliderOR = 0;
 		unsigned int flagsColliderAND = 0;
 
 		if (isMultiplayer)
@@ -663,6 +663,7 @@ namespace
 		#ifdef BUILD_64BIT
 			case 5767:
 			{
+				FillNOP(RVA(pCryGame, 0x1A7000), 0x53);
 				FillNOP(RVA(pCryGame, 0x1A7065), 0x53);
 				FillNOP(RVA(pCryGame, 0x4711C), 0xDE);
 				FillMem(RVA(pCryGame, 0x4711C), code, sizeof code);
@@ -671,6 +672,7 @@ namespace
 			}
 			case 5879:
 			{
+				FillNOP(RVA(pCryGame, 0x1A4130), 0x53);
 				FillNOP(RVA(pCryGame, 0x1A4195), 0x53);
 				FillNOP(RVA(pCryGame, 0x46E0C), 0xDE);
 				FillMem(RVA(pCryGame, 0x46E0C), code, sizeof code);
@@ -679,6 +681,7 @@ namespace
 			}
 			case 6115:
 			{
+				FillNOP(RVA(pCryGame, 0x1AB0C0), 0x53);
 				FillNOP(RVA(pCryGame, 0x1AB125), 0x53);
 				FillNOP(RVA(pCryGame, 0x498CC), 0xDE);
 				FillMem(RVA(pCryGame, 0x498CC), code, sizeof code);
@@ -687,6 +690,7 @@ namespace
 			}
 			case 6156:
 			{
+				FillNOP(RVA(pCryGame, 0x1AB490), 0x53);
 				FillNOP(RVA(pCryGame, 0x1AB4F5), 0x53);
 				FillNOP(RVA(pCryGame, 0x4934C), 0xDE);
 				FillMem(RVA(pCryGame, 0x4934C), code, sizeof code);
@@ -696,6 +700,7 @@ namespace
 		#else
 			case 5767:
 			{
+				FillNOP(RVA(pCryGame, 0x14F7B9), 0x48);
 				FillNOP(RVA(pCryGame, 0x14F81B), 0x4D);
 				FillNOP(RVA(pCryGame, 0x5617A), 0x3E);
 				FillMem(RVA(pCryGame, 0x5617A), code, sizeof code);
@@ -704,6 +709,7 @@ namespace
 			}
 			case 5879:
 			{
+				FillNOP(RVA(pCryGame, 0x14E869), 0x48);
 				FillNOP(RVA(pCryGame, 0x14E8CB), 0x4D);
 				FillNOP(RVA(pCryGame, 0x55FAA), 0x3E);
 				FillMem(RVA(pCryGame, 0x55FAA), code, sizeof code);
@@ -712,6 +718,7 @@ namespace
 			}
 			case 6115:
 			{
+				FillNOP(RVA(pCryGame, 0x152B39), 0x48);
 				FillNOP(RVA(pCryGame, 0x152B9B), 0x4D);
 				FillNOP(RVA(pCryGame, 0x576AA), 0x3E);
 				FillMem(RVA(pCryGame, 0x576AA), code, sizeof code);
@@ -720,6 +727,7 @@ namespace
 			}
 			case 6156:
 			{
+				FillNOP(RVA(pCryGame, 0x152609), 0x48);
 				FillNOP(RVA(pCryGame, 0x15266B), 0x4D);
 				FillNOP(RVA(pCryGame, 0x5723A), 0x3E);
 				FillMem(RVA(pCryGame, 0x5723A), code, sizeof code);
