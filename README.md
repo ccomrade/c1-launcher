@@ -52,15 +52,12 @@ It provides a better game launcher and dedicated server launcher with additional
 | [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | -      | Y         |
 | Origin                                                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 
-The latest official version is 1.2.1 (Build 6156).
-
-DVD version can be updated by installing the
-[1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe)
-and
-[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe)
-official patches.
-
-The missing 64-bit files in Steam version can be downloaded [here](https://crysis.nullptr.one/Crysis-6156-Bin64.zip).
+- The latest official version is 1.2.1 (Build 6156).
+- DVD version can be updated by installing the
+[1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
+[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches.
+- The missing 64-bit files in Steam version can be downloaded
+[here](https://crysis.nullptr.one/Crysis_6156_Bin64.zip).
 Launcher is not included, but you can use this one.
 
 ### Crysis Wars
@@ -73,11 +70,10 @@ Launcher is not included, but you can use this one.
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
 | Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | Y      | Y         |
 
-The latest official version is 1.5 (Build 6729).
-
-DVD and Trial versions can be updated by installing the
-[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe)
-official patch. It also adds the missing 64-bit files.
+- The latest official version is 1.5 (Build 6729).
+- DVD and Trial versions can be updated by installing the
+[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch.
+It also adds the missing 64-bit files.
 
 ## FAQ
 
@@ -126,7 +122,7 @@ directly results in a crash during game startup. This is because the 64-bit CryS
 library with additional SecuROM garbage. It checks whether the game was launched using the DRM launcher or not,
 and if not, the game crashes in a sneaky way.
 
-All of this nonsense is deactivated by this launcher. That means you can safely delete all the mentioned files.
+All this nonsense is skipped by this launcher. That means you can safely delete all the mentioned files.
 
 ## Build instructions
 
