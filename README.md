@@ -100,6 +100,8 @@ Official multiplayer has been deactivated by [GameSpy shutdown](https://en.wikip
 However, there are community projects that provide their own multiplayer services.
 The most successful one is [CryMP Network](https://crymp.net).
 
+For Crysis Wars take a look [here](https://crysiswarsmp.com) or [here](https://cryserv.eu).
+
 ### How can I run Crysis in DX9 mode instead of the default DX10 mode?
 
 Just launch the game with `-dx9` command line parameter.
@@ -156,10 +158,10 @@ cmake --build .
 Modern Visual Studio (VS2019) allows you to directly open the source code directory and compile the project as usual.
 
 Older versions of Visual Studio require manually generated solution files.
-You can use either the `cmake-gui` tool, or the same steps as above with the following command:
+You can use either the `cmake-gui` tool or the same steps as above with the following command:
 
 ```
 cmake -G "Visual Studio 10 2010" -A Win32 ..
 ```
 
-Use the appropriate version of Visual Studio. For 64-bit build, replace `Win32` with `x64`.
+Use the appropriate version of Visual Studio. For 64-bit build replace `Win32` with `x64`.
