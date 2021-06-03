@@ -602,6 +602,9 @@ static const char *g_defaultLogFileName;
 
 static LONG __stdcall CrashHandler(_EXCEPTION_POINTERS *pExceptionInfo)
 {
+	// disable this crash handler to avoid recursive calls
+	SetUnhandledExceptionFilter(NULL);
+
 	Log log;
 
 	if (log.open(g_defaultLogFileName))
