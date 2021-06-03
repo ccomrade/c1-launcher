@@ -34,7 +34,7 @@ It provides a better game launcher and dedicated server launcher with additional
 
 | Version | Build | 32-bit | 64-bit |
 | :-----: | :---: | :----: | :----: |
-| 1.0     | 6527  | Y      | N/A    |
+| 1.0     | 6527  | Y      | -      |
 | 1.1     | 6566  | Y      | Y      |
 | 1.2     | 6586  | Y      | Y      |
 | 1.3     | 6627  | Y      | Y      |
@@ -58,7 +58,6 @@ It provides a better game launcher and dedicated server launcher with additional
 [1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches.
 - The missing 64-bit files in Steam version can be downloaded
 [here](https://crysis.nullptr.one/Crysis_6156_Bin64.zip).
-Launcher is not included, but you can use this one.
 
 ### Crysis Wars
 
@@ -66,7 +65,7 @@ Launcher is not included, but you can use this one.
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
 | Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
-| [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | Y      | Y      | Y         |
+| [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | -      | Y      | Y         |
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
 | Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | Y      | Y         |
 
