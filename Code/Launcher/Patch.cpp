@@ -722,6 +722,103 @@ namespace
 	}
 
 	/**
+	 * @brief Allows connecting to Internet servers without GameSpy account.
+	 */
+	void FixInternetConnect(const CrysisLibs & libs)
+	{
+		void *pCryNetwork = libs.getCryNetwork().getHandle();
+
+		switch (libs.getGameVersion())
+		{
+		#ifdef BUILD_64BIT
+			case 5767:
+			{
+				FillNOP(RVA(pCryNetwork, 0x18C716), 0x18);
+				break;
+			}
+			case 5879:
+			{
+				FillNOP(RVA(pCryNetwork, 0x184136), 0x18);
+				break;
+			}
+			case 6115:
+			{
+				FillNOP(RVA(pCryNetwork, 0x189596), 0x18);
+				break;
+			}
+			case 6156:
+			{
+				FillNOP(RVA(pCryNetwork, 0x189896), 0x18);
+				break;
+			}
+			case 6566:
+			{
+				FillNOP(RVA(pCryNetwork, 0x19602B), 0x18);
+				break;
+			}
+			case 6586:
+			{
+				FillNOP(RVA(pCryNetwork, 0x18B0A6), 0x18);
+				break;
+			}
+			case 6627:
+			case 6670:
+			case 6729:
+			{
+				FillNOP(RVA(pCryNetwork, 0x18B0B6), 0x18);
+				break;
+			}
+		#else
+			case 5767:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3F4B5), 0xD);
+				break;
+			}
+			case 5879:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3DBCC), 0xD);
+				break;
+			}
+			case 6115:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3FA9C), 0xD);
+				break;
+			}
+			case 6156:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3FB7C), 0xD);
+				break;
+			}
+			case 6527:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3FB77), 0xD);
+				break;
+			}
+			case 6566:
+			{
+				FillNOP(RVA(pCryNetwork, 0x50892), 0xD);
+				break;
+			}
+			case 6586:
+			case 6627:
+			case 6670:
+			case 6729:
+			{
+				FillNOP(RVA(pCryNetwork, 0x3FF87), 0xD);
+				break;
+			}
+		#endif
+			case 687:
+			case 710:
+			case 711:
+			{
+				// Crysis Warhead doesn't have multiplayer
+				break;
+			}
+		}
+	}
+
+	/**
 	 * @brief Disables the SecuROM crap in 64-bit CrySystem.
 	 * It does nothing in 32-bit build.
 	 */
@@ -1273,6 +1370,7 @@ void Patch(const CrysisLibs & libs)
 	// CryNetwork
 	EnablePreordered(libs);
 	AllowSameCDKeys(libs);
+	FixInternetConnect(libs);
 
 	// CrySystem
 	UnhandledExceptions(libs);
