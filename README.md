@@ -18,7 +18,7 @@ It provides a better game launcher and dedicated server launcher with additional
 - It's possible to run multiple Crysis instances at once.
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
-- The `connect [IP] [PORT]` console command now works even without GameSpy account.
+- The `connect [IP] [PORT]` console command now works without a GameSpy account.
 
 ## Supported game versions
 
