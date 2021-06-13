@@ -68,7 +68,7 @@ It provides a better game launcher and dedicated server launcher with additional
 | Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
 | [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | -      | Y      | Y         |
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
-| Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | Y      | Y         |
+| Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | -      | Y         |
 
 - The latest official version is 1.5 (Build 6729).
 - DVD and Trial versions can be updated by installing the
