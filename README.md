@@ -96,7 +96,7 @@ Official multiplayer has been deactivated by [GameSpy shutdown](https://en.wikip
 However, there are community projects that provide their own multiplayer services.
 The most successful one is [CryMP Network](https://crymp.net).
 
-For Crysis Wars take a look [here](https://crysiswarsmp.com) or [here](https://cryserv.eu).
+For Crysis Wars take a look [here](https://crysiswarsmp.com).
 
 ### How can I run Crysis in DX9 mode instead of the default DX10 mode?
 
