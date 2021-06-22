@@ -541,7 +541,7 @@ namespace
 		// the new code that unlocks ragdoll physics in singleplayer
 		unsigned int flagsOR = 0x205C;
 		unsigned int flagsAND = 0;
-		unsigned int flagsColliderOR = 0;
+		unsigned int flagsColliderOR = 0x20;
 		unsigned int flagsColliderAND = 0;
 
 		if (isMultiplayer)
@@ -665,6 +665,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x1A7000), 0x53);
 				FillNOP(RVA(pCryGame, 0x1A7065), 0x53);
+				FillNOP(RVA(pCryGame, 0x46E54), 0x8);
 				FillNOP(RVA(pCryGame, 0x4711C), 0xDE);
 				FillMem(RVA(pCryGame, 0x4711C), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x2C349E), &performDeadHit, sizeof performDeadHit);
@@ -674,6 +675,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x1A4130), 0x53);
 				FillNOP(RVA(pCryGame, 0x1A4195), 0x53);
+				FillNOP(RVA(pCryGame, 0x46B44), 0x8);
 				FillNOP(RVA(pCryGame, 0x46E0C), 0xDE);
 				FillMem(RVA(pCryGame, 0x46E0C), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x2BECEE), &performDeadHit, sizeof performDeadHit);
@@ -683,6 +685,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x1AB0C0), 0x53);
 				FillNOP(RVA(pCryGame, 0x1AB125), 0x53);
+				FillNOP(RVA(pCryGame, 0x49604), 0x8);
 				FillNOP(RVA(pCryGame, 0x498CC), 0xDE);
 				FillMem(RVA(pCryGame, 0x498CC), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x2C7DFE), &performDeadHit, sizeof performDeadHit);
@@ -692,6 +695,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x1AB490), 0x53);
 				FillNOP(RVA(pCryGame, 0x1AB4F5), 0x53);
+				FillNOP(RVA(pCryGame, 0x49084), 0x8);
 				FillNOP(RVA(pCryGame, 0x4934C), 0xDE);
 				FillMem(RVA(pCryGame, 0x4934C), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x2C81BE), &performDeadHit, sizeof performDeadHit);
@@ -702,6 +706,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x14F7B9), 0x48);
 				FillNOP(RVA(pCryGame, 0x14F81B), 0x4D);
+				FillNOP(RVA(pCryGame, 0x55FD8), 0x8);
 				FillNOP(RVA(pCryGame, 0x5617A), 0x3E);
 				FillMem(RVA(pCryGame, 0x5617A), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x1FEA2E), &performDeadHit, sizeof performDeadHit);
@@ -711,6 +716,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x14E869), 0x48);
 				FillNOP(RVA(pCryGame, 0x14E8CB), 0x4D);
+				FillNOP(RVA(pCryGame, 0x55E08), 0x8);
 				FillNOP(RVA(pCryGame, 0x55FAA), 0x3E);
 				FillMem(RVA(pCryGame, 0x55FAA), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x1FD55E), &performDeadHit, sizeof performDeadHit);
@@ -720,6 +726,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x152B39), 0x48);
 				FillNOP(RVA(pCryGame, 0x152B9B), 0x4D);
+				FillNOP(RVA(pCryGame, 0x57508), 0x8);
 				FillNOP(RVA(pCryGame, 0x576AA), 0x3E);
 				FillMem(RVA(pCryGame, 0x576AA), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x202F2E), &performDeadHit, sizeof performDeadHit);
@@ -729,6 +736,7 @@ namespace
 			{
 				FillNOP(RVA(pCryGame, 0x152609), 0x48);
 				FillNOP(RVA(pCryGame, 0x15266B), 0x4D);
+				FillNOP(RVA(pCryGame, 0x57098), 0x8);
 				FillNOP(RVA(pCryGame, 0x5723A), 0x3E);
 				FillMem(RVA(pCryGame, 0x5723A), code, sizeof code);
 				FillMem(RVA(pCryGame, 0x202EAE), &performDeadHit, sizeof performDeadHit);
