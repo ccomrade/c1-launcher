@@ -7,6 +7,7 @@
 #include "CrysisLibs.h"
 #include "System.h"
 #include "CPU.h"
+#include "CmdLine.h"
 
 using System::RVA;
 using System::FillNOP;
@@ -1357,9 +1358,13 @@ void Patch(const CrysisLibs & libs)
 		AllowDX9ImmersiveMultiplayer(libs);
 
 		// CryGame
-		DisableIntros(libs);
 		CanJoinDX10Servers(libs);
 		EnableDX10Menu(libs);
+
+		if (!CmdLine::HasArg("-splash"))
+		{
+			DisableIntros(libs);
+		}
 
 		// CrySystem
 		RemoveSecuROM(libs);
