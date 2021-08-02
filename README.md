@@ -54,10 +54,10 @@ It provides a better game launcher and dedicated server launcher with additional
 | Origin                                                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 
 - The latest official version is 1.2.1 (Build 6156).
-- DVD version can be updated by installing the
+- Install the
 [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
-[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches.
-- The missing 64-bit files in Steam version can be downloaded
+[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version (DVD only).
+- The missing 64-bit files can be downloaded
 [here](https://crysis.nullptr.one/Crysis_6156_Bin64.zip).
 
 ### Crysis Wars
@@ -65,14 +65,14 @@ It provides a better game launcher and dedicated server launcher with additional
 | Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
-| Trial version                                                     | 1.0     | 6527  | Y      | -      | Y         |
+| Trial                                                             | 1.0     | 6527  | Y      | -      | Y         |
 | [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | -      | Y      | Y         |
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
 | Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | -      | Y         |
 
 - The latest official version is 1.5 (Build 6729).
-- DVD and Trial versions can be updated by installing the
-[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch.
+- Install the
+[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version (DVD and Trial only).
 It also adds the missing 64-bit files.
 
 ## FAQ
@@ -92,7 +92,7 @@ Yes, you can rename the executables of this launcher to whatever you want and us
 
 ### How can I play Crysis multiplayer?
 
-Official multiplayer has been deactivated by [GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown).
+The official multiplayer no longer works due to [GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown).
 However, there are community projects that provide their own multiplayer services.
 The most successful one is [CryMP Network](https://crymp.net).
 
@@ -112,7 +112,7 @@ No, it doesn't.
 
 ### Does this launcher support Crysis Warhead?
 
-No, it doesn't.
+No, it doesn't. The reason is that CryGame and CryAction DLLs have been moved into the EXE in Crysis Warhead.
 
 ### Why does the Bin64 folder contain 2 executables?
 
