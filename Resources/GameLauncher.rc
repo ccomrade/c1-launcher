@@ -26,11 +26,7 @@ BEGIN
 			VALUE "ProductName",      "C1-Launcher"
 			VALUE "ProductVersion",   C1LAUNCHER_VERSION_STRING
 			VALUE "FileVersion",      C1LAUNCHER_VERSION_STRING
-		#ifdef BUILD_64BIT
-			VALUE "FileDescription",  "Crysis (64-bit)"
-		#else
-			VALUE "FileDescription",  "Crysis (32-bit)"
-		#endif
+			VALUE "FileDescription",  "Crysis"
 			VALUE "InternalName",     "Crysis"
 			VALUE "OriginalFilename", "Crysis.exe"
 		END
