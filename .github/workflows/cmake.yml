@@ -1,0 +1,50 @@
+name: CMake
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: "0 0 1 */3 *" # trigger automatically every three months at 00:00
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Bin32
+        run: |
+          cmake -G "Visual Studio 16 2019" -A Win32 -B ${{github.workspace}}\build\Bin32
+          cmake --build ${{github.workspace}}\build\Bin32 --config ${{env.BUILD_TYPE}}
+          mkdir ${{github.workspace}}\bin\Bin32\
+          move "${{github.workspace}}\build\Bin32\Release\*.exe" "${{github.workspace}}\bin\Bin32\"
+
+      - name: Build Bin64
+        run: |
+          cmake -G "Visual Studio 16 2019" -A x64 -B ${{github.workspace}}\build\Bin64
+          cmake --build ${{github.workspace}}\build\Bin64 --config ${{env.BUILD_TYPE}}
+          mkdir ${{github.workspace}}\bin\Bin64\
+          move "${{github.workspace}}\build\Bin64\Release\*.exe" "${{github.workspace}}\bin\Bin64\"
+
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+      - name: Get branch name (pull request)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: c1-launcher-current-build-${{ env.BRANCH_NAME }}
+          path: ${{github.workspace}}\bin\*
