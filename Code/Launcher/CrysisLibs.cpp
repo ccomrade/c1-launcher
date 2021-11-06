@@ -50,6 +50,11 @@ void CrysisLibs::load()
 			throw SystemError("Failed to load the CryAction DLL!");
 		}
 	}
+
+	if (!m_CryRenderD3D10.load("CryRenderD3D10.dll", DLL::NO_RELEASE))
+	{
+		throw SystemError("Failed to load the CryRenderD3D10 DLL!");
+	}
 }
 
 bool CrysisLibs::isCrysis() const

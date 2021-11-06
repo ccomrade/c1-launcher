@@ -21,6 +21,7 @@ private:
 	DLL m_CryGame;
 	DLL m_CryNetwork;
 	DLL m_CrySystem;
+	DLL m_CryRenderD3D10;
 
 	void load();
 
@@ -31,7 +32,8 @@ public:
 	  m_CryAction(),
 	  m_CryGame(),
 	  m_CryNetwork(),
-	  m_CrySystem()
+	  m_CrySystem(),
+	  m_CryRenderD3D10()
 	{
 		load();
 	}
@@ -64,6 +66,11 @@ public:
 	const DLL & getCrySystem() const
 	{
 		return m_CrySystem;
+	}
+
+	const DLL & getCryRenderD3D10() const
+	{
+		return m_CryRenderD3D10;
 	}
 
 	bool isCrysis() const;

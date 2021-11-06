@@ -1347,6 +1347,105 @@ namespace
 			}
 		}
 	}
+
+	/**
+	 * @brief Prevents the DX10 renderer from using the lowest refresh rate available.
+	 * Thanks to Guzz and Vladislav for this patch.
+	 */
+	void FixLowRefreshRateBug(const CrysisLibs & libs)
+	{
+		void *pCryRenderD3D10 = libs.getCryRenderD3D10().getHandle();
+
+		switch (libs.getGameVersion())
+		{
+		#ifdef BUILD_64BIT
+			case 5767:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1C5ED5), 0x4);
+				break;
+			}
+			case 5879:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1C5DC5), 0x4);
+				break;
+			}
+			case 6115:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1C8B65), 0x4);
+				break;
+			}
+			case 6156:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1C8F45), 0x4);
+				break;
+			}
+			case 6566:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1BAA25), 0x4);
+				break;
+			}
+			case 6586:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1CA335), 0x4);
+				break;
+			}
+			case 6627:
+			case 6670:
+			case 6729:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1CA345), 0x4);
+				break;
+			}
+		#else
+			case 5767:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16CE00), 0x6);
+				break;
+			}
+			case 5879:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16E390), 0x6);
+				break;
+			}
+			case 6115:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F470), 0x6);
+				break;
+			}
+			case 6156:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F3E0), 0x6);
+				break;
+			}
+			case 6527:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F290), 0x6);
+				break;
+			}
+			case 6566:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x1798D0), 0x6);
+				break;
+			}
+			case 6586:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F110), 0x6);
+				break;
+			}
+			case 6627:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F150), 0x6);
+				break;
+			}
+			case 6670:
+			case 6729:
+			{
+				FillNOP(RVA(pCryRenderD3D10, 0x16F170), 0x6);
+				break;
+			}
+		#endif
+		}
+	}
 }
 
 void Patch(const CrysisLibs & libs)
@@ -1370,6 +1469,9 @@ void Patch(const CrysisLibs & libs)
 		RemoveSecuROM(libs);
 		AllowDX9VeryHighSpec(libs);
 		AllowMultipleInstances(libs);
+
+		// CryRenderD3D10
+		FixLowRefreshRateBug(libs);
 	}
 
 	// CryNetwork
