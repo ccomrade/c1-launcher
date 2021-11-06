@@ -29,8 +29,7 @@ void CrysisLibs::load()
 
 	if (isCrysisWarhead())
 	{
-		// TODO
-		throw Error("Crysis Warhead is not supported yet!");
+		throw Error("Crysis Warhead is not supported!");
 	}
 
 	if (!m_CryGame.load("CryGame.dll", DLL::NO_RELEASE))

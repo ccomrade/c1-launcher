@@ -141,13 +141,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have multiplayer
-				break;
-			}
 		}
 	}
 
@@ -268,13 +261,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// TODO
-				break;
-			}
 		}
 	}
 
@@ -385,13 +371,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have multiplayer
-				break;
-			}
 		}
 	}
 
@@ -527,13 +506,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have multiplayer
-				break;
-			}
 		}
 	}
 
@@ -608,13 +580,6 @@ namespace
 			case 6729:
 			{
 				// Crysis Wars doesn't have pre-ordered version
-				break;
-			}
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have pre-ordered version
 				break;
 			}
 		}
@@ -712,13 +677,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have multiplayer
-				break;
-			}
 		}
 	}
 
@@ -809,13 +767,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead doesn't have multiplayer
-				break;
-			}
 		}
 	}
 
@@ -857,13 +808,6 @@ namespace
 			case 6729:
 			{
 				// 64-bit CrySystem in Crysis Wars doesn't contain any SecuROM crap
-				break;
-			}
-			case 687:
-			case 710:
-			case 711:
-			{
-				// 64-bit CrySystem in Crysis Warhead doesn't contain any SecuROM crap
 				break;
 			}
 		}
@@ -961,13 +905,6 @@ namespace
 			case 6729:
 			{
 				// Crysis Wars 1.4+ allows Very High settings in DX9 mode
-				break;
-			}
-			case 687:
-			case 710:
-			case 711:
-			{
-				// Crysis Warhead allows Very High settings in DX9 mode
 				break;
 			}
 		}
@@ -1077,13 +1014,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// TODO
-				break;
-			}
 		}
 	}
 
@@ -1226,13 +1156,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// TODO
-				break;
-			}
 		}
 	}
 
@@ -1338,13 +1261,6 @@ namespace
 				break;
 			}
 		#endif
-			case 687:
-			case 710:
-			case 711:
-			{
-				// TODO
-				break;
-			}
 		}
 	}
 
