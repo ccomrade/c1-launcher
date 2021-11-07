@@ -4,9 +4,7 @@
  */
 
 #include "Launcher/Launcher.h"
-#include "Launcher/CrysisLibs.h"
-#include "Launcher/Patch.h"
-#include "Launcher/System.h"
+#include "Library/WinAPI.h"
 
 int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
 {
@@ -14,25 +12,17 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 
 	try
 	{
-		// load the required DLLs
-		CrysisLibs libs(CrysisLibs::DEDICATED_SERVER);
+		launcher.SetAppInstance(hInstance);
+		launcher.SetLogFileName("Server.log");
+		launcher.SetDedicatedServer(true);
 
-		// install memory patches
-		Patch(libs);
-
-		launcher.setAppInstance(hInstance);
-		launcher.setLogFileName("Server.log");
-		launcher.setCmdLine(System::GetCmdLine());  // lpCmdLine doesn't contain program name
-		launcher.setDedicatedServer(true);
-
-		// run the server
-		launcher.run(libs);
+		launcher.Run();
 	}
-	catch (const Error & error)
+	catch (const std::runtime_error & error)
 	{
-		System::ErrorBox(error);
+		WinAPI::ErrorBox(error.what());
 		return 1;
 	}
 
-	return launcher.getExitCode();
+	return launcher.GetExitCode();
 }

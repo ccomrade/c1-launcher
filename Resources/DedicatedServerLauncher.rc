@@ -5,7 +5,7 @@
 #include "Launcher/DedicatedServer/Resources.h"
 #include "config.h"
 
-DEDICATED_SERVER_ICON ICON "DedicatedServerIcon.ico"
+RESOURCE_ICON ICON "DedicatedServerIcon.ico"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     C1LAUNCHER_VERSION_MAJOR, C1LAUNCHER_VERSION_MINOR, 0, 0

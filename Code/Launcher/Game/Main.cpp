@@ -4,9 +4,7 @@
  */
 
 #include "Launcher/Launcher.h"
-#include "Launcher/CrysisLibs.h"
-#include "Launcher/Patch.h"
-#include "Launcher/System.h"
+#include "Library/WinAPI.h"
 
 // request discrete graphics card
 extern "C"
@@ -24,24 +22,16 @@ int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int
 
 	try
 	{
-		// load the required DLLs
-		CrysisLibs libs(CrysisLibs::GAME);
+		launcher.SetAppInstance(hInstance);
+		launcher.SetLogFileName("Game.log");
 
-		// install memory patches
-		Patch(libs);
-
-		launcher.setAppInstance(hInstance);
-		launcher.setLogFileName("Game.log");
-		launcher.setCmdLine(System::GetCmdLine());  // lpCmdLine doesn't contain program name
-
-		// run the game
-		launcher.run(libs);
+		launcher.Run();
 	}
-	catch (const Error & error)
+	catch (const std::runtime_error & error)
 	{
-		System::ErrorBox(error);
+		WinAPI::ErrorBox(error.what());
 		return 1;
 	}
 
-	return launcher.getExitCode();
+	return launcher.GetExitCode();
 }

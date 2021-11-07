@@ -39,26 +39,26 @@ struct IValidator;
  */
 struct SSystemInitParams
 {
-	void *hInstance;                     //!< Executable handle.
-	void *hWnd;                          //!< Optional window handle.
-	ILog *pLog;                          //!< Optional custom log.
-	ILogCallback *pLogCallback;          //!< Optional log callback.
-	ISystemUserCallback *pUserCallback;  //!< Optional engine callback.
-	const char *logFileName;             //!< Name of the log file.
-	IValidator *pValidator;              //!< Optional custom validator.
+	void *hInstance;                     // Executable handle
+	void *hWnd;                          // Optional window handle
+	ILog *pLog;                          // Optional custom log
+	ILogCallback *pLogCallback;          // Optional log callback
+	ISystemUserCallback *pUserCallback;  // Optional engine callback
+	const char *logFileName;             // Name of the log file
+	IValidator *pValidator;              // Optional custom validator
 
-	char cmdLine[2048];                  //!< Application command line obtained with GetCommandLineA.
-	char userPath[256];                  //!< Optional custom user folder in %USERPROFILE%\Documents.
+	char cmdLine[2048];                  // Application command line obtained with GetCommandLineA
+	char userPath[256];                  // Optional custom user folder in "%USERPROFILE%/Documents"
 
-	bool isEditor;                       //!< Editor mode.
-	bool isMinimal;                      //!< Minimal mode.
-	bool isTesting;                      //!< Test mode.
-	bool isDedicatedServer;              //!< Dedicated server mode.
+	bool isEditor;                       // Editor mode
+	bool isMinimal;                      // Minimal mode
+	bool isTesting;                      // Test mode
+	bool isDedicatedServer;              // Dedicated server mode
 
-	ISystem *pSystem;                    //!< Initialized by IGameStartup::Init.
+	ISystem *pSystem;                    // Initialized by IGameStartup::Init
 
-	void *pCheckFunc;                    //!< Not used.
-	void *pProtectedFunctions[10];       //!< Not used.
+	void *pCheckFunc;                    // Not used
+	void *pProtectedFunctions[10];       // Not used
 };
 
 /**

@@ -31,26 +31,21 @@ add_library(LauncherBase STATIC
   Code/CryCommon/IGameStartup.h
   Code/CryCommon/ILog.h
   Code/CryCommon/ISystem.h
-  Code/Launcher/CmdLine.cpp
-  Code/Launcher/CmdLine.h
-  Code/Launcher/CPU.cpp
-  Code/Launcher/CPU.h
   Code/Launcher/CrashLogger.cpp
   Code/Launcher/CrashLogger.h
-  Code/Launcher/CrysisLibs.cpp
-  Code/Launcher/CrysisLibs.h
-  Code/Launcher/DLL.cpp
-  Code/Launcher/DLL.h
-  Code/Launcher/Error.cpp
-  Code/Launcher/Error.h
-  Code/Launcher/Format.cpp
-  Code/Launcher/Format.h
   Code/Launcher/Launcher.cpp
   Code/Launcher/Launcher.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Launcher/System.cpp
-  Code/Launcher/System.h
+  Code/Library/CmdLine.cpp
+  Code/Library/CmdLine.h
+  Code/Library/CPU.cpp
+  Code/Library/CPU.h
+  Code/Library/DLL.h
+  Code/Library/Format.cpp
+  Code/Library/Format.h
+  Code/Library/WinAPI.cpp
+  Code/Library/WinAPI.h
 )
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})

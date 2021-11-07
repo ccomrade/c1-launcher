@@ -27,7 +27,9 @@ struct ILog
 
 	virtual void LogV(ELogType type, const char *format, va_list args) = 0;
 
-	virtual ~ILog() {}
+	virtual ~ILog()
+	{
+	}
 
 	virtual void Release() = 0;
 
