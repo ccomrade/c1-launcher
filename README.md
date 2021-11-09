@@ -19,6 +19,7 @@ It provides a better game launcher and dedicated server launcher with additional
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command now works without a GameSpy account.
+- Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
 
 ## Supported game versions
 
@@ -53,11 +54,11 @@ It provides a better game launcher and dedicated server launcher with additional
 | [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | -      | Y         |
 | Origin                                                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 
-- The latest official version is 1.2.1 (Build 6156).
-- Install the
+- The latest official version is 1.2.1 (6156).
+- If you have DVD version, install the
 [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
-[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version (DVD only).
-- The missing 64-bit files can be downloaded
+[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version.
+- If you have Steam version, missing 64-bit files can be downloaded
 [here](https://crysis.nullptr.one/Crysis_6156_Bin64.zip).
 
 ### Crysis Wars
@@ -70,10 +71,10 @@ It provides a better game launcher and dedicated server launcher with additional
 | Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
 | Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | -      | Y         |
 
-- The latest official version is 1.5 (Build 6729).
-- Install the
-[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version (DVD and Trial only).
-It also adds the missing 64-bit files.
+- The latest official version is 1.5 (6729).
+- If you have DVD or Trial version, install the
+[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version.
+It also adds missing 64-bit files.
 
 ## FAQ
 
@@ -101,6 +102,10 @@ For Crysis Wars take a look [here](https://crysiswarsmp.com).
 ### How can I run Crysis in DX9 mode instead of the default DX10 mode?
 
 Just launch the game with `-dx9` command line parameter.
+
+### Is it possible to disable automatic skipping of startup video ads?
+
+Yes, launch the game with `-splash` command line parameter.
 
 ### Does Crysis support screen resolutions higher than 1080p?
 
