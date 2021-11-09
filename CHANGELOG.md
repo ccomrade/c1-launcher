@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Automatic skipping of startup video ads can now be disabled with the `-splash` command line parameter.
+### Fixed
+- The lowest available display refresh rate is not being used anymore. Thanks to Guzz and Vladislav.
+- Code cleanup and refactoring.
 
 ## [2.6] - 2021-06-11
 ### Changed
