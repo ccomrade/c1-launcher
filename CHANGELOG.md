@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [2.7] - 2021-11-09
 ### Added
 - Automatic skipping of startup video ads can now be disabled with the `-splash` command line parameter.
 ### Fixed
