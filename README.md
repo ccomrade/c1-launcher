@@ -7,15 +7,15 @@ It provides a better game launcher and dedicated server launcher with additional
 
 - Full source code is available.
 - Supports all game versions in one executable.
-- Completely DRM-free launcher without any broken SecuROM crap inside.
+- Completely DRM-free launcher.
 - No compatibility mode is required to make the game work on modern systems.
 - Fixes all startup issues, including the well-known crash of 32-bit Crysis on modern AMD processors.
 - Smaller files, especially game launcher.
 - Annoying startup video ads are automatically skipped.
 - Very High settings are available in DX9 mode.
 - Game running in DX9 mode can connect to DX10 servers. Everything works just like in the DX10 mode.
-- Server doesn't kick players with the same CD key anymore.
-- It's possible to run multiple Crysis instances at once.
+- Server does not kick players with the same CD key anymore.
+- It is possible to run multiple Crysis instances at once.
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command now works without a GameSpy account.
@@ -73,8 +73,7 @@ It provides a better game launcher and dedicated server launcher with additional
 
 - The latest official version is 1.5 (6729).
 - If you have DVD or Trial version, install the
-[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version.
-It also adds missing 64-bit files.
+[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version and 64-bit files.
 
 ## FAQ
 
