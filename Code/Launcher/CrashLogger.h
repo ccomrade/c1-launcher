@@ -2,5 +2,5 @@
 
 namespace CrashLogger
 {
-	void Init(const char *logFileName);
+	void Init(const char *defaultLogFileName);
 }

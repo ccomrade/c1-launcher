@@ -3,82 +3,282 @@
  * @brief Implementation of Crysis launcher.
  */
 
-#include <cstring>
+#include "Library/CPU.h"
+#include "Library/CmdLine.h"
+#include "Library/Format.h"
+#include "Library/WinAPI.h"
 
-#include "CryCommon/IGameStartup.h"
-#include "CryCommon/ILog.h"
-
+#include "ILauncher.h"
 #include "Launcher.h"
 #include "CrashLogger.h"
-#include "DLL.h"
-#include "Util.h"
+#include "Patch.h"
 
 #include "config.h"
 
-bool Launcher::initCmdLine()
-{
-	const char *cmdLine = Util::GetCmdLine();
-	const size_t cmdLineLength = std::strlen(cmdLine);
+#include <intrin.h>
 
-	if (cmdLineLength >= sizeof m_params.cmdLine)
+#pragma intrinsic(__rdtsc)
+
+// CryCommon/ISystem.h
+SSystemGlobalEnvironment *gEnv;
+
+int maxFps = 0;
+unsigned long long nextFrameStart = 0;
+double ticksPerNanosecond = 0.001f;
+
+class LauncherAPI : public ILauncher
+{
+	static LauncherAPI *s_pInstance;
+public:
+	LauncherAPI()
 	{
-		Util::ErrorBox("Command line is too long!");
-		return false;
+		s_pInstance = this;
 	}
 
-	std::memcpy(m_params.cmdLine, cmdLine, cmdLineLength + 1);
+	~LauncherAPI()
+	{
+		s_pInstance = NULL;
+	}
 
-	return true;
+	static LauncherAPI *Get()
+	{
+		return s_pInstance;
+	}
+
+	const char *GetName() override
+	{
+		return "CW-Launcher";
+	}
+
+	int GetVersionMajor() override
+	{
+		return CWLAUNCHER_VERSION_MAJOR;
+	}
+
+	int GetVersionMinor() override
+	{
+		return CWLAUNCHER_VERSION_MINOR;
+	}
+	int GetFPSCap() {
+		return maxFps;
+	}
+	void SetFPSCap(int fps) {
+		maxFps = fps;
+	}
+};
+
+void WaitIfNeeded() {
+	if (maxFps > 0) {
+		unsigned long long current;
+		do {
+			current = __rdtsc();
+		} while (current < nextFrameStart);
+		double nanoseconds = 1000000000.0f / (double) maxFps;
+		nextFrameStart = current + (long long)(nanoseconds * ticksPerNanosecond);
+	}
 }
 
-void Launcher::logInfo(const char *format, ...)
-{
-	// CryEngine must be initialized
-	ILog *pLog = m_params.pSystem->GetILog();
+#define DLL_EXPORT __declspec(dllexport)
 
-	va_list args;
-	va_start(args, format);
-	pLog->LogV(ILog::eAlways, format, args);
-	va_end(args);
+LauncherAPI *LauncherAPI::s_pInstance = NULL;
+
+// request discrete graphics card
+extern "C"
+{
+	DLL_EXPORT ILauncher *GetILauncher()
+	{
+		return LauncherAPI::Get();
+	}
 }
 
-bool Launcher::run(const DLL & libCryGame)
+void Launcher::Run()
 {
-	const int gameVersion = Util::GetCrysisGameBuild(libCryGame);
+	LauncherAPI api;
+	SetCmdLine();
 
 	CrashLogger::Init(m_params.logFileName);
 
-	if (!initCmdLine())
+	ticksPerNanosecond = WinAPI::GetTSCTicksPerNanosecond();
+	LoadEngine();
+	PatchEngine();
+	StartEngine();
+
+	gEnv = m_params.pSystem->GetGlobalEnvironment();
+
+	CryLogAlways(CWLAUNCHER_VERSION_DESCRIPTION);
+
+	UpdateLoop();
+
+	CryLogAlways("Exit code: %d", m_exitCode);
+}
+
+void Launcher::SetCmdLine()
+{
+	const char *cmdLine = WinAPI::CommandLine();
+	const std::size_t length = std::strlen(cmdLine);
+
+	if (length >= sizeof m_params.cmdLine)
 	{
-		return false;
+		throw std::runtime_error("Command line is too long!");
 	}
 
-	IGameStartup::TEntryFunction pEntry = libCryGame.getSymbol<IGameStartup::TEntryFunction>("CreateGameStartup");
-	if (!pEntry)
+	std::memcpy(m_params.cmdLine, cmdLine, length + 1);
+}
+
+void Launcher::LoadEngine()
+{
+	m_CrySystem.Load("CrySystem.dll", DLL::NO_UNLOAD);  // unloading Crysis DLLs is not safe
+
+	m_gameBuild = WinAPI::GetCrysisGameBuild(m_CrySystem.GetHandle());
+	if (m_gameBuild < 0)
 	{
-		Util::ErrorBox("The CryGame DLL is not valid!");
-		return false;
+		throw WinAPI::MakeError("Failed to get the game version!");
 	}
 
-	IGameStartup *pGameStartup = pEntry();
-	if (!pGameStartup)
+	switch (m_gameBuild)
 	{
-		Util::ErrorBox("Failed to create the GameStartup Interface!");
-		return false;
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		{
+			// Crysis
+			break;
+		}
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// Crysis Wars
+			break;
+		}
+		case 687:
+		case 710:
+		case 711:
+		{
+			// Crysis Warhead
+			throw std::runtime_error("Crysis Warhead is not supported!");
+		}
+		default:
+		{
+			throw std::runtime_error(Format("Unknown game version %d!", m_gameBuild));
+		}
+	}
+
+	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
+	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
+
+	if (!m_params.isDedicatedServer)
+	{
+		m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
+		m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
+	}
+}
+
+void Launcher::PatchEngine()
+{
+	PatchEngine_CryGame();
+	PatchEngine_CryAction();
+	PatchEngine_CryNetwork();
+	PatchEngine_CrySystem();
+	PatchEngine_CryRenderD3D10();
+}
+
+void Launcher::PatchEngine_CryGame()
+{
+	if (!m_params.isDedicatedServer)
+	{
+		void *pCryGame = m_CryGame.GetHandle();
+
+		Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
+		Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
+
+		if (!CmdLine::HasArg("-splash"))
+		{
+			Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
+		}
+	}
+}
+
+void Launcher::PatchEngine_CryAction()
+{
+	if (!m_params.isDedicatedServer)
+	{
+		void *pCryAction = m_CryAction.GetHandle();
+
+		Patch::CryAction::AllowDX9ImmersiveMultiplayer(pCryAction, m_gameBuild);
+	}
+}
+
+void Launcher::PatchEngine_CryNetwork()
+{
+	void *pCryNetwork = m_CryNetwork.GetHandle();
+
+	Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::PatchGamespy(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::PatchServerProfiler(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::PatchSpamCWaitForEnabled(pCryNetwork, m_gameBuild);
+	Patch::CryNetwork::PatchSpamSvRequestStopFire(pCryNetwork, m_gameBuild);
+}
+
+void Launcher::PatchEngine_CrySystem()
+{
+	void *pCrySystem = m_CrySystem.GetHandle();
+	void *pWait = &WaitIfNeeded;
+
+	if (!m_params.isDedicatedServer)
+	{
+		Patch::CrySystem::AllowDX9VeryHighSpec(pCrySystem, m_gameBuild);
+		Patch::CrySystem::AllowMultipleInstances(pCrySystem, m_gameBuild);
+		Patch::CrySystem::EnableFPSCap(pCrySystem, m_gameBuild, pWait);
+		Patch::CrySystem::RemoveSecuROM(pCrySystem, m_gameBuild);
+	}
+
+	if (CPU::IsAMD() && !CPU::Has3DNow())
+	{
+		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+	}
+
+	Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+}
+
+void Launcher::PatchEngine_CryRenderD3D10()
+{
+	if (!m_params.isDedicatedServer)
+	{
+		void *pCryRenderD3D10 = m_CryRenderD3D10.GetHandle();
+
+		Patch::CryRenderD3D10::FixLowRefreshRateBug(pCryRenderD3D10, m_gameBuild);
+	}
+}
+
+void Launcher::StartEngine()
+{
+	IGameStartup::TEntryFunction entry = m_CryGame.GetSymbol<IGameStartup::TEntryFunction>("CreateGameStartup");
+	if (!entry)
+	{
+		throw std::runtime_error("The CryGame DLL is not valid!");
+	}
+
+	m_pGameStartup = entry();
+	if (!m_pGameStartup)
+	{
+		throw std::runtime_error("Failed to create the GameStartup Interface!");
 	}
 
 	// initialize CryEngine
-	if (!pGameStartup->Init(m_params))
+	if (!m_pGameStartup->Init(m_params))
 	{
-		Util::ErrorBox("Game initialization failed!");
-		pGameStartup->Shutdown();
-		return false;
+		throw std::runtime_error("Game initialization failed!");
 	}
 
-	logInfo(CWLAUNCHER_VERSION_DESCRIPTION);
-
 	//Warping lag fix for Crysis Wars 1.5
-	if (gameVersion == 6729 && m_params.isDedicatedServer)
+	if (m_gameBuild == 6729 && m_params.isDedicatedServer)
 	{
 #ifdef BUILD_64BIT
 		__int64 *pTimer = (__int64 *)(0x380BC0E8); //CryRenderNULL.dll+0xBC0E8
@@ -88,13 +288,16 @@ bool Launcher::run(const DLL & libCryGame)
 		long long int* pValue = (long long int *)(*pTimer + 0x18);
 #endif
 		*pValue = 3000000000000;
-		logInfo("Warping lag fix applied!");
+		CryLogAlways("Warping lag fix applied!");
 	}
+}
 
-	// enter game update loop
-	int status = pGameStartup->Run(NULL);
+void Launcher::UpdateLoop()
+{
+	m_exitCode = m_pGameStartup->Run(NULL);
+}
 
-	pGameStartup->Shutdown();
-
-	return status == 0;
+void Launcher::ShutdownEngine()
+{
+	m_pGameStartup->Shutdown();
 }

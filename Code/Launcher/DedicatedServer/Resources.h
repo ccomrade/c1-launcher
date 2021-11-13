@@ -5,4 +5,4 @@
 
 #pragma once
 
-#define LAUNCHER_ICON 101
+#define RESOURCE_ICON         101

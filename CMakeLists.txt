@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 #################################################
-project(CW-Launcher VERSION 2.8 LANGUAGES CXX RC)
+project(CW-Launcher VERSION 2.9 LANGUAGES CXX RC)
 #################################################
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
@@ -9,8 +9,8 @@ if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-# prevent modern MSVC from enabling ASLR
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO")
+# prevent modern MSVC from enabling ASLR and unlock memory above 2 GB
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO /LARGEADDRESSAWARE")
 
 # detect 64-bit compiler
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -22,27 +22,53 @@ endif()
 
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
+if(BUILD_64BIT)
 add_library(LauncherBase STATIC
   Code/CryCommon/IGameRef.h
   Code/CryCommon/IGameStartup.h
   Code/CryCommon/ILog.h
   Code/CryCommon/ISystem.h
-  Code/Launcher/CmdLine.cpp
-  Code/Launcher/CmdLine.h
-  Code/Launcher/CPU.cpp
-  Code/Launcher/CPU.h
   Code/Launcher/CrashLogger.cpp
   Code/Launcher/CrashLogger.h
-  Code/Launcher/DLL.cpp
-  Code/Launcher/DLL.h
   Code/Launcher/ILauncher.h
   Code/Launcher/Launcher.cpp
   Code/Launcher/Launcher.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Launcher/Util.cpp
-  Code/Launcher/Util.h
+  Code/Library/CmdLine.cpp
+  Code/Library/CmdLine.h
+  Code/Library/CPU.cpp
+  Code/Library/CPU.h
+  Code/Library/DLL.h
+  Code/Library/Format.cpp
+  Code/Library/Format.h
+  Code/Library/WinAPI.cpp
+  Code/Library/WinAPI.h
 )
+else()
+add_library(LauncherBase STATIC
+  Code/CryCommon/IGameRef.h
+  Code/CryCommon/IGameStartup.h
+  Code/CryCommon/ILog.h
+  Code/CryCommon/ISystem.h
+  Code/Launcher/CrashLogger.cpp
+  Code/Launcher/CrashLogger.h
+  Code/Launcher/ILauncher.h
+  Code/Launcher/Launcher.cpp
+  Code/Launcher/Launcher.h
+  Code/Launcher/Patch.cpp
+  Code/Launcher/Patch.h
+  Code/Library/CmdLine.cpp
+  Code/Library/CmdLine.h
+  Code/Library/CPU.cpp
+  Code/Library/CPU.h
+  Code/Library/DLL.h
+  Code/Library/Format.cpp
+  Code/Library/Format.h
+  Code/Library/WinAPI.cpp
+  Code/Library/WinAPI.h
+)
+endif()
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 
@@ -53,12 +79,14 @@ endif()
 add_executable(Crysis WIN32
   Code/Launcher/Game/Main.cpp
   Code/Launcher/Game/Resources.h
+  Resources/Launcher.manifest
   Resources/GameLauncher.rc
 )
 
 add_executable(CrysisWarsDedicatedServer WIN32
   Code/Launcher/DedicatedServer/Main.cpp
   Code/Launcher/DedicatedServer/Resources.h
+  Resources/Launcher.manifest
   Resources/DedicatedServerLauncher.rc
 )
 

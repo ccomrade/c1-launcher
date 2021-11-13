@@ -2,14 +2,12 @@
 
 #pragma once
 
-#include <cstddef>
+#include "ILog.h"
 
 struct I3DEngine;
 struct IAISystem;
 struct IAnimationGraphSystem;
-struct IBudgetingSystem;
 struct ICharacterManager;
-struct ICmdLine;
 struct IConsole;
 struct ICryFont;
 struct ICryPak;
@@ -18,14 +16,9 @@ struct IEntitySystem;
 struct IFlowSystem;
 struct IFrameProfileSystem;
 struct IGame;
-struct IGlobalTaskScheduler;
-struct IGPUPhysicsManager;
 struct IHardwareMouse;
 struct IInput;
-struct ILog;
-struct ILogCallback;
 struct IMaterialEffects;
-struct IMemoryManager;
 struct IMovieSystem;
 struct IMusicSystem;
 struct INameTable;
@@ -34,16 +27,10 @@ struct IPhysicalWorld;
 struct IRenderer;
 struct IScriptSystem;
 struct ISoundSystem;
-struct IStreamEngine;
 struct ISystem;
-struct ISystemEventDispatcher;
 struct ISystemUserCallback;
-struct IThreadTaskManager;
 struct ITimer;
 struct IValidator;
-struct SSystemGlobalEnvironment;
-
-using std::size_t;
 
 /**
  * @brief Reverse engineered CryEngine initialization parameters.
@@ -52,26 +39,65 @@ using std::size_t;
  */
 struct SSystemInitParams
 {
-	void *hInstance;                     //!< Executable handle.
-	void *hWnd;                          //!< Optional window handle.
-	ILog *pLog;                          //!< Optional custom log.
-	ILogCallback *pLogCallback;          //!< Optional log callback.
-	ISystemUserCallback *pUserCallback;  //!< Optional engine callback.
-	const char *logFileName;             //!< Name of the log file.
-	IValidator *pValidator;              //!< Optional custom validator.
+	void *hInstance;                     // Executable handle
+	void *hWnd;                          // Optional window handle
+	ILog *pLog;                          // Optional custom log
+	ILogCallback *pLogCallback;          // Optional log callback
+	ISystemUserCallback *pUserCallback;  // Optional engine callback
+	const char *logFileName;             // Name of the log file
+	IValidator *pValidator;              // Optional custom validator
 
-	char cmdLine[2048];                  //!< Application command line obtained with GetCommandLineA.
-	char userPath[256];                  //!< Optional custom user folder in %USERPROFILE%\Documents.
+	char cmdLine[2048];                  // Application command line obtained with GetCommandLineA
+	char userPath[256];                  // Optional custom user folder in "%USERPROFILE%/Documents"
 
-	bool isEditor;                       //!< Editor mode.
-	bool isMinimal;                      //!< Minimal mode.
-	bool isTesting;                      //!< Test mode.
-	bool isDedicatedServer;              //!< Dedicated server mode.
+	bool isEditor;                       // Editor mode
+	bool isMinimal;                      // Minimal mode
+	bool isTesting;                      // Test mode
+	bool isDedicatedServer;              // Dedicated server mode
 
-	ISystem *pSystem;                    //!< Initialized by IGameStartup::Init.
+	ISystem *pSystem;                    // Initialized by IGameStartup::Init
 
-	void *pCheckFunc;                    //!< Not used.
-	void *pProtectedFunctions[10];       //!< Not used.
+	void *pCheckFunc;                    // Not used
+	void *pProtectedFunctions[10];       // Not used
+};
+
+/**
+ * @brief Global environment.
+ */
+struct SSystemGlobalEnvironment
+{
+	ISystem               *pSystem;
+	IGame                 *pGame;
+	INetwork              *pNetwork;
+	IRenderer             *pRenderer;
+	IInput                *pInput;
+	ITimer                *pTimer;
+	IConsole              *pConsole;
+	IScriptSystem         *pScriptSystem;
+	I3DEngine             *p3DEngine;
+	ISoundSystem          *pSoundSystem;
+	IMusicSystem          *pMusicSystem;
+	IPhysicalWorld        *pPhysicalWorld;
+	IMovieSystem          *pMovieSystem;
+	IAISystem             *pAISystem;
+	IEntitySystem         *pEntitySystem;
+	ICryFont              *pCryFont;
+	ICryPak               *pCryPak;
+	ILog                  *pLog;
+	ICharacterManager     *pCharacterManager;
+	IFrameProfileSystem   *pFrameProfileSystem;
+	INameTable            *pNameTable;
+	IFlowSystem           *pFlowSystem;
+	IAnimationGraphSystem *pAnimationGraphSystem;
+	IDialogSystem         *pDialogSystem;
+	IHardwareMouse        *pHardwareMouse;
+	IMaterialEffects      *pMaterialEffects;
+
+	bool bClient;
+	bool bServer;
+	bool bMultiplayer;
+
+	// ...
 };
 
 /**
@@ -80,104 +106,67 @@ struct SSystemInitParams
  */
 struct ISystem
 {
-	struct ILoadingProgressListener
-	{
-		virtual void OnLoadingProgress(int steps) = 0;
-	};
-
 	virtual void Release() = 0;
 
 	virtual SSystemGlobalEnvironment *GetGlobalEnvironment() = 0;
-	virtual const char *GetRootFolder() const = 0;
-
-	virtual bool Update(int updateFlags = 0, int pauseMode = 0) = 0;
-
-	virtual void RenderBegin() = 0;
-	virtual void Render() = 0;
-	virtual void RenderEnd() = 0;
-	virtual void RenderStatistics() = 0;
-
-	virtual void *AllocMem(void *oldPtr, size_t newSize) = 0;
-	virtual unsigned int GetUsedMemory() = 0;
-
-	virtual const char *GetUserName() = 0;
-
-	virtual int GetCPUFlags() = 0;
-	virtual double GetSecondsPerCycle() = 0;
-
-	virtual void DumpMemoryUsageStatistics(bool useKB = false) = 0;
-
-	virtual void Quit() = 0;
-	virtual void Relaunch(bool relaunch) = 0;
-	virtual bool IsRelaunch() const = 0;
-	virtual void SerializingFile(int mode) = 0;
-	virtual int IsSerializingFile() const = 0;
-	virtual bool IsQuitting() = 0;
-
-	virtual void Error(const char *format, ...) = 0;
-	virtual void Warning(int module, int severity, int flags, const char *file, const char *format, ...) = 0;
-
-	virtual bool CheckLogVerbosity(int verbosity) = 0;
-
-	virtual bool IsDedicated() = 0;
-	virtual bool IsEditor() = 0;
-	virtual bool IsEditorMode() = 0;
-
-	virtual IConsole *GetIConsole() = 0;
-	virtual IScriptSystem *GetIScriptSystem() = 0;
-	virtual I3DEngine *GetI3DEngine() = 0;
-	virtual ISoundSystem *GetISoundSystem() = 0;
-	virtual IMusicSystem *GetIMusicSystem() = 0;
-	virtual IPhysicalWorld *GetIPhysicalWorld() = 0;
-	virtual IMovieSystem *GetIMovieSystem() = 0;
-	virtual IAISystem *GetAISystem() = 0;
-	virtual IMemoryManager *GetIMemoryManager() = 0;
-	virtual IEntitySystem *GetIEntitySystem() = 0;
-	virtual ICryFont *GetICryFont()	= 0;
-	virtual ICryPak *GetIPak() = 0;
-	virtual ILog *GetILog() = 0;
-	virtual ICmdLine *GetICmdLine() = 0;
-	virtual IStreamEngine *GetStreamEngine() = 0;
-	virtual ICharacterManager *GetIAnimationSystem() = 0;
-	virtual IValidator *GetIValidator() = 0;
-	virtual IFrameProfileSystem *GetIProfileSystem() = 0;
-	virtual INameTable *GetINameTable() = 0;
-	virtual IBudgetingSystem *GetIBudgetingSystem() = 0;
-	virtual IFlowSystem *GetIFlowSystem() = 0;
-	virtual IAnimationGraphSystem *GetIAnimationGraphSystem() = 0;
-	virtual IDialogSystem *GetIDialogSystem() = 0;
-	virtual IHardwareMouse *GetIHardwareMouse() = 0;
-	virtual ISystemEventDispatcher *GetISystemEventDispatcher() = 0;
-	virtual IGlobalTaskScheduler *GetIGlobalTaskScheduler() = 0;
-	virtual IThreadTaskManager *GetIThreadTaskManager() = 0;
-	virtual IGame *GetIGame() = 0;
-	virtual INetwork *GetINetwork() = 0;
-	virtual IRenderer *GetIRenderer() = 0;
-	virtual IInput *GetIInput() = 0;
-	virtual ITimer *GetITimer() = 0;
-
-	virtual IGPUPhysicsManager *GetIGPUPhysicsManager() = 0;
-
-	virtual void SetLoadingProgressListener(ILoadingProgressListener *pListener) = 0;
-	virtual ILoadingProgressListener *GetLoadingProgressListener() const = 0;
-
-	virtual void SetIGame(IGame *pGame) = 0;
-	virtual void SetIFlowSystem(IFlowSystem *pFlowSystem) = 0;
-	virtual void SetIAnimationGraphSystem(IAnimationGraphSystem *pAnimationGraphSystem) = 0;
-	virtual void SetIDialogSystem(IDialogSystem *pDialogSystem) = 0;
-	virtual void SetIMaterialEffects(IMaterialEffects *pMaterialEffects) = 0;
-
-	virtual void ChangeUserPath(const char *userPath) = 0;
-
-	virtual void DebugStats(bool checkpoint, bool leaks) = 0;
-	virtual void DumpWinHeaps() = 0;
-	virtual int DumpMMStats(bool log) = 0;
-
-	virtual void SetForceNonDevMode(bool bValue) = 0;
-	virtual bool GetForceNonDevMode() const = 0;
-	virtual bool WasInDevMode() const = 0;
-	virtual bool IsDevMode() const = 0;
-	virtual bool IsMODValid(const char *modName) const = 0;
 
 	// ...
 };
+
+extern SSystemGlobalEnvironment *gEnv;
+
+inline void CryLog(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eMessage, format, args);
+	va_end(args);
+}
+
+inline void CryLogWarning(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eWarning, format, args);
+	va_end(args);
+}
+
+inline void CryLogError(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eError, format, args);
+	va_end(args);
+}
+
+inline void CryLogAlways(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eAlways, format, args);
+	va_end(args);
+}
+
+inline void CryLogWarningAlways(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eWarningAlways, format, args);
+	va_end(args);
+}
+
+inline void CryLogErrorAlways(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eErrorAlways, format, args);
+	va_end(args);
+}
+
+inline void CryLogComment(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	gEnv->pLog->LogV(ILog::eComment, format, args);
+	va_end(args);
+}

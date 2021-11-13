@@ -6,36 +6,77 @@
 #pragma once
 
 #include "CryCommon/ISystem.h"
+#include "CryCommon/IGameStartup.h"
+#include "Library/DLL.h"
 
-struct DLL;
+struct IGameStartup;
 
 class Launcher
 {
 	SSystemInitParams m_params;
 
-	bool initCmdLine();
-	void logInfo(const char *format, ...);
+	int m_exitCode;
+	int m_gameBuild;
+
+	DLL m_CryGame;
+	DLL m_CryAction;
+	DLL m_CryNetwork;
+	DLL m_CrySystem;
+	DLL m_CryRenderD3D10;
+
+	IGameStartup *m_pGameStartup;
+
+	void SetCmdLine();
+
+	void LoadEngine();
+	void PatchEngine();
+
+	void PatchEngine_CryGame();
+	void PatchEngine_CryAction();
+	void PatchEngine_CryNetwork();
+	void PatchEngine_CrySystem();
+	void PatchEngine_CryRenderD3D10();
+
+	void StartEngine();
+	void UpdateLoop();
+	void ShutdownEngine();
 
 public:
 	Launcher()
-	: m_params()
+	: m_params(),
+	  m_exitCode(0),
+	  m_gameBuild(0),
+	  m_pGameStartup(NULL)
 	{
 	}
 
-	void setAppInstance(void *hInstance)
+	~Launcher()
+	{
+		if (m_pGameStartup)
+		{
+			ShutdownEngine();
+		}
+	}
+
+	void SetAppInstance(void *hInstance)
 	{
 		m_params.hInstance = hInstance;
 	}
 
-	void setLogFileName(const char *logFileName)
+	void SetLogFileName(const char *logFileName)
 	{
 		m_params.logFileName = logFileName;
 	}
 
-	void setDedicatedServer(bool isDedicatedServer)
+	void SetDedicatedServer(bool isDedicatedServer)
 	{
 		m_params.isDedicatedServer = isDedicatedServer;
 	}
 
-	bool run(const DLL & libCryGame);
+	void Run();
+
+	int GetExitCode() const
+	{
+		return m_exitCode;
+	}
 };

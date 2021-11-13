@@ -1,5 +1,11 @@
-Build/
+.vs/
+out/
+[Bb]uild*/
+
 build.sh
+build.bat
 x86/**
 x64/**
 *.aps
+
+CMakeSettings.json

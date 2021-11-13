@@ -1,34 +1,48 @@
 /**
  * @file
- * @brief Functions for patching Crysis code.
+ * @brief Runtime patching of Crysis code.
  */
 
 #pragma once
 
 namespace Patch
 {
-	// CryAction
-	bool AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameVersion);
+	namespace CryAction
+	{
+		void AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBuild);
+	}
 
-	// CryGame
-	bool DisableIntros(void *pCryGame, int gameVersion);
-	bool CanJoinDX10Servers(void *pCryGame, int gameVersion);
-	bool EnableDX10Menu(void *pCryGame, int gameVersion);
-	bool DisableAutoexec(void *pCryGame, int gameVersion);
+	namespace CryGame
+	{
+		void CanJoinDX10Servers(void *pCryGame, int gameBuild);
+		void DisableAutoexec(void *pCryGame, int gameBuild);
+		void DisableIntros(void *pCryGame, int gameBuild);
+		void EnableDX10Menu(void *pCryGame, int gameBuild);
+	}
 
-	// CryNetwork
-	bool PatchServerProfiler(void *pCryNetwork, int gameVersion);
-	bool EnablePreordered(void *pCryNetwork, int gameVersion);
-	bool AllowSameCDKeys(void *pCryNetwork, int gameVersion);
-	bool PatchGamespy(void* pCryNetwork, int gameVersion);
-	bool PatchSpamCWaitForEnabled(void* pCryNetwork, int gameVersion);
-	bool PatchSpamSvRequestStopFire(void* pCryNetwork, int gameVersion);
+	namespace CryNetwork
+	{
+		void AllowSameCDKeys(void *pCryNetwork, int gameBuild);
+		void EnablePreordered(void *pCryNetwork, int gameBuild);
+		void FixInternetConnect(void *pCryNetwork, int gameBuild);
+		void PatchGamespy(void *pCryNetwork, int gameBuild);
+		void PatchServerProfiler(void *pCryNetwork, int gameBuild);
+		void PatchSpamCWaitForEnabled(void *pCryNetwork, int gameBuild);
+		void PatchSpamSvRequestStopFire(void *pCryNetwork, int gameBuild);
+	}
 
-	// CrySystem
-	bool EnableFPSCap(void *pCrySystem, int gameVersion, void *pWait);
-	bool RemoveSecuROM(void *pCrySystem, int gameVersion);
-	bool AllowDX9VeryHighSpec(void *pCrySystem, int gameVersion);
-	bool AllowMultipleInstances(void *pCrySystem, int gameVersion);
-	bool UnhandledExceptions(void *pCrySystem, int gameVersion);
-	bool Disable3DNow(void *pCrySystem, int gameVersion);
+	namespace CrySystem
+	{
+		void AllowDX9VeryHighSpec(void *pCrySystem, int gameBuild);
+		void AllowMultipleInstances(void *pCrySystem, int gameBuild);
+		void Disable3DNow(void *pCrySystem, int gameBuild);
+		void EnableFPSCap(void *pCrySystem, int gameBuild, void *pWait);
+		void RemoveSecuROM(void *pCrySystem, int gameBuild);
+		void UnhandledExceptions(void *pCrySystem, int gameBuild);
+	}
+
+	namespace CryRenderD3D10
+	{
+		void FixLowRefreshRateBug(void *pCryRenderD3D10, int gameBuild);
+	}
 }
