@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 #################################################
-project(CW-Launcher VERSION 2.9 LANGUAGES CXX RC)
+project(CW-Launcher VERSION 2.10 LANGUAGES CXX RC)
 #################################################
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)

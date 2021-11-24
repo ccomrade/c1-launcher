@@ -816,36 +816,59 @@ void Patch::CryNetwork::PatchGamespy(void *pCryNetwork, int gameBuild)
 	//The replacement must match length of "gamespy.com"
 	std::string replacement = "g.jedi95.us";
 
-	unsigned int targets[] = {
-#ifdef BUILD_64BIT
-		0x1AA765, 0x1AB840, 0x1AB858, 0x1AB870,
-		0x1ABBD0, 0x1ABEFA, 0x1AC879, 0x1ADF0F,
-		0x1AE67C, 0x1AE6FC, 0x1AEBB6, 0x1AEFB7,
-		0x1EA315, 0x1EA465, 0x1EA51A
-#else
-		0xC5595, 0xC6558, 0xC656C, 0xC6580,
-		0xC68A8, 0xC68E6, 0xC730D, 0xC887F,
-		0xC8F0C, 0xC8F74, 0xC93B6, 0xC968F,
-		0xD05B2, 0xD0645, 0xD078D
-#endif
-	};
-
 	switch (gameBuild)
 	{
 	case 5767:
 	case 5879:
 	case 6115:
+	{
+		//Only Crysis 1.21 is supported
+		break;
+	}
 	case 6156:
+	{
+		unsigned int targets[] = {
+#ifdef BUILD_64BIT
+			0x1A8755, 0x1A9830, 0x1A9848, 0x1A9860,
+			0x1A9BC0, 0x1A9EEA, 0x1AA869, 0x1ABEFF,
+			0x1AC66C, 0x1AC6EC, 0x1ACB96, 0x1ACF97,
+			0x1E7315, 0x1E7465, 0x1E751A
+#else
+			0xC4599, 0xC5560, 0xC5574, 0xC5588,
+			0xC58B0, 0xC58EE, 0xC6315, 0xC7887,
+			0xC7F14, 0xC7F7C, 0xC83AE, 0xC8687,
+			0xCF5CA, 0xCF63D, 0xCF785
+#endif
+		};
+		for (int i = 0; i < 15; i++) {
+			FillMem(pCryNetwork, targets[i], replacement.c_str(), 11);
+		}
+		break;
+	}
+	case 6527:
 	case 6566:
 	case 6586:
 	case 6627:
 	case 6670:
 	{
-		//Crysis 1 and old Crysis Wars not supported
+		//Only Crysis Wars 1.5 is supported
 		break;
 	}
 	case 6729:
 	{
+		unsigned int targets[] = {
+#ifdef BUILD_64BIT
+			0x1AA765, 0x1AB840, 0x1AB858, 0x1AB870,
+			0x1ABBD0, 0x1ABEFA, 0x1AC879, 0x1ADF0F,
+			0x1AE67C, 0x1AE6FC, 0x1AEBB6, 0x1AEFB7,
+			0x1EA315, 0x1EA465, 0x1EA51A
+#else
+			0xC5595, 0xC6558, 0xC656C, 0xC6580,
+			0xC68A8, 0xC68E6, 0xC730D, 0xC887F,
+			0xC8F0C, 0xC8F74, 0xC93B6, 0xC968F,
+			0xD05B2, 0xD0645, 0xD078D
+#endif
+		};
 		for (int i = 0; i < 15; i++) {
 			FillMem(pCryNetwork, targets[i], replacement.c_str(), 11);
 		}
@@ -916,8 +939,10 @@ void Patch::CryNetwork::PatchSpamCWaitForEnabled(void *pCryNetwork, int gameBuil
 		case 6586:
 		case 6627:
 		case 6670:
+		{
 			//Only Crysis Wars 1.5 is supported
 			break;
+		}
 		case 6729:
 		{
 #ifdef BUILD_64BIT
@@ -946,8 +971,10 @@ void Patch::CryNetwork::PatchSpamSvRequestStopFire(void *pCryNetwork, int gameBu
 		case 6586:
 		case 6627:
 		case 6670:
+		{
 			//Only Crysis Wars 1.5 is supported
 			break;
+		}
 		case 6729:
 		{
 #ifdef BUILD_64BIT
@@ -1286,9 +1313,30 @@ void Patch::CrySystem::EnableFPSCap(void *pCrySystem, int gameBuild, void *pWait
 	case 5767:
 	case 5879:
 	case 6115:
+	{
+		//Older builds of Crysis 1 are not supported.
+		break;
+	}
 	case 6156:
 	{
-		//Crysis 1 not supported yet
+#ifdef BUILD_64BIT
+		FillMem(pCrySystem, 0x360E2, code, sizeof code);
+		FillMem(pCrySystem, 0x360E4, &pWait, sizeof pWait);
+		FillNOP(pCrySystem, 0x46864, 0x4);
+#else
+		FillMem(pCrySystem, 0x4C4A3, code, sizeof code);
+		FillMem(pCrySystem, 0x4C4A4, &pWait, sizeof pWait);
+		FillNOP(pCrySystem, 0x59E3F, 0x4);
+#endif
+		break;
+	}
+	case 6527:
+	case 6566:
+	case 6586:
+	case 6627:
+	case 6670:
+	{
+		//Older builds of Crysis Wars are not supported.
 		break;
 	}
 	case 6729:

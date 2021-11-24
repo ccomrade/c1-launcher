@@ -63,7 +63,14 @@ public:
 		return maxFps;
 	}
 	void SetFPSCap(int fps) {
-		maxFps = fps;
+		if (fps < 0)
+		{
+			maxFps = 0;
+		}
+		else
+		{
+			maxFps = fps;
+		}
 	}
 };
 
@@ -78,14 +85,11 @@ void WaitIfNeeded() {
 	}
 }
 
-#define DLL_EXPORT __declspec(dllexport)
-
 LauncherAPI *LauncherAPI::s_pInstance = NULL;
 
-// request discrete graphics card
 extern "C"
 {
-	DLL_EXPORT ILauncher *GetILauncher()
+	__declspec(dllexport) ILauncher *GetILauncher()
 	{
 		return LauncherAPI::Get();
 	}
@@ -189,10 +193,9 @@ void Launcher::PatchEngine()
 
 void Launcher::PatchEngine_CryGame()
 {
+	void *pCryGame = m_CryGame.GetHandle();
 	if (!m_params.isDedicatedServer)
 	{
-		void *pCryGame = m_CryGame.GetHandle();
-
 		Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
 		Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
 
@@ -200,6 +203,10 @@ void Launcher::PatchEngine_CryGame()
 		{
 			Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
 		}
+	}
+	else
+	{
+		Patch::CryGame::DisableAutoexec(pCryGame, m_gameBuild);
 	}
 }
 
@@ -288,7 +295,6 @@ void Launcher::StartEngine()
 		long long int* pValue = (long long int *)(*pTimer + 0x18);
 #endif
 		*pValue = 3000000000000;
-		CryLogAlways("Warping lag fix applied!");
 	}
 }
 
