@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Fixed
+- CryRenderD3D10 DLL is not being loaded anymore in DX9 mode.
 
 ## [2.7] - 2021-11-09
 ### Added
