@@ -44,6 +44,7 @@ namespace WinAPI
 	///////////////
 
 	int GetCrysisGameBuild(void *pDLL);
+	bool IsVistaOrLater();
 
 	///////////
 	// Hacks //

@@ -178,7 +178,10 @@ void Launcher::LoadEngine()
 	if (!m_params.isDedicatedServer)
 	{
 		m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
-		m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
+		if (WinAPI::IsVistaOrLater() && !CmdLine::HasArg("-dx9"))
+		{
+			m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
+		}
 	}
 }
 
@@ -256,7 +259,7 @@ void Launcher::PatchEngine_CrySystem()
 
 void Launcher::PatchEngine_CryRenderD3D10()
 {
-	if (!m_params.isDedicatedServer)
+	if (m_CryRenderD3D10.IsLoaded())
 	{
 		void *pCryRenderD3D10 = m_CryRenderD3D10.GetHandle();
 
