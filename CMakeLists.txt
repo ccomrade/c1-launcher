@@ -9,8 +9,15 @@ if(NOT MSVC)
 endif()
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
-	# use statically linked MSVC runtime library
-	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	# detect VS2005 compiler
+	# all original Crysis DLLs use dynamically linked MSVC runtime library from VS2005
+	if(MSVC_VERSION EQUAL 1400)
+		# use dynamically linked MSVC runtime library to reduce size of the resulting executables
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+	else()
+		# use statically linked MSVC runtime library to avoid any unwanted DLL dependencies
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	endif()
 endif()
 
 # prevent modern MSVC from enabling ASLR and unlock memory above 2 GB
