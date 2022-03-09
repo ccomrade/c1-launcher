@@ -103,7 +103,7 @@ void Launcher::LoadEngine()
 	{
 		m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
 
-		if (!CmdLine::HasArg("-dx9"))
+		if (!CmdLine::HasArg("-dx9") && (CmdLine::HasArg("-dx10") || WinAPI::IsVistaOrLater()))
 		{
 			m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
 		}

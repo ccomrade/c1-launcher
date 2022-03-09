@@ -119,6 +119,15 @@ int WinAPI::GetCrysisGameBuild(void *pDLL)
 	return LOWORD(pFileInfo->dwFileVersionLS);
 }
 
+bool WinAPI::IsVistaOrLater()
+{
+	OSVERSIONINFOW info = {};
+	info.dwOSVersionInfoSize = sizeof info;
+	GetVersionExW(&info);
+
+	return info.dwMajorVersion >= 6;
+}
+
 ///////////
 // Hacks //
 ///////////
