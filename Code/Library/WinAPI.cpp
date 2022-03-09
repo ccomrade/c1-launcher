@@ -32,7 +32,7 @@ std::string WinAPI::GetErrorCodeDescription(int code)
 	return std::string(buffer, length);
 }
 
-std::runtime_error WinAPI::MakeError(const char *format, ...)
+std::runtime_error WinAPI::CurrentError(const char *format, ...)
 {
 	const int code = CurrentErrorCode();
 	const std::string description = GetErrorCodeDescription(code);

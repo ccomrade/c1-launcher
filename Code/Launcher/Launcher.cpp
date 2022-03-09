@@ -60,7 +60,7 @@ void Launcher::LoadEngine()
 	m_gameBuild = WinAPI::GetCrysisGameBuild(m_CrySystem.GetHandle());
 	if (m_gameBuild < 0)
 	{
-		throw WinAPI::MakeError("Failed to get the game version!");
+		throw WinAPI::CurrentError("Failed to get the game version!");
 	}
 
 	switch (m_gameBuild)

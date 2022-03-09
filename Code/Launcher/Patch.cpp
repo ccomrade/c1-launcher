@@ -15,7 +15,7 @@ namespace
 
 		if (WinAPI::FillNOP(address, count) < 0)
 		{
-			throw WinAPI::MakeError("Failed to apply memory patch at offset 0x%X!", offset);
+			throw WinAPI::CurrentError("Failed to apply memory patch at offset 0x%X!", offset);
 		}
 	}
 
@@ -25,7 +25,7 @@ namespace
 
 		if (WinAPI::FillMem(address, data, length) < 0)
 		{
-			throw WinAPI::MakeError("Failed to apply memory patch at offset 0x%X!", offset);
+			throw WinAPI::CurrentError("Failed to apply memory patch at offset 0x%X!", offset);
 		}
 	}
 }

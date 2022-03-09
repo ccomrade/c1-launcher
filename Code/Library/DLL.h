@@ -59,7 +59,7 @@ public:
 	{
 		if (!TryLoad(name, flags))
 		{
-			throw WinAPI::MakeError("Failed to load %s", name);
+			throw WinAPI::CurrentError("Failed to load %s", name);
 		}
 	}
 

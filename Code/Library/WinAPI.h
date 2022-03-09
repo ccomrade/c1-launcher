@@ -21,8 +21,7 @@ namespace WinAPI
 
 	std::string GetErrorCodeDescription(int code);
 
-	// adds the current error code and its description
-	std::runtime_error MakeError(const char *format, ...);
+	std::runtime_error CurrentError(const char *format, ...);
 
 	/////////////
 	// Modules //
