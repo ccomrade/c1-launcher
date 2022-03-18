@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Fixed
-- CryRenderD3D10 DLL is not being loaded anymore in DX9 mode.
+- CryRenderD3D10 DLL is not being loaded in DX9 mode anymore.
 - Static linking of MSVC runtime library is automatically disabled when VS2005 compiler is used.
 
 ## [2.7] - 2021-11-09

@@ -5,7 +5,6 @@ It provides a better game launcher and dedicated server launcher with additional
 
 ## Features
 
-- Full source code is available.
 - Supports all game versions in one executable.
 - Completely DRM-free launcher.
 - No compatibility mode is required to make the game work on modern systems.
@@ -18,7 +17,7 @@ It provides a better game launcher and dedicated server launcher with additional
 - It is possible to run multiple Crysis instances at once.
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
-- The `connect [IP] [PORT]` console command now works without a GameSpy account.
+- The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
 
 ## Supported game versions
@@ -116,7 +115,7 @@ No, it doesn't.
 
 ### Does this launcher support Crysis Warhead?
 
-No, it doesn't. The reason is that CryGame and CryAction DLLs have been moved into the EXE in Crysis Warhead.
+No, it doesn't. The reason is that CryGame and CryAction DLLs are integrated into the EXE in Crysis Warhead.
 
 ### Why does the Bin64 folder contain 2 executables?
 
