@@ -77,3 +77,28 @@ add_executable(CrysisDedicatedServer WIN32
 
 target_link_libraries(Crysis LauncherBase)
 target_link_libraries(CrysisDedicatedServer LauncherBase)
+
+set(GAME_LAUNCHER_RESOURCES
+  ${PROJECT_SOURCE_DIR}/Resources/CursorAmber.cur
+  ${PROJECT_SOURCE_DIR}/Resources/CursorBlue.cur
+  ${PROJECT_SOURCE_DIR}/Resources/CursorGreen.cur
+  ${PROJECT_SOURCE_DIR}/Resources/CursorRed.cur
+  ${PROJECT_SOURCE_DIR}/Resources/CursorWhite.cur
+  ${PROJECT_SOURCE_DIR}/Resources/GameIcon.ico
+)
+
+set(DEDICATED_SERVER_LAUNCHER_RESOURCES
+  ${PROJECT_SOURCE_DIR}/Resources/DedicatedServerIcon.ico
+)
+
+set_source_files_properties(
+  Resources/GameLauncher.rc
+PROPERTIES
+  OBJECT_DEPENDS "${GAME_LAUNCHER_RESOURCES}"
+)
+
+set_source_files_properties(
+  Resources/DedicatedServerLauncher.rc
+PROPERTIES
+  OBJECT_DEPENDS "${DEDICATED_SERVER_LAUNCHER_RESOURCES}"
+)
