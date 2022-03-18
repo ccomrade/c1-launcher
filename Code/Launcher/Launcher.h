@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "CryCommon/ISystem.h"
-#include "CryCommon/IGameStartup.h"
+#include "CryCommon/CrySystem/ISystem.h"
+#include "CryCommon/CryGame/IGameStartup.h"
 #include "Library/DLL.h"
 
 struct IGameStartup;

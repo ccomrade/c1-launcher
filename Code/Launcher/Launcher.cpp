@@ -14,7 +14,7 @@
 
 #include "config.h"
 
-// CryCommon/ISystem.h
+// CryCommon/CrySystem/ISystem.h
 SSystemGlobalEnvironment *gEnv;
 
 void Launcher::Run()

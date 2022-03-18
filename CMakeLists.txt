@@ -34,10 +34,10 @@ endif()
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
 add_library(LauncherBase STATIC
-  Code/CryCommon/IGameRef.h
-  Code/CryCommon/IGameStartup.h
-  Code/CryCommon/ILog.h
-  Code/CryCommon/ISystem.h
+  Code/CryCommon/CryGame/IGameRef.h
+  Code/CryCommon/CryGame/IGameStartup.h
+  Code/CryCommon/CrySystem/ILog.h
+  Code/CryCommon/CrySystem/ISystem.h
   Code/Launcher/CrashLogger.cpp
   Code/Launcher/CrashLogger.h
   Code/Launcher/Launcher.cpp
