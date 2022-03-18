@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
-#################################################
+################################################################################
+
 project(C1-Launcher VERSION 2.7 LANGUAGES CXX RC)
-#################################################
+
+################################################################################
 
 if(NOT MSVC)
 	message(FATAL_ERROR "MSVC is the only supported compiler!")
@@ -10,8 +12,8 @@ endif()
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
 	# detect VS2005 compiler
-	# all original Crysis DLLs use dynamically linked MSVC runtime library from VS2005
 	if(MSVC_VERSION EQUAL 1400)
+		# all original Crysis DLLs are dynamically linked to MSVC runtime library from VS2005
 		# use dynamically linked MSVC runtime library to reduce size of the resulting executables
 		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 	else()
@@ -23,6 +25,8 @@ endif()
 # prevent modern MSVC from enabling ASLR and unlock memory above 2 GB
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO /LARGEADDRESSAWARE")
 
+################################################################################
+
 # detect 64-bit compiler
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(BUILD_64BIT TRUE)
@@ -31,7 +35,11 @@ else()
 	message(STATUS "32-bit build")
 endif()
 
+################################################################################
+
 configure_file(Config.h.in ${PROJECT_BINARY_DIR}/Config.h)
+
+################################################################################
 
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h
@@ -61,6 +69,8 @@ if(BUILD_64BIT)
 	target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
 endif()
 
+################################################################################
+
 add_executable(Crysis WIN32
   Code/Launcher/Game/Main.cpp
   Code/Launcher/Game/Resources.h
@@ -77,6 +87,8 @@ add_executable(CrysisDedicatedServer WIN32
 
 target_link_libraries(Crysis LauncherBase)
 target_link_libraries(CrysisDedicatedServer LauncherBase)
+
+################################################################################
 
 set(GAME_LAUNCHER_RESOURCES
   ${PROJECT_SOURCE_DIR}/Resources/CursorAmber.cur
@@ -102,3 +114,5 @@ set_source_files_properties(
 PROPERTIES
   OBJECT_DEPENDS "${DEDICATED_SERVER_LAUNCHER_RESOURCES}"
 )
+
+################################################################################
