@@ -31,7 +31,7 @@ else()
 	message(STATUS "32-bit build")
 endif()
 
-configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
+configure_file(Config.h.in ${PROJECT_BINARY_DIR}/Config.h)
 
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h

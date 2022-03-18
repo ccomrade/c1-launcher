@@ -3,7 +3,7 @@
 #include <winver.h>
 
 #include "Launcher/DedicatedServer/Resources.h"
-#include "config.h"
+#include "Config.h"
 
 RESOURCE_ICON ICON "DedicatedServerIcon.ico"
 

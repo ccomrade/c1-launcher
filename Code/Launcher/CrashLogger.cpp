@@ -16,7 +16,7 @@
 
 #include "CrashLogger.h"
 
-#include "config.h"
+#include "Config.h"
 
 class Log
 {

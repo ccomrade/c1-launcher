@@ -12,7 +12,7 @@
 #include "CrashLogger.h"
 #include "Patch.h"
 
-#include "config.h"
+#include "Config.h"
 
 // CryCommon/CrySystem/ISystem.h
 SSystemGlobalEnvironment *gEnv;
