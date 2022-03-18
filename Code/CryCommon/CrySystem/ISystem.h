@@ -91,12 +91,8 @@ struct SSystemGlobalEnvironment
 	IAnimationGraphSystem *pAnimationGraphSystem;
 	IDialogSystem         *pDialogSystem;
 	IHardwareMouse        *pHardwareMouse;
-	IMaterialEffects      *pMaterialEffects;
-
-	bool bClient;
-	bool bServer;
-	bool bMultiplayer;
-
+	// everything is the same in Crysis and Crysis Wars up to here
+	// the following stuff cannot be used because we support both Crysis and Crysis Wars
 	// ...
 };
 
