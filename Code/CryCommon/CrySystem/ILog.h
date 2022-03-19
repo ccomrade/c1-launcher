@@ -31,14 +31,14 @@ struct ILog
 	{
 	}
 
+	virtual void Log(const char *format, ...) = 0;
+	virtual void LogWarning(const char *format, ...) = 0;
+	virtual void LogError(const char *format, ...) = 0;
+
 	virtual void Release() = 0;
 
 	virtual bool SetFileName(const char *filename) = 0;
 	virtual const char *GetFileName() = 0;
-
-	virtual void Log(const char *format, ...) = 0;
-	virtual void LogWarning(const char *format, ...) = 0;
-	virtual void LogError(const char *format, ...) = 0;
 
 	virtual void LogPlus(const char *format, ...) = 0;
 	virtual void LogToFile(const char *format, ...) = 0;
