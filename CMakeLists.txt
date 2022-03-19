@@ -37,7 +37,7 @@ endif()
 
 ################################################################################
 
-configure_file(Config.h.in ${PROJECT_BINARY_DIR}/Config.h)
+configure_file(Version.h.in ${PROJECT_BINARY_DIR}/Version.h)
 
 ################################################################################
 

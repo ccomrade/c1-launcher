@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Build configuration.
+ * @brief Project version.
  * This file is processed by CMake.
  */
 
