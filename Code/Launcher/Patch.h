@@ -1,8 +1,3 @@
-/**
- * @file
- * @brief Runtime patching of Crysis code.
- */
-
 #pragma once
 
 namespace Patch
@@ -10,6 +5,7 @@ namespace Patch
 	namespace CryAction
 	{
 		void AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBuild);
+		void DisableGameplayStats(void *pCryAction, int gameBuild);
 	}
 
 	namespace CryGame
@@ -24,6 +20,7 @@ namespace Patch
 		void EnablePreordered(void *pCryNetwork, int gameBuild);
 		void AllowSameCDKeys(void *pCryNetwork, int gameBuild);
 		void FixInternetConnect(void *pCryNetwork, int gameBuild);
+		void DisableServerProfile(void *pCryNetwork, int gameBuild);
 	}
 
 	namespace CrySystem
@@ -38,5 +35,10 @@ namespace Patch
 	namespace CryRenderD3D10
 	{
 		void FixLowRefreshRateBug(void *pCryRenderD3D10, int gameBuild);
+	}
+
+	namespace CryRenderNULL
+	{
+		void DisableDebugRenderer(void *pCryRenderNULL, int gameBuild);
 	}
 }

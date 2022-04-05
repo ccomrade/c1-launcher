@@ -8,9 +8,43 @@
 // Command line //
 //////////////////
 
-const char *WinAPI::CommandLine()
+const char* WinAPI::GetCmdLine()
 {
 	return GetCommandLineA();
+}
+
+const char* WinAPI::GetCmdLineArgsOnly()
+{
+	const char* args = GetCmdLine();
+
+	char separator = ' ';
+
+	if (*args == '"')
+	{
+		separator = '"';
+		args++;
+	}
+	else if (*args == '\'')
+	{
+		separator = '\'';
+		args++;
+	}
+
+	for (; *args; args++)
+	{
+		if (*args == separator)
+		{
+			args++;
+			break;
+		}
+	}
+
+	while (*args == ' ')
+	{
+		args++;
+	}
+
+	return args;
 }
 
 ////////////
@@ -51,24 +85,47 @@ std::runtime_error WinAPI::CurrentError(const char *format, ...)
 // Modules //
 /////////////
 
-void *WinAPI::DLL_Get(const char *name)
+void* WinAPI::Module::Get(const char* moduleName)
 {
-	return GetModuleHandleA(name);
+	return GetModuleHandleA(moduleName);
 }
 
-void *WinAPI::DLL_Load(const char *name)
+void* WinAPI::Module::Load(const char* moduleName)
 {
-	return LoadLibraryA(name);
+	return LoadLibraryA(moduleName);
 }
 
-void *WinAPI::DLL_GetSymbol(void *pDLL, const char *name)
+void WinAPI::Module::Unload(void* pModule)
 {
-	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pDLL), name));
+	FreeLibrary(static_cast<HMODULE>(pModule));
 }
 
-void WinAPI::DLL_Unload(void *pDLL)
+void* WinAPI::Module::FindSymbol(void* pModule, const char* symbolName)
 {
-	FreeLibrary(static_cast<HMODULE>(pDLL));
+	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pModule), symbolName));
+}
+
+std::string WinAPI::Module::GetPath(void* pModule)
+{
+	char buffer[512];
+	const DWORD length = GetModuleFileNameA(static_cast<HMODULE>(pModule), buffer, sizeof buffer);
+	if (length == 0)
+	{
+		// some error occurred
+		return std::string();
+	}
+	else if (length >= sizeof buffer)
+	{
+		// the buffer is too small
+		// WinXP doesn't set the last error
+		SetLastError(ERROR_INSUFFICIENT_BUFFER);
+		return std::string();
+	}
+	else
+	{
+		// success
+		return std::string(buffer, length);
+	}
 }
 
 /////////////////
@@ -141,6 +198,7 @@ bool WinAPI::IsVistaOrLater()
 int WinAPI::FillNOP(void *address, std::size_t length)
 {
 	DWORD oldProtection = 0;
+
 	if (!VirtualProtect(address, length, PAGE_EXECUTE_READWRITE, &oldProtection))
 		return -1;
 
@@ -164,6 +222,7 @@ int WinAPI::FillNOP(void *address, std::size_t length)
 int WinAPI::FillMem(void *address, const void *data, std::size_t length)
 {
 	DWORD oldProtection = 0;
+
 	if (!VirtualProtect(address, length, PAGE_EXECUTE_READWRITE, &oldProtection))
 		return -1;
 
@@ -173,4 +232,384 @@ int WinAPI::FillMem(void *address, const void *data, std::size_t length)
 		return -1;
 
 	return 0;
+}
+
+/////////////
+// Threads //
+/////////////
+
+unsigned long WinAPI::GetCurrentThreadID()
+{
+	return GetCurrentThreadId();
+}
+
+void* WinAPI::CriticalSection::Create()
+{
+	CRITICAL_SECTION* pCriticalSection = new CRITICAL_SECTION;
+	InitializeCriticalSection(pCriticalSection);
+	return pCriticalSection;
+}
+
+void WinAPI::CriticalSection::Enter(void* pCriticalSection)
+{
+	EnterCriticalSection(static_cast<CRITICAL_SECTION*>(pCriticalSection));
+}
+
+void WinAPI::CriticalSection::Leave(void* pCriticalSection)
+{
+	LeaveCriticalSection(static_cast<CRITICAL_SECTION*>(pCriticalSection));
+}
+
+void WinAPI::CriticalSection::Destroy(void* pCriticalSection)
+{
+	DeleteCriticalSection(static_cast<CRITICAL_SECTION*>(pCriticalSection));
+	delete static_cast<CRITICAL_SECTION*>(pCriticalSection);
+}
+
+///////////
+// Files //
+///////////
+
+namespace
+{
+	DWORD ToNativeFileAccessMode(FileBase::Access access)
+	{
+		switch (access)
+		{
+			case FileBase::READ_ONLY:
+			{
+				return GENERIC_READ;
+			}
+			case FileBase::WRITE_ONLY:
+			case FileBase::WRITE_ONLY_CREATE:
+			{
+				return GENERIC_WRITE;
+			}
+			case FileBase::READ_WRITE:
+			case FileBase::READ_WRITE_CREATE:
+			{
+				return GENERIC_READ | GENERIC_WRITE;
+			}
+		}
+
+		return 0;
+	}
+
+	DWORD ToNativeFileCreationDisposition(FileBase::Access access)
+	{
+		switch (access)
+		{
+			case FileBase::READ_ONLY:
+			case FileBase::WRITE_ONLY:
+			case FileBase::READ_WRITE:
+			{
+				return OPEN_EXISTING;
+			}
+			case FileBase::WRITE_ONLY_CREATE:
+			case FileBase::READ_WRITE_CREATE:
+			{
+				return OPEN_ALWAYS;
+			}
+		}
+
+		return 0;
+	}
+
+	DWORD ToNativeFileSeek(FileBase::SeekBase base)
+	{
+		switch (base)
+		{
+			case FileBase::BEGIN:   return FILE_BEGIN;
+			case FileBase::CURRENT: return FILE_CURRENT;
+			case FileBase::END:     return FILE_END;
+		}
+
+		return 0;
+	}
+}
+
+void* WinAPI::File::Open(const char* path, FileBase::Access access, bool *pCreated)
+{
+	const DWORD mode = ToNativeFileAccessMode(access);
+	const DWORD share = FILE_SHARE_READ;
+	const DWORD creation = ToNativeFileCreationDisposition(access);
+	const DWORD attributes = FILE_ATTRIBUTE_NORMAL;
+
+	HANDLE handle = CreateFileA(path, mode, share, NULL, creation, attributes, NULL);
+	if (handle == INVALID_HANDLE_VALUE)
+	{
+		return NULL;
+	}
+
+	if (pCreated)
+	{
+		*pCreated = (GetLastError() != ERROR_ALREADY_EXISTS);
+	}
+
+	return handle;
+}
+
+bool WinAPI::File::Read(void* pFile, std::string& buffer, std::size_t maxLength)
+{
+	HANDLE handle = static_cast<HANDLE>(pFile);
+
+	if (maxLength == 0)
+	{
+		// read everything from the current position to the end of the file
+		unsigned __int64 currentPos = 0;
+		unsigned __int64 endPos = 0;
+
+		if (!Seek(handle, FileBase::CURRENT, 0, &currentPos)
+		 || !Seek(handle, FileBase::END, 0, &endPos)
+		 || !Seek(handle, FileBase::BEGIN, currentPos))  // restore position
+		{
+			return false;
+		}
+
+		if (currentPos < endPos)
+		{
+			const unsigned __int64 distance = endPos - currentPos;
+
+			if (distance >= 0x80000000)  // 2 GiB
+			{
+				SetLastError(ERROR_FILE_TOO_LARGE);
+				return false;
+			}
+
+			maxLength = distance;
+		}
+	}
+
+	buffer.resize(maxLength);
+
+	void* targetBuffer = const_cast<char*>(buffer.data());
+	DWORD targetBufferSize = static_cast<DWORD>(buffer.length());
+
+	DWORD bytesRead = 0;
+
+	if (!ReadFile(handle, targetBuffer, targetBufferSize, &bytesRead, NULL))
+	{
+		return false;
+	}
+
+	if (bytesRead != targetBufferSize)
+	{
+		buffer.resize(bytesRead);
+	}
+
+	return true;
+}
+
+bool WinAPI::File::Write(void* pFile, const void* data, std::size_t dataLength)
+{
+#ifdef BUILD_64BIT
+	if (dataLength >= 0xFFFFFFFF)
+	{
+		SetLastError(ERROR_BUFFER_OVERFLOW);
+		return false;
+	}
+#endif
+
+	std::size_t totalBytesWritten = 0;
+
+	do
+	{
+		const void *buffer = static_cast<const unsigned char*>(data) + totalBytesWritten;
+		const DWORD bufferSize = static_cast<DWORD>(dataLength - totalBytesWritten);
+
+		DWORD bytesWritten = 0;
+
+		if (!WriteFile(static_cast<HANDLE>(pFile), buffer, bufferSize, &bytesWritten, NULL))
+		{
+			return false;
+		}
+
+		totalBytesWritten += bytesWritten;
+	}
+	while (totalBytesWritten < dataLength);
+
+	return true;
+}
+
+bool WinAPI::File::Seek(void* pFile, FileBase::SeekBase base, __int64 offset, unsigned __int64* pNewPos)
+{
+	LARGE_INTEGER offsetValue;
+	offsetValue.QuadPart = offset;
+
+	if (!SetFilePointerEx(static_cast<HANDLE>(pFile), offsetValue, &offsetValue, ToNativeFileSeek(base)))
+	{
+		return false;
+	}
+
+	if (pNewPos)
+	{
+		*pNewPos = static_cast<unsigned __int64>(offsetValue.QuadPart);
+	}
+
+	return true;
+}
+
+bool WinAPI::File::Resize(void* pFile, unsigned __int64 size)
+{
+	// the offset is interpreted as an unsigned value
+	const __int64 offset = static_cast<__int64>(size);
+
+	return Seek(pFile, FileBase::BEGIN, offset) && SetEndOfFile(static_cast<HANDLE>(pFile));
+}
+
+void WinAPI::File::Close(void* pFile)
+{
+	CloseHandle(static_cast<HANDLE>(pFile));
+}
+
+bool WinAPI::File::Copy(const char* sourcePath, const char* destinationPath)
+{
+	return CopyFile(sourcePath, destinationPath, FALSE);
+}
+
+bool WinAPI::Directory::Create(const char* path, bool *pCreated)
+{
+	bool created = true;
+
+	if (!CreateDirectoryA(path, NULL))
+	{
+		if (GetLastError() == ERROR_ALREADY_EXISTS)
+		{
+			created = false;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	if (pCreated)
+	{
+		*pCreated = created;
+	}
+
+	return true;
+}
+
+//////////
+// Time //
+//////////
+
+namespace
+{
+	WinAPI::DateTime FromNativeDateTime(const SYSTEMTIME& dateTime)
+	{
+		WinAPI::DateTime result;
+		result.year        = dateTime.wYear;
+		result.month       = dateTime.wMonth;
+		result.day         = dateTime.wDay;
+		result.dayOfWeek   = (dateTime.wDayOfWeek == 0) ? 7 : dateTime.wDayOfWeek;
+		result.hour        = dateTime.wHour;
+		result.minute      = dateTime.wMinute;
+		result.second      = dateTime.wSecond;
+		result.millisecond = dateTime.wMilliseconds;
+
+		return result;
+	}
+}
+
+const char* WinAPI::DateTime::GetDayName()
+{
+	switch (dayOfWeek)
+	{
+		case 1: return "Monday";
+		case 2: return "Tuesday";
+		case 3: return "Wednesday";
+		case 4: return "Thursday";
+		case 5: return "Friday";
+		case 6: return "Saturday";
+		case 7: return "Sunday";
+	}
+
+	return "";
+}
+
+const char* WinAPI::DateTime::GetMonthName()
+{
+	switch (month)
+	{
+		case 1:  return "January";
+		case 2:  return "February";
+		case 3:  return "March";
+		case 4:  return "April";
+		case 5:  return "May";
+		case 6:  return "June";
+		case 7:  return "July";
+		case 8:  return "August";
+		case 9:  return "September";
+		case 10: return "October";
+		case 11: return "November";
+		case 12: return "December";
+	}
+
+	return "";
+}
+
+WinAPI::DateTime WinAPI::DateTime::GetCurrentUTC()
+{
+	SYSTEMTIME dateTime;
+	GetSystemTime(&dateTime);
+
+	return FromNativeDateTime(dateTime);
+}
+
+WinAPI::DateTime WinAPI::DateTime::GetCurrentLocal()
+{
+	SYSTEMTIME dateTime;
+	GetLocalTime(&dateTime);
+
+	return FromNativeDateTime(dateTime);
+}
+
+long WinAPI::DateTime::GetTimeZoneBias()
+{
+	TIME_ZONE_INFORMATION tz;
+	switch (GetTimeZoneInformation(&tz))
+	{
+		case TIME_ZONE_ID_UNKNOWN:
+		{
+			return tz.Bias;
+		}
+		case TIME_ZONE_ID_STANDARD:
+		{
+			return tz.Bias + tz.StandardBias;
+		}
+		case TIME_ZONE_ID_DAYLIGHT:
+		{
+			return tz.Bias + tz.DaylightBias;
+		}
+		case TIME_ZONE_ID_INVALID:
+		{
+			return 0;
+		}
+	}
+
+	return 0;
+}
+
+void WinAPI::DateTime::AddTimeZoneOffset(std::string& buffer)
+{
+	long bias = GetTimeZoneBias();
+
+	if (bias == 0)
+	{
+		buffer += 'Z';  // UTC
+	}
+	else
+	{
+		char sign = '-';
+
+		if (bias < 0)
+		{
+			bias = -bias;
+			sign = '+';
+		}
+
+		FormatTo(buffer, "%c%02lu%02lu", sign, bias / 60, bias % 60);
+	}
 }

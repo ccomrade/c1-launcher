@@ -1,18 +1,8 @@
-// Game launcher resources
+// Headless server launcher resources
 
 #include <winver.h>
 
-#include "Launcher/Game/Resources.h"
-
 #include "Project.h"
-
-RESOURCE_ICON ICON "GameIcon.ico"
-
-RESOURCE_CURSOR_AMBER CURSOR "CursorAmber.cur"
-RESOURCE_CURSOR_BLUE  CURSOR "CursorBlue.cur"
-RESOURCE_CURSOR_GREEN CURSOR "CursorGreen.cur"
-RESOURCE_CURSOR_RED   CURSOR "CursorRed.cur"
-RESOURCE_CURSOR_WHITE CURSOR "CursorWhite.cur"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, 0, 0
@@ -27,9 +17,9 @@ BEGIN
 			VALUE "ProductName",      "C1-Launcher"
 			VALUE "ProductVersion",   PROJECT_VERSION_STRING
 			VALUE "FileVersion",      PROJECT_VERSION_STRING
-			VALUE "FileDescription",  "Crysis"
-			VALUE "InternalName",     "Crysis"
-			VALUE "OriginalFilename", "Crysis.exe"
+			VALUE "FileDescription",  "Crysis Headless Server"
+			VALUE "InternalName",     "CrysisHeadlessServer"
+			VALUE "OriginalFilename", "CrysisHeadlessServer.exe"
 		END
 	END
 

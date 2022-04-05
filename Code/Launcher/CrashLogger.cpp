@@ -16,7 +16,7 @@
 
 #include "CrashLogger.h"
 
-#include "Version.h"
+#include "Project.h"
 
 class Log
 {
@@ -567,12 +567,7 @@ static void DumpRegisters(Log & log, const CONTEXT *ctx)
 static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 {
 	log.Write("================================ CRASH DETECTED ================================");
-
-#ifdef BUILD_64BIT
-	log.Write("C1-Launcher " C1LAUNCHER_VERSION_STRING " 64-bit");
-#else
-	log.Write("C1-Launcher " C1LAUNCHER_VERSION_STRING " 32-bit");
-#endif
+	log.Write(PROJECT_VERSION_DETAILS);
 
 	DumpExceptionInfo(log, pExceptionInfo->ExceptionRecord);
 	DumpRegisters(log, pExceptionInfo->ContextRecord);

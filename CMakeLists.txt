@@ -37,28 +37,36 @@ endif()
 
 ################################################################################
 
-configure_file(Version.h.in ${PROJECT_BINARY_DIR}/Version.h)
+configure_file(Project.h.in ${PROJECT_BINARY_DIR}/Project.h)
 
 ################################################################################
 
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h
   Code/CryCommon/CryGame/IGameStartup.h
+  Code/CryCommon/CrySystem/IConsole.h
   Code/CryCommon/CrySystem/ILog.h
   Code/CryCommon/CrySystem/ISystem.h
+  Code/CryCommon/CrySystem/IValidator.h
   Code/Launcher/CrashLogger.cpp
   Code/Launcher/CrashLogger.h
-  Code/Launcher/Launcher.cpp
-  Code/Launcher/Launcher.h
+  Code/Launcher/LauncherBase.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
   Code/Library/CmdLine.cpp
   Code/Library/CmdLine.h
   Code/Library/CPU.cpp
   Code/Library/CPU.h
+  Code/Library/CryColorCode.h
   Code/Library/DLL.h
+  Code/Library/File.h
+  Code/Library/FileBase.h
   Code/Library/Format.cpp
   Code/Library/Format.h
+  Code/Library/LockGuard.h
+  Code/Library/Mutex.h
+  Code/Library/Path.h
+  Code/Library/ThreadSafeQueue.h
   Code/Library/WinAPI.cpp
   Code/Library/WinAPI.h
 )
@@ -72,6 +80,8 @@ endif()
 ################################################################################
 
 add_executable(Crysis WIN32
+  Code/Launcher/Game/GameLauncher.cpp
+  Code/Launcher/Game/GameLauncher.h
   Code/Launcher/Game/Main.cpp
   Code/Launcher/Game/Resources.h
   Resources/Launcher.manifest
@@ -79,14 +89,29 @@ add_executable(Crysis WIN32
 )
 
 add_executable(CrysisDedicatedServer WIN32
+  Code/Launcher/DedicatedServer/DedicatedServerLauncher.cpp
+  Code/Launcher/DedicatedServer/DedicatedServerLauncher.h
   Code/Launcher/DedicatedServer/Main.cpp
   Code/Launcher/DedicatedServer/Resources.h
   Resources/Launcher.manifest
   Resources/DedicatedServerLauncher.rc
 )
 
+add_executable(CrysisHeadlessServer
+  Code/Launcher/HeadlessServer/Executor.cpp
+  Code/Launcher/HeadlessServer/Executor.h
+  Code/Launcher/HeadlessServer/HeadlessServerLauncher.cpp
+  Code/Launcher/HeadlessServer/HeadlessServerLauncher.h
+  Code/Launcher/HeadlessServer/LogSystem.cpp
+  Code/Launcher/HeadlessServer/LogSystem.h
+  Code/Launcher/HeadlessServer/Main.cpp
+  Code/Launcher/HeadlessServer/NullValidator.h
+  Resources/HeadlessServerLauncher.rc
+)
+
 target_link_libraries(Crysis LauncherBase)
 target_link_libraries(CrysisDedicatedServer LauncherBase)
+target_link_libraries(CrysisHeadlessServer LauncherBase)
 
 ################################################################################
 

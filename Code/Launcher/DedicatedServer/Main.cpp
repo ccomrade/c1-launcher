@@ -3,26 +3,17 @@
  * @brief Dedicated server launcher.
  */
 
-#include "Launcher/Launcher.h"
-#include "Library/WinAPI.h"
+#include "DedicatedServerLauncher.h"
 
-int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
+#include "Project.h"
+
+// declared in CryCommon/CrySystem/ISystem.h
+SSystemGlobalEnvironment* gEnv;
+
+// declared in Project.h
+const char* const PROJECT_VERSION_DETAILS = PROJECT_MAKE_VERSION_DETAILS("C1-Launcher Dedicated Server");
+
+int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {
-	Launcher launcher;
-
-	try
-	{
-		launcher.SetAppInstance(hInstance);
-		launcher.SetLogFileName("Server.log");
-		launcher.SetDedicatedServer(true);
-
-		launcher.Run();
-	}
-	catch (const std::runtime_error & error)
-	{
-		WinAPI::ErrorBox(error.what());
-		return 1;
-	}
-
-	return launcher.GetExitCode();
+	return DedicatedServerLauncher().Run();
 }

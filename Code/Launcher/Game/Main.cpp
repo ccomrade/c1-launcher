@@ -3,35 +3,23 @@
  * @brief Game launcher.
  */
 
-#include "Launcher/Launcher.h"
-#include "Library/WinAPI.h"
+#include "GameLauncher.h"
+
+#include "Project.h"
+
+// declared in CryCommon/CrySystem/ISystem.h
+SSystemGlobalEnvironment* gEnv;
+
+// declared in Project.h
+const char* const PROJECT_VERSION_DETAILS = PROJECT_MAKE_VERSION_DETAILS("C1-Launcher Game");
 
 // request discrete graphics card
-extern "C"
+// nVidia
+extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+// AMD
+extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+
+int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {
-	// nVidia
-	__declspec(dllexport) unsigned long NvOptimusEnablement = 1;
-
-	// AMD
-	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-}
-
-int __stdcall WinMain(void *hInstance, void *hPrevInstance, char *lpCmdLine, int nCmdShow)
-{
-	Launcher launcher;
-
-	try
-	{
-		launcher.SetAppInstance(hInstance);
-		launcher.SetLogFileName("Game.log");
-
-		launcher.Run();
-	}
-	catch (const std::runtime_error & error)
-	{
-		WinAPI::ErrorBox(error.what());
-		return 1;
-	}
-
-	return launcher.GetExitCode();
+	return GameLauncher().Run();
 }

@@ -19,6 +19,7 @@ It provides a better game launcher and dedicated server launcher with additional
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
+- The source code is compatible with the legacy VS2005 compiler that was used to build Crysis.
 
 ## Supported game versions
 
