@@ -27,13 +27,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO /LARGEADDR
 
 ################################################################################
 
-# detect 64-bit compiler
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(BUILD_64BIT TRUE)
-	message(STATUS "64-bit build")
-else()
-	message(STATUS "32-bit build")
-endif()
+math(EXPR BUILD_BITS "${CMAKE_SIZEOF_VOID_P} * 8")
+
+message(STATUS "${BUILD_BITS}-bit build")
 
 ################################################################################
 
@@ -73,7 +69,7 @@ add_library(LauncherBase STATIC
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 
-if(BUILD_64BIT)
+if(BUILD_BITS EQUAL 64)
 	target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
 endif()
 

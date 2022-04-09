@@ -11,19 +11,9 @@
 
 #define PROJECT_VERSION_STRING "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@"
 
-#ifdef BUILD_64BIT
-#define PROJECT_BUILD_BITS_STRING "64-bit"
-#else
-#define PROJECT_BUILD_BITS_STRING "32-bit"
-#endif
-
-#define PROJECT_BUILD_TYPE_NAME "@CMAKE_BUILD_TYPE@"
-
 #define PROJECT_MAKE_VERSION_DETAILS(name) name ## \
-	" [v" PROJECT_VERSION_STRING "]" \
-	" [" PROJECT_BUILD_BITS_STRING "]" \
-	" [" PROJECT_BUILD_TYPE_NAME "]" \
-	" [" __DATE__ " " __TIME__ "]"
+	" [v@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@]" \
+	" [@BUILD_BITS@-bit] [@CMAKE_BUILD_TYPE@] [" __DATE__ " " __TIME__ "]"
 
 // defined in Main.cpp of each launcher
 extern const char* const PROJECT_VERSION_DETAILS;
