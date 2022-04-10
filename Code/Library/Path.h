@@ -16,7 +16,7 @@ namespace Path
 
 		if (!result.empty() && !IsSlash(result[result.length()-1]) && !IsSlash(*pathB))
 		{
-			result += '/';
+			result += '\\';
 		}
 
 		result += pathB;
