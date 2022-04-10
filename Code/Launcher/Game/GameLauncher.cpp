@@ -1,4 +1,3 @@
-#include "Library/CmdLine.h"
 #include "Library/WinAPI.h"
 
 #include "../CrashLogger.h"
@@ -23,7 +22,7 @@ int GameLauncher::Run()
 		m_params.hInstance = WinAPI::Module::GetEXE();
 		m_params.logFileName = "Game.log";
 
-		SetParamsCmdLine(WinAPI::GetCmdLine());
+		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
 		CrashLogger::Init(m_params.logFileName);
 
@@ -60,7 +59,7 @@ void GameLauncher::LoadEngine()
 	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
 	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
 
-	if (!CmdLine::HasArg("-dx9") && (CmdLine::HasArg("-dx10") || WinAPI::IsVistaOrLater()))
+	if (!WinAPI::CmdLine::HasArg("-dx9") && (WinAPI::CmdLine::HasArg("-dx10") || WinAPI::IsVistaOrLater()))
 	{
 		m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
 	}
@@ -75,7 +74,7 @@ void GameLauncher::PatchEngine()
 		Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
 		Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
 
-		if (!CmdLine::HasArg("-splash"))
+		if (!WinAPI::CmdLine::HasArg("-splash"))
 		{
 			Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
 		}

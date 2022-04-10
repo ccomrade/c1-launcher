@@ -1,4 +1,3 @@
-#include "Library/CmdLine.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"
 
@@ -22,7 +21,7 @@ int HeadlessServerLauncher::Run()
 	try
 	{
 		LogSystem::StdErr("%s", PROJECT_VERSION_DETAILS);
-		LogSystem::StdErr("Command line: \"%s\"", WinAPI::GetCmdLineArgsOnly());
+		LogSystem::StdErr("Command line: [%s]", WinAPI::CmdLine::GetOnlyArgs());
 		LogSystem::StdErr("Root folder: \"%s\"", m_rootFolder.c_str());
 
 		m_params.hInstance = WinAPI::Module::GetEXE();
@@ -32,7 +31,7 @@ int HeadlessServerLauncher::Run()
 		m_params.pValidator = &m_validator;
 		m_params.pUserCallback = this;
 
-		SetParamsCmdLine(WinAPI::GetCmdLine());
+		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
 		CrashLogger::Init(m_params.logFileName);
 
@@ -156,7 +155,7 @@ void HeadlessServerLauncher::PatchEngine()
 
 std::string HeadlessServerLauncher::GetRootFolder()
 {
-	std::string rootFolder = CmdLine::GetArgValue("-root");
+	std::string rootFolder = WinAPI::CmdLine::GetArgValue("-root");
 
 	if (rootFolder.empty())
 	{

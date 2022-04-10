@@ -13,8 +13,15 @@ namespace WinAPI
 	// Command line //
 	//////////////////
 
-	const char* GetCmdLine();
-	const char* GetCmdLineArgsOnly();
+	namespace CmdLine
+	{
+		const char* Get();
+		const char* GetOnlyArgs();
+
+		bool HasArg(const char* arg);
+
+		const char* GetArgValue(const char* arg, const char* defaultValue = "");
+	}
 
 	////////////
 	// Errors //

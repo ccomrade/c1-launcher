@@ -10,9 +10,9 @@
 #include <windows.h>
 #include <dbghelp.h>
 
-#include "Library/CmdLine.h"
 #include "Library/Format.h"
 #include "Library/DLL.h"
+#include "Library/WinAPI.h"
 
 #include "CrashLogger.h"
 
@@ -35,7 +35,7 @@ public:
 
 	bool Open(const char *defaultFileName)
 	{
-		std::string path = CmdLine::GetArgValue("-root");
+		std::string path = WinAPI::CmdLine::GetArgValue("-root");
 
 		if (!path.empty() && path[path.length() - 1] != '\\' && path[path.length() - 1] != '/')
 		{
@@ -44,7 +44,7 @@ public:
 		}
 
 		// append the log file name
-		path += CmdLine::GetArgValue("-logfile", defaultFileName);
+		path += WinAPI::CmdLine::GetArgValue("-logfile", defaultFileName);
 
 		if (IsOpen())
 		{

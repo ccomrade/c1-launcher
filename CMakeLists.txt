@@ -49,8 +49,6 @@ add_library(LauncherBase STATIC
   Code/Launcher/LauncherBase.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Library/CmdLine.cpp
-  Code/Library/CmdLine.h
   Code/Library/CryColorCode.h
   Code/Library/DLL.h
   Code/Library/File.h

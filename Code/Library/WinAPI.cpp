@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <intrin.h>
 #include <windows.h>
 
@@ -8,14 +10,35 @@
 // Command line //
 //////////////////
 
-const char* WinAPI::GetCmdLine()
+namespace
+{
+	int FindArgIndex(const char* arg)
+	{
+		for (int i = 1; i < __argc; i++)
+		{
+			if (_stricmp(__argv[i], arg) == 0)
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	const char* GetNextArg(int index)
+	{
+		return (index >= 0 && (index + 1) < __argc) ? __argv[index + 1] : NULL;
+	}
+}
+
+const char* WinAPI::CmdLine::Get()
 {
 	return GetCommandLineA();
 }
 
-const char* WinAPI::GetCmdLineArgsOnly()
+const char* WinAPI::CmdLine::GetOnlyArgs()
 {
-	const char* args = GetCmdLine();
+	const char* args = Get();
 
 	char separator = ' ';
 
@@ -45,6 +68,20 @@ const char* WinAPI::GetCmdLineArgsOnly()
 	}
 
 	return args;
+}
+
+bool WinAPI::CmdLine::HasArg(const char* arg)
+{
+	return FindArgIndex(arg) > 0;
+}
+
+const char* WinAPI::CmdLine::GetArgValue(const char* arg, const char* defaultValue)
+{
+	const int index = FindArgIndex(arg);
+	const char *value = GetNextArg(index);
+
+	// make sure the value is not another argument
+	return (value && value[0] != '-' && value[0] != '+') ? value : defaultValue;
 }
 
 ////////////

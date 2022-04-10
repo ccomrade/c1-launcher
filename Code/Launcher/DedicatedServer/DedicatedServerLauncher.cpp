@@ -23,7 +23,7 @@ int DedicatedServerLauncher::Run()
 		m_params.logFileName = "Server.log";
 		m_params.isDedicatedServer = true;
 
-		SetParamsCmdLine(WinAPI::GetCmdLine());
+		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
 		CrashLogger::Init(m_params.logFileName);
 

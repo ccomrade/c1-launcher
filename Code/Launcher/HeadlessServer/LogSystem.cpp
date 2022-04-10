@@ -5,7 +5,6 @@
 #include "CryCommon/CrySystem/ISystem.h"
 #include "CryCommon/CrySystem/IConsole.h"
 
-#include "Library/CmdLine.h"
 #include "Library/CryColorCode.h"
 #include "Library/Format.h"
 #include "Library/Path.h"
@@ -18,17 +17,17 @@
 
 int LogSystem::GetDefaultVerbosity()
 {
-	return std::atoi(CmdLine::GetArgValue("-verbosity", "0"));
+	return std::atoi(WinAPI::CmdLine::GetArgValue("-verbosity", "0"));
 }
 
 const char* LogSystem::GetDefaultFileName()
 {
-	return CmdLine::GetArgValue("-logfile", "Server.log");
+	return WinAPI::CmdLine::GetArgValue("-logfile", "Server.log");
 }
 
 const char* LogSystem::GetDefaultPrefix()
 {
-	return CmdLine::GetArgValue("-logprefix", "");
+	return WinAPI::CmdLine::GetArgValue("-logprefix", "");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
