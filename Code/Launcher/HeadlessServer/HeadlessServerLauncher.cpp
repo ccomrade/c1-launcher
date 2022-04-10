@@ -117,46 +117,41 @@ void HeadlessServerLauncher::LoadEngine()
 
 void HeadlessServerLauncher::PatchEngine()
 {
-	PatchEngine_CryAction();
-	PatchEngine_CryNetwork();
-	PatchEngine_CrySystem();
-	PatchEngine_CryRenderNULL();
-}
-
-void HeadlessServerLauncher::PatchEngine_CryAction()
-{
-	void* pCryAction = m_CryAction.GetHandle();
-
-	Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
-}
-
-void HeadlessServerLauncher::PatchEngine_CryNetwork()
-{
-	void* pCryNetwork = m_CryNetwork.GetHandle();
-
-	Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::DisableServerProfile(pCryNetwork, m_gameBuild);
-}
-
-void HeadlessServerLauncher::PatchEngine_CrySystem()
-{
-	void* pCrySystem = m_CrySystem.GetHandle();
-
-	if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+	if (m_CryAction.IsLoaded())
 	{
-		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		void* pCryAction = m_CryAction.GetHandle();
+
+		Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
 	}
 
-	Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
-}
+	if (m_CryNetwork.IsLoaded())
+	{
+		void* pCryNetwork = m_CryNetwork.GetHandle();
 
-void HeadlessServerLauncher::PatchEngine_CryRenderNULL()
-{
-	void* pCryRenderNULL = m_CryRenderNULL.GetHandle();
+		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::DisableServerProfile(pCryNetwork, m_gameBuild);
+	}
 
-	Patch::CryRenderNULL::DisableDebugRenderer(pCryRenderNULL, m_gameBuild);
+	if (m_CrySystem.IsLoaded())
+	{
+		void* pCrySystem = m_CrySystem.GetHandle();
+
+		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+		{
+			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		}
+
+		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+	}
+
+	if (m_CryRenderNULL.IsLoaded())
+	{
+		void* pCryRenderNULL = m_CryRenderNULL.GetHandle();
+
+		Patch::CryRenderNULL::DisableDebugRenderer(pCryRenderNULL, m_gameBuild);
+	}
 }
 
 std::string HeadlessServerLauncher::GetRootFolder()

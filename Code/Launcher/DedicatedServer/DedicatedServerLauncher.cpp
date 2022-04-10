@@ -62,27 +62,24 @@ void DedicatedServerLauncher::LoadEngine()
 
 void DedicatedServerLauncher::PatchEngine()
 {
-	PatchEngine_CryNetwork();
-	PatchEngine_CrySystem();
-}
-
-void DedicatedServerLauncher::PatchEngine_CryNetwork()
-{
-	void* pCryNetwork = m_CryNetwork.GetHandle();
-
-	Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
-}
-
-void DedicatedServerLauncher::PatchEngine_CrySystem()
-{
-	void* pCrySystem = m_CrySystem.GetHandle();
-
-	if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+	if (m_CryNetwork.IsLoaded())
 	{
-		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		void* pCryNetwork = m_CryNetwork.GetHandle();
+
+		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
 	}
 
-	Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+	if (m_CrySystem.IsLoaded())
+	{
+		void* pCrySystem = m_CrySystem.GetHandle();
+
+		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+		{
+			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		}
+
+		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+	}
 }

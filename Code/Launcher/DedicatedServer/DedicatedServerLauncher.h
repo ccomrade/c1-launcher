@@ -16,8 +16,5 @@ public:
 
 private:
 	void LoadEngine();
-
 	void PatchEngine();
-	void PatchEngine_CryNetwork();
-	void PatchEngine_CrySystem();
 };

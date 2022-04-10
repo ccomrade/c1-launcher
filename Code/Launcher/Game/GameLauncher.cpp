@@ -68,60 +68,51 @@ void GameLauncher::LoadEngine()
 
 void GameLauncher::PatchEngine()
 {
-	PatchEngine_CryGame();
-	PatchEngine_CryAction();
-	PatchEngine_CryNetwork();
-	PatchEngine_CrySystem();
-	PatchEngine_CryRenderD3D10();
-}
-
-void GameLauncher::PatchEngine_CryGame()
-{
-	void* pCryGame = m_CryGame.GetHandle();
-
-	Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
-	Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
-
-	if (!CmdLine::HasArg("-splash"))
+	if (m_CryGame.IsLoaded())
 	{
-		Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
-	}
-}
+		void* pCryGame = m_CryGame.GetHandle();
 
-void GameLauncher::PatchEngine_CryAction()
-{
-	void* pCryAction = m_CryAction.GetHandle();
+		Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
+		Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
 
-	Patch::CryAction::AllowDX9ImmersiveMultiplayer(pCryAction, m_gameBuild);
-}
-
-void GameLauncher::PatchEngine_CryNetwork()
-{
-	void* pCryNetwork = m_CryNetwork.GetHandle();
-
-	Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-	Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
-}
-
-void GameLauncher::PatchEngine_CrySystem()
-{
-	void* pCrySystem = m_CrySystem.GetHandle();
-
-	Patch::CrySystem::RemoveSecuROM(pCrySystem, m_gameBuild);
-	Patch::CrySystem::AllowDX9VeryHighSpec(pCrySystem, m_gameBuild);
-	Patch::CrySystem::AllowMultipleInstances(pCrySystem, m_gameBuild);
-
-	if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
-	{
-		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		if (!CmdLine::HasArg("-splash"))
+		{
+			Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
+		}
 	}
 
-	Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
-}
+	if (m_CryAction.IsLoaded())
+	{
+		void* pCryAction = m_CryAction.GetHandle();
 
-void GameLauncher::PatchEngine_CryRenderD3D10()
-{
+		Patch::CryAction::AllowDX9ImmersiveMultiplayer(pCryAction, m_gameBuild);
+	}
+
+	if (m_CryNetwork.IsLoaded())
+	{
+		void* pCryNetwork = m_CryNetwork.GetHandle();
+
+		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
+		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
+	}
+
+	if (m_CrySystem.IsLoaded())
+	{
+		void* pCrySystem = m_CrySystem.GetHandle();
+
+		Patch::CrySystem::RemoveSecuROM(pCrySystem, m_gameBuild);
+		Patch::CrySystem::AllowDX9VeryHighSpec(pCrySystem, m_gameBuild);
+		Patch::CrySystem::AllowMultipleInstances(pCrySystem, m_gameBuild);
+
+		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+		{
+			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+		}
+
+		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+	}
+
 	if (m_CryRenderD3D10.IsLoaded())
 	{
 		void* pCryRenderD3D10 = m_CryRenderD3D10.GetHandle();

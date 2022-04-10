@@ -18,11 +18,5 @@ public:
 
 private:
 	void LoadEngine();
-
 	void PatchEngine();
-	void PatchEngine_CryGame();
-	void PatchEngine_CryAction();
-	void PatchEngine_CryNetwork();
-	void PatchEngine_CrySystem();
-	void PatchEngine_CryRenderD3D10();
 };
