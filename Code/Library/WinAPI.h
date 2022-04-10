@@ -141,4 +141,14 @@ namespace WinAPI
 		static long GetTimeZoneBias();
 		static void AddTimeZoneOffset(std::string& buffer);
 	};
+
+	////////////////////////
+	// System information //
+	////////////////////////
+
+	namespace CPU
+	{
+		bool IsAMD();
+		bool Has3DNow();
+	}
 }

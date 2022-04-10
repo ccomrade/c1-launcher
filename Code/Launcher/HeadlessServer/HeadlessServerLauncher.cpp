@@ -1,5 +1,4 @@
 #include "Library/CmdLine.h"
-#include "Library/CPU.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"
 
@@ -145,7 +144,7 @@ void HeadlessServerLauncher::PatchEngine_CrySystem()
 {
 	void* pCrySystem = m_CrySystem.GetHandle();
 
-	if (CPU::IsAMD() && !CPU::Has3DNow())
+	if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
 	{
 		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
 	}

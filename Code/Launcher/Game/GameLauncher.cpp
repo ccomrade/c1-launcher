@@ -1,5 +1,4 @@
 #include "Library/CmdLine.h"
-#include "Library/CPU.h"
 #include "Library/WinAPI.h"
 
 #include "../CrashLogger.h"
@@ -113,7 +112,7 @@ void GameLauncher::PatchEngine_CrySystem()
 	Patch::CrySystem::AllowDX9VeryHighSpec(pCrySystem, m_gameBuild);
 	Patch::CrySystem::AllowMultipleInstances(pCrySystem, m_gameBuild);
 
-	if (CPU::IsAMD() && !CPU::Has3DNow())
+	if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
 	{
 		Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
 	}
