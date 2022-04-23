@@ -180,8 +180,10 @@ void WinAPI::ErrorBox(const char *message)
 ///////////////
 
 /**
- * @brief Obtains game version from any Crysis DLL.
+ * Obtains game version from any Crysis DLL.
+ *
  * It parses version resource of the specified file.
+ *
  * @param pDLL Handle of any Crysis DLL.
  * @return Game build number or -1 if some error occurred.
  */
@@ -219,7 +221,8 @@ int WinAPI::GetCrysisGameBuild(void *pDLL)
 ///////////
 
 /**
- * @brief Fills read-only memory region with x86 NOP instruction.
+ * Fills read-only memory region with x86 NOP instruction.
+ *
  * @param address Address of the memory region.
  * @param length Size of the memory region in bytes.
  * @return 0 on success or -1 if some error occurred.
@@ -241,8 +244,10 @@ int WinAPI::FillNOP(void *address, std::size_t length)
 }
 
 /**
- * @brief Fills read-only memory region with custom data.
+ * Fills read-only memory region with custom data.
+ *
  * The memory region and the data must not overlap.
+ *
  * @param address Address of the memory region.
  * @param data The data.
  * @param length Size of the data in bytes.
@@ -647,10 +652,6 @@ void WinAPI::DateTime::AddTimeZoneOffset(std::string& buffer)
 // System information //
 ////////////////////////
 
-/**
- * @brief Checks if AMD processor is being used.
- * @return True if we are running on AMD processor, otherwise false.
- */
 bool WinAPI::CPU::IsAMD()
 {
 	const char *vendorID = "AuthenticAMD";  // must be 12 characters long
@@ -665,10 +666,6 @@ bool WinAPI::CPU::IsAMD()
 	    && registers[2] == id[2];  // 3rd part is in ECX register
 }
 
-/**
- * @brief Checks if the processor supports 3DNow! instructions.
- * @return True if 3DNow! instruction set is available, otherwise false.
- */
 bool WinAPI::CPU::Has3DNow()
 {
 	int registers[4];

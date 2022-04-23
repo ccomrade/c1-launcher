@@ -70,7 +70,7 @@ typedef void (*ConsoleCommandFunc)(IConsoleCmdArgs*);
 typedef void (*ConsoleVarFunc)(ICVar*);
 
 /**
- * @brief Interface to the engine console.
+ * CryEngine in-game console interface.
  *
  * The engine console allow to manipulate the internal engine parameters and to invoke commands.
  * This interface allow external modules to integrate their functionalities into the console as commands or variables.

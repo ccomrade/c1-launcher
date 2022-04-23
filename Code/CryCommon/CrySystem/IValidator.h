@@ -58,7 +58,7 @@ struct SValidatorRecord
 };
 
 /**
- * @brief This interface will be given to Validate methods of the engine for resource and object validation.
+ * This interface will be given to Validate methods of the engine for resource and object validation.
  */
 struct IValidator
 {

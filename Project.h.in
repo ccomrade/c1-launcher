@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief Project information.
+ *
  * This file is processed by CMake.
  */
 

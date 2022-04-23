@@ -31,7 +31,7 @@ namespace
 }
 
 /**
- * @brief Allows connecting to DX10 servers with game running in DX9 mode.
+ * Allows connecting to DX10 servers with game running in DX9 mode.
  */
 void Patch::CryAction::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBuild)
 {
@@ -158,7 +158,8 @@ void Patch::CryAction::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBu
 }
 
 /**
- * @brief Disables automatic creation of "gameplaystatsXXX.txt" files.
+ * Disables automatic creation of "gameplaystatsXXX.txt" files.
+ *
  * The "dump_stats" console command can still be used to create these files manually.
  */
 void Patch::CryAction::DisableGameplayStats(void *pCryAction, int gameBuild)
@@ -232,7 +233,7 @@ void Patch::CryAction::DisableGameplayStats(void *pCryAction, int gameBuild)
 }
 
 /**
- * @brief Disables useless startup video ads.
+ * Disables useless startup video ads.
  */
 void Patch::CryGame::DisableIntros(void *pCryGame, int gameBuild)
 {
@@ -350,7 +351,7 @@ void Patch::CryGame::DisableIntros(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Prevents DX10 servers in the server list from being grayed-out when the game is running in DX9 mode.
+ * Prevents DX10 servers in the server list from being grayed-out when the game is running in DX9 mode.
  */
 void Patch::CryGame::CanJoinDX10Servers(void *pCryGame, int gameBuild)
 {
@@ -458,7 +459,8 @@ void Patch::CryGame::CanJoinDX10Servers(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Forces true value for DX10 flag in Flash UI scripts (ActionScript).
+ * Forces true value for DX10 flag in Flash UI scripts (ActionScript).
+ *
  * It unlocks DX10 features in "CREATE GAME" menu in DX9 game.
  */
 void Patch::CryGame::EnableDX10Menu(void *pCryGame, int gameBuild)
@@ -591,7 +593,8 @@ void Patch::CryGame::EnableDX10Menu(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Unlocks advantages of pre-ordered version for everyone.
+ * Unlocks advantages of pre-ordered version for everyone.
+ *
  * This is both server-side and client-side patch.
  */
 void Patch::CryNetwork::EnablePreordered(void *pCryNetwork, int gameBuild)
@@ -665,7 +668,8 @@ void Patch::CryNetwork::EnablePreordered(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Prevents server from kicking players with the same CD key.
+ * Prevents server from kicking players with the same CD key.
+ *
  * This is server-side patch.
  */
 void Patch::CryNetwork::AllowSameCDKeys(void *pCryNetwork, int gameBuild)
@@ -758,7 +762,7 @@ void Patch::CryNetwork::AllowSameCDKeys(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Allows connecting to Internet servers without GameSpy account.
+ * Allows connecting to Internet servers without GameSpy account.
  */
 void Patch::CryNetwork::FixInternetConnect(void *pCryNetwork, int gameBuild)
 {
@@ -846,7 +850,7 @@ void Patch::CryNetwork::FixInternetConnect(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Disables creation of the "server_profile.txt" file.
+ * Disables creation of the "server_profile.txt" file.
  */
 void Patch::CryNetwork::DisableServerProfile(void *pCryNetwork, int gameBuild)
 {
@@ -902,8 +906,7 @@ void Patch::CryNetwork::DisableServerProfile(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Disables the SecuROM crap in 64-bit CrySystem DLL.
- * It does nothing in 32-bit build.
+ * Disables the SecuROM crap in 64-bit CrySystem DLL.
  */
 void Patch::CrySystem::RemoveSecuROM(void *pCrySystem, int gameBuild)
 {
@@ -944,7 +947,7 @@ void Patch::CrySystem::RemoveSecuROM(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Allows Very High settings in DX9 mode.
+ * Allows Very High settings in DX9 mode.
  */
 void Patch::CrySystem::AllowDX9VeryHighSpec(void *pCrySystem, int gameBuild)
 {
@@ -1038,7 +1041,8 @@ void Patch::CrySystem::AllowDX9VeryHighSpec(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Allows running multiple instances of Crysis at once.
+ * Allows running multiple instances of Crysis at once.
+ *
  * Note that the first check if any instance is already running is normally done in launcher.
  */
 void Patch::CrySystem::AllowMultipleInstances(void *pCrySystem, int gameBuild)
@@ -1143,7 +1147,7 @@ void Patch::CrySystem::AllowMultipleInstances(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Prevents the engine from installing its own broken unhandled exceptions handler.
+ * Prevents the engine from installing its own broken unhandled exceptions handler.
  */
 void Patch::CrySystem::UnhandledExceptions(void *pCrySystem, int gameBuild)
 {
@@ -1283,7 +1287,8 @@ void Patch::CrySystem::UnhandledExceptions(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Disables use of 3DNow! instructions.
+ * Disables use of 3DNow! instructions.
+ *
  * This patch correctly fixes the well-known crash of 32-bit Crysis on modern AMD processors.
  */
 void Patch::CrySystem::Disable3DNow(void *pCrySystem, int gameBuild)
@@ -1387,7 +1392,8 @@ void Patch::CrySystem::Disable3DNow(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Prevents the DX10 renderer from using the lowest refresh rate available.
+ * Prevents the DX10 renderer from using the lowest refresh rate available.
+ *
  * Thanks to Guzz and Vladislav for this patch.
  */
 void Patch::CryRenderD3D10::FixLowRefreshRateBug(void *pCryRenderD3D10, int gameBuild)
@@ -1484,8 +1490,14 @@ void Patch::CryRenderD3D10::FixLowRefreshRateBug(void *pCryRenderD3D10, int game
 }
 
 /**
- * @brief Disables the debug renderer in CryRenderNULL DLL.
+ * Disables the debug renderer in CryRenderNULL DLL.
+ *
  * This patch gets rid of the wasteful hidden debug renderer window with OpenGL context.
+ *
+ * The 1st FillNOP disables debug renderer stuff in CNULLRenderAuxGeom constructor.
+ * The 2nd FillNOP disables debug renderer stuff in CNULLRenderAuxGeom destructor.
+ * The 3rd FillMem disables the CNULLRenderAuxGeom::BeginFrame call in CNULLRenderer::BeginFrame.
+ * The 4th FillMem disables the CNULLRenderAuxGeom::EndFrame call in CNULLRenderer::EndFrame.
  */
 void Patch::CryRenderNULL::DisableDebugRenderer(void *pCryRenderNULL, int gameBuild)
 {
@@ -1505,10 +1517,6 @@ void Patch::CryRenderNULL::DisableDebugRenderer(void *pCryRenderNULL, int gameBu
 
 	switch (gameBuild)
 	{
-		// 1st FillNOP disables debug renderer stuff in CNULLRenderAuxGeom constructor
-		// 2nd FillNOP disables debug renderer stuff in CNULLRenderAuxGeom destructor
-		// 3rd FillMem disables the CNULLRenderAuxGeom::BeginFrame call in CNULLRenderer::BeginFrame
-		// 4th FillMem disables the CNULLRenderAuxGeom::EndFrame call in CNULLRenderer::EndFrame
 #ifdef BUILD_64BIT
 		case 5767:
 		{

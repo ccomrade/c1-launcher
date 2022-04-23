@@ -39,7 +39,8 @@ struct ISystemUserCallback;
 struct ITimer;
 
 /**
- * @brief Reverse engineered CryEngine initialization parameters.
+ * Reverse engineered CryEngine initialization parameters.
+ *
  * Crytek removed content of this structure from the Mod SDK.
  * Total size is 2384 bytes in 32-bit code and 2464 bytes in 64-bit code.
  */
@@ -68,7 +69,7 @@ struct SSystemInitParams
 };
 
 /**
- * @brief Global environment.
+ * CryEngine global environment.
  */
 struct SSystemGlobalEnvironment
 {
@@ -103,7 +104,8 @@ struct SSystemGlobalEnvironment
 };
 
 /**
- * @brief The main engine interface.
+ * The main engine interface.
+ *
  * Initializes and dispatches all engine subsystems.
  */
 struct ISystem
@@ -216,7 +218,7 @@ struct ISystem
 };
 
 /**
- * @brief User defined callback, which can be passed to ISystem.
+ * User defined callback, which can be passed to ISystem.
  */
 struct ISystemUserCallback
 {
