@@ -19,7 +19,7 @@ int DedicatedServerLauncher::Run()
 {
 	try
 	{
-		m_params.hInstance = WinAPI::Module::GetEXE();
+		m_params.hInstance = WinAPI::EXE::Get();
 		m_params.logFileName = "Server.log";
 		m_params.isDedicatedServer = true;
 

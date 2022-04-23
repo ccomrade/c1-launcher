@@ -122,47 +122,48 @@ std::runtime_error WinAPI::CurrentError(const char *format, ...)
 // Modules //
 /////////////
 
-void* WinAPI::Module::Get(const char* moduleName)
+void* WinAPI::DLL::Get(const char* name)
 {
-	return GetModuleHandleA(moduleName);
+	return GetModuleHandleA(name);
 }
 
-void* WinAPI::Module::Load(const char* moduleName)
+void* WinAPI::DLL::Load(const char* name)
 {
-	return LoadLibraryA(moduleName);
+	return LoadLibraryA(name);
 }
 
-void WinAPI::Module::Unload(void* pModule)
+void WinAPI::DLL::Unload(void* pDLL)
 {
-	FreeLibrary(static_cast<HMODULE>(pModule));
+	FreeLibrary(static_cast<HMODULE>(pDLL));
 }
 
-void* WinAPI::Module::FindSymbol(void* pModule, const char* symbolName)
+void* WinAPI::DLL::FindSymbol(void* pDLL, const char* symbolName)
 {
-	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pModule), symbolName));
+	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(pDLL), symbolName));
 }
 
-std::string WinAPI::Module::GetPath(void* pModule)
+std::string WinAPI::DLL::GetPath(void* pDLL)
 {
 	char buffer[512];
-	const DWORD length = GetModuleFileNameA(static_cast<HMODULE>(pModule), buffer, sizeof buffer);
-	if (length == 0)
+	const DWORD length = GetModuleFileNameA(static_cast<HMODULE>(pDLL), buffer, sizeof buffer);
+
+	std::string path;
+
+	if (length > 0)
 	{
-		// some error occurred
-		return std::string();
+		if (length >= sizeof buffer)
+		{
+			// the buffer is too small
+			// WinXP doesn't set the last error
+			SetLastError(ERROR_INSUFFICIENT_BUFFER);
+		}
+		else
+		{
+			path.assign(buffer, length);
+		}
 	}
-	else if (length >= sizeof buffer)
-	{
-		// the buffer is too small
-		// WinXP doesn't set the last error
-		SetLastError(ERROR_INSUFFICIENT_BUFFER);
-		return std::string();
-	}
-	else
-	{
-		// success
-		return std::string(buffer, length);
-	}
+
+	return path;
 }
 
 /////////////////
@@ -211,15 +212,6 @@ int WinAPI::GetCrysisGameBuild(void *pDLL)
 		return -1;
 
 	return LOWORD(pFileInfo->dwFileVersionLS);
-}
-
-bool WinAPI::IsVistaOrLater()
-{
-	OSVERSIONINFOW info = {};
-	info.dwOSVersionInfoSize = sizeof info;
-	GetVersionExW(&info);
-
-	return info.dwMajorVersion >= 6;
 }
 
 ///////////
@@ -685,4 +677,13 @@ bool WinAPI::CPU::Has3DNow()
 	int bit3DNow = registers[3] & (1 << 31);  // bit 31 in EDX register
 
 	return bit3DNow != 0;
+}
+
+bool WinAPI::IsVistaOrLater()
+{
+	OSVERSIONINFOW info = {};
+	info.dwOSVersionInfoSize = sizeof info;
+	GetVersionExW(&info);
+
+	return info.dwMajorVersion >= 6;
 }

@@ -24,7 +24,7 @@ int HeadlessServerLauncher::Run()
 		LogSystem::StdErr("Command line: [%s]", WinAPI::CmdLine::GetOnlyArgs());
 		LogSystem::StdErr("Root folder: \"%s\"", m_rootFolder.c_str());
 
-		m_params.hInstance = WinAPI::Module::GetEXE();
+		m_params.hInstance = WinAPI::EXE::Get();
 		m_params.logFileName = LogSystem::GetDefaultFileName();
 		m_params.isDedicatedServer = true;
 		m_params.pLog = &m_log;
@@ -160,7 +160,7 @@ std::string HeadlessServerLauncher::GetRootFolder()
 	if (rootFolder.empty())
 	{
 		// Bin32 or Bin64 folder
-		rootFolder = Path::DirName(WinAPI::Module::GetEXEPath());
+		rootFolder = Path::DirName(WinAPI::EXE::GetPath());
 
 		const std::string binFolder = Path::BaseName(rootFolder);
 

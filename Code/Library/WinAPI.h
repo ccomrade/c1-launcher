@@ -37,25 +37,28 @@ namespace WinAPI
 	// Modules //
 	/////////////
 
-	namespace Module
+	namespace DLL
 	{
-		void* Get(const char* moduleName);
+		void* Get(const char* name);
 
-		void* Load(const char* moduleName);
-		void Unload(void* pModule);
+		void* Load(const char* name);
+		void Unload(void* pDLL);
 
-		void* FindSymbol(void* pModule, const char* symbolName);
+		void* FindSymbol(void* pDLL, const char* symbolName);
 
-		std::string GetPath(void* pModule);
+		std::string GetPath(void* pDLL);
+	}
 
-		inline void* GetEXE()
+	namespace EXE
+	{
+		inline void* Get()
 		{
-			return Get(NULL);
+			return DLL::Get(NULL);
 		}
 
-		inline std::string GetEXEPath()
+		inline std::string GetPath()
 		{
-			return GetPath(NULL);
+			return DLL::GetPath(NULL);
 		}
 	}
 
@@ -70,8 +73,6 @@ namespace WinAPI
 	///////////////
 
 	int GetCrysisGameBuild(void *pDLL);
-
-	bool IsVistaOrLater();
 
 	///////////
 	// Hacks //
@@ -158,4 +159,6 @@ namespace WinAPI
 		bool IsAMD();
 		bool Has3DNow();
 	}
+
+	bool IsVistaOrLater();
 }

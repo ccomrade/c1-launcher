@@ -19,7 +19,7 @@ int GameLauncher::Run()
 {
 	try
 	{
-		m_params.hInstance = WinAPI::Module::GetEXE();
+		m_params.hInstance = WinAPI::EXE::Get();
 		m_params.logFileName = "Game.log";
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
