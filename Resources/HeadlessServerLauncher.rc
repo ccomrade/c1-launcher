@@ -1,12 +1,8 @@
-// Dedicated server launcher resources
+// Headless server launcher resources
 
 #include <winver.h>
 
-#include "Launcher/DedicatedServer/Resources.h"
-
 #include "Project.h"
-
-RESOURCE_ICON ICON "DedicatedServerIcon.ico"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     PROJECT_VERSION, 0, 0, 0
@@ -22,12 +18,12 @@ BEGIN
 			VALUE "ProductVersion",   PROJECT_VERSION_STRING
 			VALUE "FileVersion",      PROJECT_VERSION_STRING
 		#ifdef BUILD_64BIT
-			VALUE "FileDescription",  "Crysis Wars Dedicated Server (64-bit)"
+			VALUE "FileDescription",  "Crysis Wars Headless Server (64-bit)"
 		#else
-			VALUE "FileDescription",  "Crysis Wars Dedicated Server (32-bit)"
+			VALUE "FileDescription",  "Crysis Wars Headless Server (32-bit)"
 		#endif
-			VALUE "InternalName",     "CrysisWarsDedicatedServer"
-			VALUE "OriginalFilename", "CrysisWarsDedicatedServer.exe"
+			VALUE "InternalName",     "CrysisWarsHeadlessServer"
+			VALUE "OriginalFilename", "CrysisWarsHeadlessServer.exe"
 		END
 	END
 

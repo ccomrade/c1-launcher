@@ -10,13 +10,13 @@
 #include <windows.h>
 #include <dbghelp.h>
 
-#include "Library/CmdLine.h"
 #include "Library/Format.h"
 #include "Library/DLL.h"
+#include "Library/WinAPI.h"
 
 #include "CrashLogger.h"
 
-#include "config.h"
+#include "Project.h"
 
 class Log
 {
@@ -35,7 +35,7 @@ public:
 
 	bool Open(const char *defaultFileName)
 	{
-		std::string path = CmdLine::GetArgValue("-root");
+		std::string path = WinAPI::CmdLine::GetArgValue("-root");
 
 		if (!path.empty() && path[path.length() - 1] != '\\' && path[path.length() - 1] != '/')
 		{
@@ -44,7 +44,7 @@ public:
 		}
 
 		// append the log file name
-		path += CmdLine::GetArgValue("-logfile", defaultFileName);
+		path += WinAPI::CmdLine::GetArgValue("-logfile", defaultFileName);
 
 		if (IsOpen())
 		{
@@ -571,8 +571,7 @@ static void DumpRegisters(Log & log, const CONTEXT *ctx)
 static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
 {
 	log.Write("================================ CRASH DETECTED ================================");
-
-	log.Write(CWLAUNCHER_VERSION_DESCRIPTION);
+	log.Write(PROJECT_VERSION_DETAILS);
 
 	DumpExceptionInfo(log, pExceptionInfo->ExceptionRecord);
 	DumpRegisters(log, pExceptionInfo->ContextRecord);

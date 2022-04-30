@@ -1,37 +1,37 @@
-/**
- * @file
- * @brief Implementation of runtime patching of Crysis code.
- */
-
 #include "Library/WinAPI.h"
 
 #include "Patch.h"
 
 namespace
 {
+	void *RVA(void *base, unsigned int offset)
+	{
+		return static_cast<unsigned char*>(base) + offset;
+	}
+
 	void FillNOP(void *base, unsigned int offset, unsigned int count)
 	{
-		void *address = static_cast<unsigned char*>(base) + offset;
+		void *address = RVA(base, offset);
 
 		if (WinAPI::FillNOP(address, count) < 0)
 		{
-			throw WinAPI::MakeError("Failed to apply memory patch at offset 0x%X!", offset);
+			throw WinAPI::CurrentError("Failed to apply memory patch at offset 0x%X!", offset);
 		}
 	}
 
 	void FillMem(void *base, unsigned int offset, const void *data, std::size_t length)
 	{
-		void *address = static_cast<unsigned char*>(base) + offset;
+		void *address = RVA(base, offset);
 
 		if (WinAPI::FillMem(address, data, length) < 0)
 		{
-			throw WinAPI::MakeError("Failed to apply memory patch at offset 0x%X!", offset);
+			throw WinAPI::CurrentError("Failed to apply memory patch at offset 0x%X!", offset);
 		}
 	}
 }
 
 /**
- * @brief Allows connecting to DX10 servers with game running in DX9 mode.
+ * Allows connecting to DX10 servers with game running in DX9 mode.
  */
 void Patch::CryAction::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBuild)
 {
@@ -158,7 +158,82 @@ void Patch::CryAction::AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBu
 }
 
 /**
- * @brief Prevents DX10 servers in the server list from being grayed-out when the game is running in DX9 mode.
+ * Disables automatic creation of "gameplaystatsXXX.txt" files.
+ *
+ * The "dump_stats" console command can still be used to create these files manually.
+ */
+void Patch::CryAction::DisableGameplayStats(void *pCryAction, int gameBuild)
+{
+#ifdef BUILD_64BIT
+	const unsigned char code[] = {
+		0xC3,  // ret
+		0x90,  // nop
+		0x90,  // nop
+		0x90,  // nop
+		0x90   // nop
+	};
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pCryAction, 0x2F21D6, code, sizeof code);
+			break;
+		}
+		case 5879:
+		{
+			FillMem(pCryAction, 0x2F59E6, code, sizeof code);
+			break;
+		}
+		case 6115:
+		{
+			FillMem(pCryAction, 0x2FA686, code, sizeof code);
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCryAction, 0x2FA976, code, sizeof code);
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNOP(pCryAction, 0x2016ED, 0x7);
+			break;
+		}
+		case 5879:
+		{
+			FillNOP(pCryAction, 0x203EBD, 0x7);
+			break;
+		}
+		case 6115:
+		{
+			FillNOP(pCryAction, 0x20668D, 0x7);
+			break;
+		}
+		case 6156:
+		{
+			FillNOP(pCryAction, 0x20605D, 0x7);
+			break;
+		}
+#endif
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// Crysis Wars has no automatically created "gameplaystatsXXX.txt" files
+			break;
+		}
+	}
+}
+
+/**
+ * Prevents DX10 servers in the server list from being grayed-out when the game is running in DX9 mode.
  */
 void Patch::CryGame::CanJoinDX10Servers(void *pCryGame, int gameBuild)
 {
@@ -266,7 +341,7 @@ void Patch::CryGame::CanJoinDX10Servers(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Disables executing autoexec.cfg on startup.
+ * Disables executing autoexec.cfg on startup.
  * This is useful for running the dedicated server and client from the same install
  */
 void Patch::CryGame::DisableAutoexec(void *pCryGame, int gameBuild)
@@ -303,7 +378,7 @@ void Patch::CryGame::DisableAutoexec(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Disables useless startup video ads.
+ * Disables useless startup video ads.
  */
 void Patch::CryGame::DisableIntros(void *pCryGame, int gameBuild)
 {
@@ -421,7 +496,8 @@ void Patch::CryGame::DisableIntros(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Forces true value for DX10 flag in Flash UI scripts (ActionScript).
+ * Forces true value for DX10 flag in Flash UI scripts (ActionScript).
+ *
  * It unlocks DX10 features in "CREATE GAME" menu in DX9 game.
  */
 void Patch::CryGame::EnableDX10Menu(void *pCryGame, int gameBuild)
@@ -554,7 +630,8 @@ void Patch::CryGame::EnableDX10Menu(void *pCryGame, int gameBuild)
 }
 
 /**
- * @brief Prevents server from kicking players with the same CD key.
+ * Prevents server from kicking players with the same CD key.
+ *
  * This is server-side patch.
  */
 void Patch::CryNetwork::AllowSameCDKeys(void *pCryNetwork, int gameBuild)
@@ -646,8 +723,66 @@ void Patch::CryNetwork::AllowSameCDKeys(void *pCryNetwork, int gameBuild)
 	}
 }
 
+
 /**
- * @brief Unlocks advantages of pre-ordered version for everyone.
+ * Disables creation of the "server_profile.txt" file.
+ */
+void Patch::CryNetwork::DisableServerProfile(void *pCryNetwork, int gameBuild)
+{
+#ifdef BUILD_64BIT
+	// already disabled in 64-bit version
+#else
+	switch (gameBuild)
+	{
+		case 5767:
+		{
+			FillNOP(pCryNetwork, 0x9F435, 0x5);
+			break;
+		}
+		case 5879:
+		{
+			FillNOP(pCryNetwork, 0x9CA81, 0x5);
+			break;
+		}
+		case 6115:
+		{
+			FillNOP(pCryNetwork, 0x9C665, 0x5);
+			break;
+		}
+		case 6156:
+		{
+			FillNOP(pCryNetwork, 0x9BE2E, 0x5);
+			break;
+		}
+		case 6527:
+		{
+			FillNOP(pCryNetwork, 0x9BEE6, 0x5);
+			break;
+		}
+		case 6566:
+		{
+			FillNOP(pCryNetwork, 0xB3419, 0x5);
+			break;
+		}
+		case 6586:
+		case 6627:
+		case 6670:
+		{
+			FillNOP(pCryNetwork, 0x9C4DC, 0x5);
+			break;
+		}
+		case 6729:
+		{
+			FillNOP(pCryNetwork, 0x9C4D7, 0x5);
+			break;
+		}
+	}
+#endif
+}
+
+/**
+ * Unlocks advantages of pre-ordered version for everyone.
+ *
  * This is both server-side and client-side patch.
  */
 void Patch::CryNetwork::EnablePreordered(void *pCryNetwork, int gameBuild)
@@ -721,7 +856,7 @@ void Patch::CryNetwork::EnablePreordered(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Allows connecting to Internet servers without GameSpy account.
+ * Allows connecting to Internet servers without GameSpy account.
  */
 void Patch::CryNetwork::FixInternetConnect(void *pCryNetwork, int gameBuild)
 {
@@ -809,7 +944,7 @@ void Patch::CryNetwork::FixInternetConnect(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Replace gamespy.com URL for multiplayer
+ * Replace gamespy.com URL for multiplayer
  */
 void Patch::CryNetwork::PatchGamespy(void *pCryNetwork, int gameBuild)
 {
@@ -878,7 +1013,7 @@ void Patch::CryNetwork::PatchGamespy(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Disables server profiler - "server_profile.txt" file.
+ * Disables server profiler - "server_profile.txt" file.
  * Only the 32-bit version has a server profiler.
  */
 void Patch::CryNetwork::PatchServerProfiler(void *pCryNetwork, int gameBuild)
@@ -924,7 +1059,7 @@ void Patch::CryNetwork::PatchServerProfiler(void *pCryNetwork, int gameBuild)
 }
 
 /**
- * @brief Removes the logspam: CWaitForEnabled: awaited object %s is not bound
+ * Removes the logspam: CWaitForEnabled: awaited object %s is not bound
  */
 void Patch::CryNetwork::PatchSpamCWaitForEnabled(void *pCryNetwork, int gameBuild)
 {
@@ -956,7 +1091,7 @@ void Patch::CryNetwork::PatchSpamCWaitForEnabled(void *pCryNetwork, int gameBuil
 }
 
 /**
- * @brief Removes the logspam: %s message with no entity id; discarding
+ * Removes the logspam: %s message with no entity id; discarding
  */
 void Patch::CryNetwork::PatchSpamSvRequestStopFire(void *pCryNetwork, int gameBuild)
 {
@@ -988,7 +1123,7 @@ void Patch::CryNetwork::PatchSpamSvRequestStopFire(void *pCryNetwork, int gameBu
 }
 
 /**
- * @brief Allows Very High settings in DX9 mode.
+ * Allows Very High settings in DX9 mode.
  */
 void Patch::CrySystem::AllowDX9VeryHighSpec(void *pCrySystem, int gameBuild)
 {
@@ -1082,7 +1217,8 @@ void Patch::CrySystem::AllowDX9VeryHighSpec(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Allows running multiple instances of Crysis at once.
+ * Allows running multiple instances of Crysis at once.
+ *
  * Note that the first check if any instance is already running is normally done in launcher.
  */
 void Patch::CrySystem::AllowMultipleInstances(void *pCrySystem, int gameBuild)
@@ -1187,7 +1323,8 @@ void Patch::CrySystem::AllowMultipleInstances(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Disables use of 3DNow! instructions.
+ * Disables use of 3DNow! instructions.
+ *
  * This patch correctly fixes the well-known crash of 32-bit Crysis on modern AMD processors.
  */
 void Patch::CrySystem::Disable3DNow(void *pCrySystem, int gameBuild)
@@ -1291,7 +1428,7 @@ void Patch::CrySystem::Disable3DNow(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Enable FPS cap on client
+ * Enable FPS cap on client
  */
 void Patch::CrySystem::EnableFPSCap(void *pCrySystem, int gameBuild, void *pWait)
 {
@@ -1356,8 +1493,7 @@ void Patch::CrySystem::EnableFPSCap(void *pCrySystem, int gameBuild, void *pWait
 }
 
 /**
- * @brief Disables the SecuROM crap in 64-bit CrySystem.
- * It does nothing in 32-bit build.
+ * Disables the SecuROM crap in 64-bit CrySystem DLL.
  */
 void Patch::CrySystem::RemoveSecuROM(void *pCrySystem, int gameBuild)
 {
@@ -1390,7 +1526,7 @@ void Patch::CrySystem::RemoveSecuROM(void *pCrySystem, int gameBuild)
 		case 6670:
 		case 6729:
 		{
-			// 64-bit CrySystem in Crysis Wars doesn't contain any SecuROM crap
+			// Crysis Wars has no SecuROM crap in its CrySystem DLL
 			break;
 		}
 	}
@@ -1398,7 +1534,7 @@ void Patch::CrySystem::RemoveSecuROM(void *pCrySystem, int gameBuild)
 }
 
 /**
- * @brief Prevents the engine from installing its own broken unhandled exceptions handler.
+ * Prevents the engine from installing its own broken unhandled exceptions handler.
  */
 void Patch::CrySystem::UnhandledExceptions(void *pCrySystem, int gameBuild)
 {
@@ -1537,8 +1673,10 @@ void Patch::CrySystem::UnhandledExceptions(void *pCrySystem, int gameBuild)
 	}
 }
 
+
 /**
- * @brief Prevents the DX10 renderer from using the lowest refresh rate available.
+ * Prevents the DX10 renderer from using the lowest refresh rate available.
+ *
  * Thanks to Guzz and Vladislav for this patch.
  */
 void Patch::CryRenderD3D10::FixLowRefreshRateBug(void *pCryRenderD3D10, int gameBuild)
@@ -1631,5 +1769,212 @@ void Patch::CryRenderD3D10::FixLowRefreshRateBug(void *pCryRenderD3D10, int game
 			break;
 		}
 #endif
+	}
+}
+
+/**
+ * Disables the debug renderer in CryRenderNULL DLL.
+ *
+ * This patch gets rid of the wasteful hidden debug renderer window with OpenGL context.
+ *
+ * The 1st FillNOP disables debug renderer stuff in CNULLRenderAuxGeom constructor.
+ * The 2nd FillNOP disables debug renderer stuff in CNULLRenderAuxGeom destructor.
+ * The 3rd FillMem disables the CNULLRenderAuxGeom::BeginFrame call in CNULLRenderer::BeginFrame.
+ * The 4th FillMem disables the CNULLRenderAuxGeom::EndFrame call in CNULLRenderer::EndFrame.
+ */
+void Patch::CryRenderNULL::DisableDebugRenderer(void *pCryRenderNULL, int gameBuild)
+{
+	const unsigned char code[] = {
+		0xC3,  // ret
+#ifdef BUILD_64BIT
+		0x90,  // nop
+#endif
+		0x90,  // nop
+		0x90,  // nop
+		0x90,  // nop
+		0x90,  // nop
+		0x90   // nop
+	};
+
+	unsigned int renderAuxGeomVTableOffset = 0;
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillNOP(pCryRenderNULL, 0xD2B9, 0x175);
+			FillNOP(pCryRenderNULL, 0xD473, 0x35);
+			FillMem(pCryRenderNULL, 0x16BE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16D0, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x97578;
+			break;
+		}
+		case 5879:
+		{
+			FillNOP(pCryRenderNULL, 0xD489, 0x175);
+			FillNOP(pCryRenderNULL, 0xD393, 0x35);
+			FillMem(pCryRenderNULL, 0x16CE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16E0, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x97538;
+			break;
+		}
+		case 6115:
+		{
+			FillNOP(pCryRenderNULL, 0xD049, 0x175);
+			FillNOP(pCryRenderNULL, 0xD203, 0x35);
+			FillMem(pCryRenderNULL, 0x16BE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16D0, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x974A8;
+			break;
+		}
+		case 6156:
+		{
+			FillNOP(pCryRenderNULL, 0xD379, 0x175);
+			FillNOP(pCryRenderNULL, 0xD533, 0x35);
+			FillMem(pCryRenderNULL, 0x16CE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16E0, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x97588;
+			break;
+		}
+		case 6566:
+		{
+			FillNOP(pCryRenderNULL, 0xC332, 0x175);
+			FillNOP(pCryRenderNULL, 0xC4EC, 0x35);
+			FillMem(pCryRenderNULL, 0x176E, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1780, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x98918;
+			break;
+		}
+		case 6586:
+		{
+			FillNOP(pCryRenderNULL, 0xCFC9, 0x175);
+			FillNOP(pCryRenderNULL, 0xD183, 0x35);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x984B8;
+			break;
+		}
+		case 6627:
+		{
+			FillNOP(pCryRenderNULL, 0xD369, 0x175);
+			FillNOP(pCryRenderNULL, 0xD523, 0x35);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x984B8;
+			break;
+		}
+		case 6670:
+		case 6729:
+		{
+			FillNOP(pCryRenderNULL, 0xD0D9, 0x175);
+			FillNOP(pCryRenderNULL, 0xD293, 0x35);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			renderAuxGeomVTableOffset = 0x984B8;
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNOP(pCryRenderNULL, 0x1CF3E, 0x101);
+			FillNOP(pCryRenderNULL, 0x1D051, 0xE);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA677C;
+			break;
+		}
+		case 5879:
+		{
+			FillNOP(pCryRenderNULL, 0x1CF78, 0x101);
+			FillNOP(pCryRenderNULL, 0x1CEFE, 0xE);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA6734;
+			break;
+		}
+		case 6115:
+		{
+			FillNOP(pCryRenderNULL, 0x1CF4F, 0x101);
+			FillNOP(pCryRenderNULL, 0x1D062, 0xE);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA6784;
+			break;
+		}
+		case 6156:
+		{
+			FillNOP(pCryRenderNULL, 0x1CEE6, 0x101);
+			FillNOP(pCryRenderNULL, 0x1CFF9, 0xE);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA778C;
+			break;
+		}
+		case 6527:
+		{
+			FillNOP(pCryRenderNULL, 0x1CE41, 0x101);
+			FillNOP(pCryRenderNULL, 0x1CF54, 0xE);
+			FillMem(pCryRenderNULL, 0x189B, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18AF, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA779C;
+			break;
+		}
+		case 6566:
+		{
+			FillNOP(pCryRenderNULL, 0x1D3D9, 0x10C);
+			FillNOP(pCryRenderNULL, 0x1D4F7, 0xE);
+			FillMem(pCryRenderNULL, 0x18A0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18B4, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xB078C;
+			break;
+		}
+		case 6586:
+		{
+			FillNOP(pCryRenderNULL, 0x1CF67, 0x101);
+			FillNOP(pCryRenderNULL, 0x1D07A, 0xE);
+			FillMem(pCryRenderNULL, 0x18A0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18B4, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA779C;
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			FillNOP(pCryRenderNULL, 0x1CF7C, 0x101);
+			FillNOP(pCryRenderNULL, 0x1D08F, 0xE);
+			FillMem(pCryRenderNULL, 0x18AD, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18C1, code, sizeof code);
+			renderAuxGeomVTableOffset = 0xA779C;
+			break;
+		}
+#endif
+	}
+
+	if (renderAuxGeomVTableOffset)
+	{
+		void **oldVTable = static_cast<void**>(RVA(pCryRenderNULL, renderAuxGeomVTableOffset));
+
+		// create a new CNULLRenderAuxGeom vtable
+		void *newVTable[27] = {};
+
+		// keep CNULLRenderAuxGeom::SetRenderFlags
+		// keep CNULLRenderAuxGeom::GetRenderFlags
+		newVTable[0] = oldVTable[0];
+		newVTable[1] = oldVTable[1];
+
+		// CNULLRenderAuxGeom::SetRenderFlags is empty and returns nothing
+		void *emptyFunc = newVTable[0];
+
+		// make the rest of CNULLRenderAuxGeom functions empty
+		// note that all the functions return nothing
+		for (unsigned int i = 2; i < (sizeof newVTable / sizeof newVTable[0]); i++)
+		{
+			newVTable[i] = emptyFunc;
+		}
+
+		// inject the new vtable
+		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof newVTable);
 	}
 }

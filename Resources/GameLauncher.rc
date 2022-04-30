@@ -3,7 +3,8 @@
 #include <winver.h>
 
 #include "Launcher/Game/Resources.h"
-#include "config.h"
+
+#include "Project.h"
 
 RESOURCE_ICON ICON "GameIcon.ico"
 
@@ -14,8 +15,8 @@ RESOURCE_CURSOR_RED   CURSOR "CursorRed.cur"
 RESOURCE_CURSOR_WHITE CURSOR "CursorWhite.cur"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     CWLAUNCHER_VERSION_MAJOR, CWLAUNCHER_VERSION_MINOR, 0, 0
-PRODUCTVERSION  CWLAUNCHER_VERSION_MAJOR, CWLAUNCHER_VERSION_MINOR, 0, 0
+FILEVERSION     PROJECT_VERSION, 0, 0, 0
+PRODUCTVERSION  PROJECT_VERSION, 0, 0, 0
 FILEOS          VOS__WINDOWS32
 FILETYPE        VFT_APP
 BEGIN
@@ -24,8 +25,8 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "ProductName",      "CW-Launcher"
-			VALUE "ProductVersion",   CWLAUNCHER_VERSION_STRING
-			VALUE "FileVersion",      CWLAUNCHER_VERSION_STRING
+			VALUE "ProductVersion",   PROJECT_VERSION_STRING
+			VALUE "FileVersion",      PROJECT_VERSION_STRING
 		#ifdef BUILD_64BIT
 			VALUE "FileDescription",  "Crysis Wars (64-bit)"
 		#else

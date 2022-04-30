@@ -43,7 +43,7 @@ public:
 	{
 		Unload();
 
-		void *handle = (flags & REF_ONLY) ? WinAPI::DLL_Get(name) : WinAPI::DLL_Load(name);
+		void *handle = (flags & REF_ONLY) ? WinAPI::DLL::Get(name) : WinAPI::DLL::Load(name);
 		if (!handle)
 		{
 			return false;
@@ -59,7 +59,7 @@ public:
 	{
 		if (!TryLoad(name, flags))
 		{
-			throw WinAPI::MakeError("Failed to load %s", name);
+			throw WinAPI::CurrentError("Failed to load %s", name);
 		}
 	}
 
@@ -67,7 +67,7 @@ public:
 	{
 		if (IsLoaded() && IsUnloadAllowed())
 		{
-			WinAPI::DLL_Unload(m_handle);
+			WinAPI::DLL::Unload(m_handle);
 		}
 
 		m_handle = NULL;
@@ -94,9 +94,14 @@ public:
 		return m_flags;
 	}
 
+	std::string GetPath() const
+	{
+		return WinAPI::DLL::GetPath(m_handle);
+	}
+
 	void *GetSymbolAddress(const char *name) const
 	{
-		return IsLoaded() ? WinAPI::DLL_GetSymbol(m_handle, name) : NULL;
+		return WinAPI::DLL::FindSymbol(m_handle, name);
 	}
 
 	template<class T>
