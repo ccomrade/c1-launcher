@@ -10,11 +10,10 @@
 #include <windows.h>
 #include <dbghelp.h>
 
-#include "Library/Format.h"
-#include "Library/DLL.h"
-#include "Library/WinAPI.h"
-
 #include "CrashLogger.h"
+#include "Format.h"
+#include "DLL.h"
+#include "WinAPI.h"
 
 #include "Project.h"
 

@@ -1,7 +1,7 @@
+#include "Library/CrashLogger.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"
 
-#include "../CrashLogger.h"
 #include "../Patch.h"
 
 #include "HeadlessServerLauncher.h"

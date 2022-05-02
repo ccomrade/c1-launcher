@@ -1,6 +1,6 @@
+#include "Library/CrashLogger.h"
 #include "Library/WinAPI.h"
 
-#include "../CrashLogger.h"
 #include "../Patch.h"
 
 #include "DedicatedServerLauncher.h"
