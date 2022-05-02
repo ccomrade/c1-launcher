@@ -63,6 +63,8 @@ add_library(LauncherBase STATIC
   Code/Library/WinAPI.h
 )
 
+target_link_libraries(LauncherBase dbghelp)
+
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 
 if(BUILD_BITS EQUAL 64)
