@@ -4,8 +4,8 @@
 
 #include "CryCommon/CrySystem/ISystem.h"
 #include "CryCommon/CrySystem/IConsole.h"
+#include "CryCommon/CrySystem/CryColorCode.h"
 
-#include "Library/CryColorCode.h"
 #include "Library/Format.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"

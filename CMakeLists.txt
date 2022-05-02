@@ -40,6 +40,7 @@ configure_file(Project.h.in ${PROJECT_BINARY_DIR}/Project.h)
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h
   Code/CryCommon/CryGame/IGameStartup.h
+  Code/CryCommon/CrySystem/CryColorCode.h
   Code/CryCommon/CrySystem/IConsole.h
   Code/CryCommon/CrySystem/ILog.h
   Code/CryCommon/CrySystem/ISystem.h
@@ -49,7 +50,6 @@ add_library(LauncherBase STATIC
   Code/Launcher/Patch.h
   Code/Library/CrashLogger.cpp
   Code/Library/CrashLogger.h
-  Code/Library/CryColorCode.h
   Code/Library/DLL.h
   Code/Library/File.h
   Code/Library/FileBase.h
