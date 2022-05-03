@@ -154,8 +154,8 @@ cmake --build .
 
 #### Using Visual Studio
 
-Modern Visual Studio (>= VS2019) allows you to directly open the source code directory as a CMake project and build it
-as usual.
+Modern Visual Studio (>= VS2019) and [Visual Studio Code](https://code.visualstudio.com/docs/cpp/config-msvc) allow you
+to directly open the source code directory as a CMake project and build it as usual.
 
 Older versions of Visual Studio require manually generated solution files.
 Use the same steps as above with the following command:
