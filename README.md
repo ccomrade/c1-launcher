@@ -19,7 +19,7 @@ It provides a better game launcher and dedicated server launcher with additional
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
-- The source code is compatible with the legacy VS2005 compiler that was used to build Crysis.
+- The source code is still compatible with the legacy VS2005 compiler that was used to build Crysis.
 
 ## Supported game versions
 
@@ -135,33 +135,33 @@ All this nonsense is skipped by this launcher. That means you can safely delete 
 - Microsoft Visual C++ compiler (MSVC) >= VS2005
 - CMake >= 3.15
 
-No other compilers are supported because Crytek used the MSVC compiler to build Crysis, and the same ABI is required.
-You don't have to install the highly bloated Visual Studio to get the MSVC compiler. All you need is the Windows SDK.
+MSVC is the only supported compiler due to the required ABI compatibility with Crysis DLLs.
 
 ### Building
 
-#### Using Windows SDK (recommended)
+#### Using Native Tools Command Prompt
 
 1. Download the source code.
 2. Create two empty build directories named `Build32` and `Build64` inside the source code directory.
-3. Open the 32-bit Windows SDK command prompt in the newly created `Build32` directory and run the following commands:
+3. Open the x86 Native Tools Command Prompt in the newly created `Build32` directory and run the following commands:
 
 ```
 cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 
-4. Repeat the previous step using the 64-bit Windows SDK command prompt and the `Build64` directory.
+4. Repeat the previous step with the x64 Native Tools Command Prompt and the `Build64` directory.
 
 #### Using Visual Studio
 
-Modern Visual Studio (VS2019) allows you to directly open the source code directory and compile the project as usual.
+Modern Visual Studio (>= VS2019) allows you to directly open the source code directory as a CMake project and build it
+as usual.
 
 Older versions of Visual Studio require manually generated solution files.
-You can use either the `cmake-gui` tool or the same steps as above with the following command:
+Use the same steps as above with the following command:
 
 ```
 cmake -G "Visual Studio 10 2010" -A Win32 ..
 ```
 
-Use the appropriate version of Visual Studio. For 64-bit build replace `Win32` with `x64`.
+Choose the appropriate version of Visual Studio. For 64-bit build replace `Win32` with `x64`.
