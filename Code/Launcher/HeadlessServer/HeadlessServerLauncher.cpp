@@ -33,7 +33,7 @@ int HeadlessServerLauncher::Run()
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
-		CrashLogger::Init(m_params.logFileName);
+		CrashLogger::SetSink(m_log);
 
 		LoadEngine();
 		PatchEngine();

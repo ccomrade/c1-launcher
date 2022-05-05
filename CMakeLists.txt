@@ -45,6 +45,8 @@ add_library(LauncherBase STATIC
   Code/CryCommon/CrySystem/ILog.h
   Code/CryCommon/CrySystem/ISystem.h
   Code/CryCommon/CrySystem/IValidator.h
+  Code/Launcher/CrashLogFileSink.cpp
+  Code/Launcher/CrashLogFileSink.h
   Code/Launcher/LauncherBase.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h

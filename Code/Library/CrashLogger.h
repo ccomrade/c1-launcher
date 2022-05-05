@@ -1,6 +1,13 @@
 #pragma once
 
+#include <string>
+
 namespace CrashLogger
 {
-	void Init(const char *defaultLogFileName);
+	struct Sink
+	{
+		virtual void OnCrashData(const std::string& data) = 0;
+	};
+
+	void SetSink(Sink& sink);
 }

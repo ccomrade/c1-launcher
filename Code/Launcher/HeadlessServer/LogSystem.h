@@ -8,6 +8,7 @@
 #include "CryCommon/CrySystem/ILog.h"
 
 #include "Library/File.h"
+#include "Library/CrashLogger.h"
 
 struct ICVar;
 
@@ -15,7 +16,7 @@ class Executor;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class LogSystem : public ILog
+class LogSystem : public ILog, public CrashLogger::Sink
 {
 	struct Message
 	{
@@ -96,6 +97,10 @@ public:
 
 	void AddCallback(ILogCallback* pCallback) override;
 	void RemoveCallback(ILogCallback* pCallback) override;
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	void OnCrashData(const std::string& data) override;
 
 	////////////////////////////////////////////////////////////////////////////////
 

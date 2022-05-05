@@ -259,6 +259,16 @@ void LogSystem::RemoveCallback(ILogCallback* pCallback)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void LogSystem::OnCrashData(const std::string& data)
+{
+	if (m_file.IsOpen())
+	{
+		m_file.Write(data);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void LogSystem::PushMessage(ELogType type, unsigned int flags, const char* format, ...)
 {
 	va_list args;

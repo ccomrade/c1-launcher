@@ -25,7 +25,8 @@ int DedicatedServerLauncher::Run()
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
-		CrashLogger::Init(m_params.logFileName);
+		m_crashSink.SetFileName(m_params.logFileName);
+		CrashLogger::SetSink(m_crashSink);
 
 		LoadEngine();
 		PatchEngine();
