@@ -2,6 +2,7 @@
 #include <string.h>
 #include <intrin.h>
 #include <windows.h>
+#include <shlobj.h>
 
 #include "WinAPI.h"
 #include "Format.h"
@@ -523,6 +524,19 @@ bool WinAPI::Directory::Create(const char* path, bool *pCreated)
 	}
 
 	return true;
+}
+
+std::string WinAPI::GetDocumentsPath()
+{
+	std::string path;
+
+	char buffer[MAX_PATH];
+	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, buffer) == S_OK)
+	{
+		path = buffer;
+	}
+
+	return path;
 }
 
 //////////

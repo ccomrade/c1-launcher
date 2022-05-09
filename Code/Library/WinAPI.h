@@ -121,6 +121,8 @@ namespace WinAPI
 		bool Create(const char* path, bool *pCreated = NULL);
 	}
 
+	std::string GetDocumentsPath();
+
 	//////////
 	// Time //
 	//////////
