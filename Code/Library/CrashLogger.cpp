@@ -1,105 +1,17 @@
-#include <cstdio>
-#include <cstdarg>
 #include <cstring>
 #include <cctype>
 #include <string>
 #include <vector>
 #include <algorithm>
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <dbghelp.h>
 
-#include "Library/Format.h"
-#include "Library/DLL.h"
-#include "Library/WinAPI.h"
-
 #include "CrashLogger.h"
+#include "Format.h"
+#include "WinAPI.h"
 
 #include "Project.h"
-
-class Log
-{
-	std::FILE *m_file;
-
-public:
-	Log()
-	: m_file(NULL)
-	{
-	}
-
-	~Log()
-	{
-		Close();
-	}
-
-	bool Open(const char *defaultFileName)
-	{
-		std::string path = WinAPI::CmdLine::GetArgValue("-root");
-
-		if (!path.empty() && path[path.length() - 1] != '\\' && path[path.length() - 1] != '/')
-		{
-			// append missing trailing slash
-			path += '\\';
-		}
-
-		// append the log file name
-		path += WinAPI::CmdLine::GetArgValue("-logfile", defaultFileName);
-
-		if (IsOpen())
-		{
-			Close();
-		}
-
-		m_file = std::fopen(path.c_str(), "a");
-
-		return IsOpen();
-	}
-
-	void Close()
-	{
-		if (IsOpen())
-		{
-			std::fclose(m_file);
-			m_file = NULL;
-		}
-	}
-
-	bool IsOpen() const
-	{
-		return m_file != NULL;
-	}
-
-	void Write(const char *msg)
-	{
-		if (IsOpen())
-		{
-			std::fputs(msg, m_file);
-			std::fputc('\n', m_file);
-		}
-	}
-
-	void Write(const std::string & msg)
-	{
-		if (IsOpen())
-		{
-			std::fputs(msg.c_str(), m_file);
-			std::fputc('\n', m_file);
-		}
-	}
-
-	void Printf(const char *format, ...)
-	{
-		if (IsOpen())
-		{
-			va_list args;
-			va_start(args, format);
-			std::vfprintf(m_file, format, args);
-			std::fputc('\n', m_file);
-			va_end(args);
-		}
-	}
-};
 
 struct CallStackEntry
 {
@@ -258,53 +170,15 @@ static BOOL CALLBACK EnumerateModulesCallback(PCSTR name, ULONG address, ULONG s
 
 class DebugHelper
 {
-	typedef BOOL (__stdcall *TSymInitialize)(HANDLE process, const char *userSearchPath, BOOL invadeProcess);
-	typedef BOOL (__stdcall *TSymSetOptions)(DWORD options);
-	typedef BOOL (__stdcall *TSymCleanup)(HANDLE process);
-	typedef BOOL (__stdcall *TSymFromAddr)(HANDLE process, DWORD64 address, DWORD64 *offset, SYMBOL_INFO *symbol);
-	typedef BOOL (__stdcall *TSymGetLineFromAddr)(HANDLE process, size_t address, size_t *offset, IMAGEHLP_LINE *line);
-	typedef BOOL (__stdcall *TSymGetModuleInfo)(HANDLE process, size_t address, IMAGEHLP_MODULE *moduleInfo);
-	typedef BOOL (__stdcall *TEnumerateLoadedModules)(HANDLE process, PENUMLOADED_MODULES_CALLBACK callback, void *p);
-	typedef BOOL (__stdcall *TStackWalk)(DWORD machine, HANDLE process, HANDLE thread, STACKFRAME *frame,
-	                                     void *contextRecord, PREAD_PROCESS_MEMORY_ROUTINE pReadMemoryRoutine,
-	                                     PFUNCTION_TABLE_ACCESS_ROUTINE pFunctionTableAccessRoutine,
-	                                     PGET_MODULE_BASE_ROUTINE pGetModuleBaseRoutine,
-	                                     PTRANSLATE_ADDRESS_ROUTINE pTranslateAddressRoutine);
-
-	DLL m_dll;
-
 	HANDLE m_process;
 	HANDLE m_thread;
-
-	TSymInitialize m_pSymInitialize;
-	TSymSetOptions m_pSymSetOptions;
-	TSymCleanup m_pSymCleanup;
-	TSymFromAddr m_pSymFromAddr;
-	TSymGetLineFromAddr m_pSymGetLineFromAddr;
-	TSymGetModuleInfo m_pSymGetModuleInfo;
-	TEnumerateLoadedModules m_pEnumerateLoadedModules;
-	TStackWalk m_pStackWalk;
-
-	PFUNCTION_TABLE_ACCESS_ROUTINE m_pSymFunctionTableAccess;
-	PGET_MODULE_BASE_ROUTINE m_pSymGetModuleBase;
 
 	bool m_isInitialized;
 
 public:
 	DebugHelper()
-	: m_dll(),
-	  m_process(),
+	: m_process(),
 	  m_thread(),
-	  m_pSymInitialize(),
-	  m_pSymSetOptions(),
-	  m_pSymCleanup(),
-	  m_pSymFromAddr(),
-	  m_pSymGetLineFromAddr(),
-	  m_pSymGetModuleInfo(),
-	  m_pEnumerateLoadedModules(),
-	  m_pStackWalk(),
-	  m_pSymFunctionTableAccess(),
-	  m_pSymGetModuleBase(),
 	  m_isInitialized(false)
 	{
 	}
@@ -313,7 +187,7 @@ public:
 	{
 		if (m_isInitialized)
 		{
-			m_pSymCleanup(m_process);
+			SymCleanup(m_process);
 		}
 	}
 
@@ -324,55 +198,15 @@ public:
 			return true;
 		}
 
-		if (!m_dll.TryLoad("dbghelp.dll"))
-		{
-			return false;
-		}
-
 		m_process = GetCurrentProcess();
 		m_thread  = GetCurrentThread();
 
-		m_pSymInitialize = m_dll.GetSymbol<TSymInitialize>("SymInitialize");
-		m_pSymSetOptions = m_dll.GetSymbol<TSymSetOptions>("SymSetOptions");
-		m_pSymCleanup    = m_dll.GetSymbol<TSymCleanup>("SymCleanup");
-		m_pSymFromAddr   = m_dll.GetSymbol<TSymFromAddr>("SymFromAddr");
-
-#ifdef BUILD_64BIT
-		m_pSymGetLineFromAddr     = m_dll.GetSymbol<TSymGetLineFromAddr>("SymGetLineFromAddr64");
-		m_pSymGetModuleInfo       = m_dll.GetSymbol<TSymGetModuleInfo>("SymGetModuleInfo64");
-		m_pEnumerateLoadedModules = m_dll.GetSymbol<TEnumerateLoadedModules>("EnumerateLoadedModules64");
-		m_pStackWalk              = m_dll.GetSymbol<TStackWalk>("StackWalk64");
-		m_pSymFunctionTableAccess = m_dll.GetSymbol<PFUNCTION_TABLE_ACCESS_ROUTINE>("SymFunctionTableAccess64");
-		m_pSymGetModuleBase       = m_dll.GetSymbol<PGET_MODULE_BASE_ROUTINE>("SymGetModuleBase64");
-#else
-		m_pSymGetLineFromAddr     = m_dll.GetSymbol<TSymGetLineFromAddr>("SymGetLineFromAddr");
-		m_pSymGetModuleInfo       = m_dll.GetSymbol<TSymGetModuleInfo>("SymGetModuleInfo");
-		m_pEnumerateLoadedModules = m_dll.GetSymbol<TEnumerateLoadedModules>("EnumerateLoadedModules");
-		m_pStackWalk              = m_dll.GetSymbol<TStackWalk>("StackWalk");
-		m_pSymFunctionTableAccess = m_dll.GetSymbol<PFUNCTION_TABLE_ACCESS_ROUTINE>("SymFunctionTableAccess");
-		m_pSymGetModuleBase       = m_dll.GetSymbol<PGET_MODULE_BASE_ROUTINE>("SymGetModuleBase");
-#endif
-
-		if (!m_pSymInitialize
-		 || !m_pSymSetOptions
-		 || !m_pSymCleanup
-		 || !m_pSymFromAddr
-		 || !m_pSymGetLineFromAddr
-		 || !m_pSymGetModuleInfo
-		 || !m_pEnumerateLoadedModules
-		 || !m_pStackWalk
-		 || !m_pSymFunctionTableAccess
-		 || !m_pSymGetModuleBase)
+		if (!SymInitialize(m_process, NULL, TRUE))
 		{
 			return false;
 		}
 
-		if (!m_pSymInitialize(m_process, NULL, TRUE))
-		{
-			return false;
-		}
-
-		m_pSymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
+		SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
 
 		m_isInitialized = true;
 
@@ -419,8 +253,8 @@ public:
 		frame.AddrStack.Mode = AddrModeFlat;
 #endif
 
-		while (m_pStackWalk(machine, m_process, m_thread, &frame, &context, NULL,
-		                    m_pSymFunctionTableAccess, m_pSymGetModuleBase, NULL))
+		while (StackWalk(machine, m_process, m_thread, &frame, &context, NULL,
+		                 SymFunctionTableAccess, SymGetModuleBase, NULL))
 		{
 			const size_t address = frame.AddrPC.Offset;
 
@@ -432,7 +266,7 @@ public:
 			IMAGEHLP_MODULE moduleInfo = {};
 			moduleInfo.SizeOfStruct = sizeof (IMAGEHLP_MODULE);
 
-			if (m_pSymGetModuleInfo(m_process, address, &moduleInfo))
+			if (SymGetModuleInfo(m_process, address, &moduleInfo))
 			{
 				entry.moduleName = BaseName(moduleInfo.ImageName);
 			}
@@ -444,7 +278,7 @@ public:
 
 			DWORD64 symbolOffset = 0;
 
-			if (m_pSymFromAddr(m_process, address, &symbolOffset, pSymbol))
+			if (SymFromAddr(m_process, address, &symbolOffset, pSymbol))
 			{
 				if (pSymbol->Flags & SYMFLAG_EXPORT && IsCrysisDLL(moduleInfo))
 				{
@@ -460,9 +294,9 @@ public:
 			IMAGEHLP_LINE line = {};
 			line.SizeOfStruct = sizeof (IMAGEHLP_LINE);
 
-			size_t lineOffset = 0;
+			DWORD lineOffset = 0;
 
-			if (m_pSymGetLineFromAddr(m_process, address, &lineOffset, &line))
+			if (SymGetLineFromAddr(m_process, address, &lineOffset, &line))
 			{
 				entry.sourceFile = line.FileName;
 				entry.sourceLine = line.LineNumber;
@@ -479,11 +313,10 @@ public:
 		if (m_isInitialized)
 		{
 #ifdef BUILD_64BIT
-			m_pEnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK64)EnumerateModulesCallback, &result);
+			EnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK64)EnumerateModulesCallback, &result);
 #else
-			m_pEnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK)EnumerateModulesCallback, &result);
+			EnumerateLoadedModules(m_process, (PENUMLOADED_MODULES_CALLBACK)EnumerateModulesCallback, &result);
 #endif
-
 			std::sort(result.begin(), result.end());
 		}
 
@@ -520,11 +353,21 @@ static const char *ExceptionCodeToString(unsigned int code)
 	return "Unknown";
 }
 
-static void DumpExceptionInfo(Log & log, const EXCEPTION_RECORD *exception)
+static void AddLine(std::string& data, const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	FormatToV(data, format, args);
+	va_end(args);
+
+	data += "\r\n";
+}
+
+static void DumpExceptionInfo(std::string& data, const EXCEPTION_RECORD *exception)
 {
 	const unsigned int code = exception->ExceptionCode;
 
-	log.Printf("%s exception (0x%08X) at 0x%p", ExceptionCodeToString(code), code, exception->ExceptionAddress);
+	AddLine(data, "%s exception (0x%08X) at 0x%p", ExceptionCodeToString(code), code, exception->ExceptionAddress);
 
 	if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 	{
@@ -534,98 +377,103 @@ static void DumpExceptionInfo(Log & log, const EXCEPTION_RECORD *exception)
 		{
 			case 0:
 			{
-				log.Printf("Read from 0x%p failed", address);
+				AddLine(data, "Read from 0x%p failed", address);
 				break;
 			}
 			case 1:
 			{
-				log.Printf("Write to 0x%p failed", address);
+				AddLine(data, "Write to 0x%p failed", address);
 				break;
 			}
 			case 8:
 			{
-				log.Printf("Execute at 0x%p failed", address);
+				AddLine(data, "Execute at 0x%p failed", address);
 				break;
 			}
 		}
 	}
 }
 
-static void DumpRegisters(Log & log, const CONTEXT *ctx)
+static void DumpRegisters(std::string& data, const CONTEXT *ctx)
 {
-	log.Write("Register dump:");
+	AddLine(data, "Register dump:");
 
 #ifdef BUILD_64BIT
-	log.Printf("RIP: %016I64X RSP: %016I64X RBP: %016I64X EFLAGS: %08X", ctx->Rip, ctx->Rsp, ctx->Rbp, ctx->EFlags);
-	log.Printf("RAX: %016I64X RBX: %016I64X RCX: %016I64X RDX: %016I64X", ctx->Rax, ctx->Rbx, ctx->Rcx, ctx->Rdx);
-	log.Printf("RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X", ctx->Rsi, ctx->Rdi, ctx->R8, ctx->R9);
-	log.Printf("R10: %016I64X R11: %016I64X R12: %016I64X R13: %016I64X", ctx->R10, ctx->R11, ctx->R12, ctx->R13);
-	log.Printf("R14: %016I64X R15: %016I64X", ctx->R14, ctx->R15);
+	AddLine(data, "RIP: %016I64X RSP: %016I64X RBP: %016I64X EFLAGS: %08X", ctx->Rip, ctx->Rsp, ctx->Rbp, ctx->EFlags);
+	AddLine(data, "RAX: %016I64X RBX: %016I64X RCX: %016I64X RDX: %016I64X", ctx->Rax, ctx->Rbx, ctx->Rcx, ctx->Rdx);
+	AddLine(data, "RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X", ctx->Rsi, ctx->Rdi, ctx->R8, ctx->R9);
+	AddLine(data, "R10: %016I64X R11: %016I64X R12: %016I64X R13: %016I64X", ctx->R10, ctx->R11, ctx->R12, ctx->R13);
+	AddLine(data, "R14: %016I64X R15: %016I64X", ctx->R14, ctx->R15);
 #else
-	log.Printf("EIP: %08X ESP: %08X EBP: %08X EFLAGS: %08X", ctx->Eip, ctx->Esp, ctx->Ebp, ctx->EFlags);
-	log.Printf("EAX: %08X EBX: %08X ECX: %08X EDX: %08X", ctx->Eax, ctx->Ebx, ctx->Ecx, ctx->Edx);
-	log.Printf("ESI: %08X EDI: %08X", ctx->Esi, ctx->Edi);
+	AddLine(data, "EIP: %08X ESP: %08X EBP: %08X EFLAGS: %08X", ctx->Eip, ctx->Esp, ctx->Ebp, ctx->EFlags);
+	AddLine(data, "EAX: %08X EBX: %08X ECX: %08X EDX: %08X", ctx->Eax, ctx->Ebx, ctx->Ecx, ctx->Edx);
+	AddLine(data, "ESI: %08X EDI: %08X", ctx->Esi, ctx->Edi);
 #endif
 }
 
-static void LogCrash(Log & log, _EXCEPTION_POINTERS *pExceptionInfo)
+static std::string CreateCrashData(_EXCEPTION_POINTERS *pExceptionInfo)
 {
-	log.Write("================================ CRASH DETECTED ================================");
-	log.Write(PROJECT_VERSION_DETAILS);
+	std::string data;
+	data.reserve(8192 - 1);
 
-	DumpExceptionInfo(log, pExceptionInfo->ExceptionRecord);
-	DumpRegisters(log, pExceptionInfo->ContextRecord);
+	AddLine(data, "================================ CRASH DETECTED ================================");
+	AddLine(data, "%s", PROJECT_VERSION_DETAILS);
+
+	DumpExceptionInfo(data, pExceptionInfo->ExceptionRecord);
+	DumpRegisters(data, pExceptionInfo->ContextRecord);
 
 	DebugHelper dbghelp;
 	if (dbghelp.Init())
 	{
 		std::vector<CallStackEntry> callstack = dbghelp.GetCallStack(pExceptionInfo->ContextRecord);
 
-		log.Write("Callstack:");
+		AddLine(data, "Callstack:");
 		for (size_t i = 0; i < callstack.size(); i++)
 		{
-			log.Write(callstack[i].ToString());
+			AddLine(data, "%s", callstack[i].ToString().c_str());
 		}
 
 		std::vector<Module> modules = dbghelp.GetLoadedModules();
 
-		log.Printf("Modules (%u):", modules.size());
+		AddLine(data, "Modules (%u):", modules.size());
 		for (size_t i = 0; i < modules.size(); i++)
 		{
-			log.Write(modules[i].ToString());
+			AddLine(data, "%s", modules[i].ToString().c_str());
 		}
 	}
 	else
 	{
-		log.Printf("CrashLogger: DebugHelper initialization failed with error code %lu", GetLastError());
+		AddLine(data, "CrashLogger: DebugHelper initialization failed with error code %lu", GetLastError());
 	}
 
-	log.Write("Command line:");
-	log.Write(GetCommandLineA());
+	AddLine(data, "Command line:");
+	AddLine(data, "%s", GetCommandLineA());
 
-	log.Write("================================================================================");
+	AddLine(data, "================================================================================");
+
+	return data;
 }
 
-static const char *g_defaultLogFileName;
+static CrashLogger::Sink* g_sink;
 
 static LONG __stdcall CrashHandler(_EXCEPTION_POINTERS *pExceptionInfo)
 {
 	// disable this crash handler to avoid recursive calls
 	SetUnhandledExceptionFilter(NULL);
 
-	Log log;
-
-	if (log.Open(g_defaultLogFileName))
+	if (g_sink)
 	{
-		LogCrash(log, pExceptionInfo);
+		const std::string data = CreateCrashData(pExceptionInfo);
+
+		g_sink->OnCrashData(data);
 	}
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-void CrashLogger::Init(const char *defaultLogFileName)
+void CrashLogger::SetSink(Sink& sink)
 {
-	g_defaultLogFileName = defaultLogFileName;
+	g_sink = &sink;
 
 	SetUnhandledExceptionFilter(CrashHandler);
 }

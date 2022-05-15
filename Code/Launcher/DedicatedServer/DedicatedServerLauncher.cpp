@@ -1,6 +1,6 @@
+#include "Library/CrashLogger.h"
 #include "Library/WinAPI.h"
 
-#include "../CrashLogger.h"
 #include "../ILauncher.h"
 #include "../Patch.h"
 
@@ -86,7 +86,8 @@ int DedicatedServerLauncher::Run()
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
-		CrashLogger::Init(m_params.logFileName);
+		m_crashSink.SetFileName(m_params.logFileName);
+		CrashLogger::SetSink(m_crashSink);
 
 		LoadEngine();
 		PatchEngine();
@@ -120,6 +121,7 @@ void DedicatedServerLauncher::LoadEngine()
 	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
 	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
 	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
+	m_CryPhysics.Load("CryPhysics.dll", DLL::NO_UNLOAD);
 }
 
 void DedicatedServerLauncher::PatchEngine()
@@ -136,6 +138,7 @@ void DedicatedServerLauncher::PatchEngine()
 		void* pCryAction = m_CryAction.GetHandle();
 
 		Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
+		Patch::CryAction::PatchSpamTimesOut(pCryAction, m_gameBuild);
 	}
 
 	if (m_CryNetwork.IsLoaded())
@@ -161,5 +164,12 @@ void DedicatedServerLauncher::PatchEngine()
 		}
 
 		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
+	}
+
+	if (m_CryPhysics.IsLoaded())
+	{
+		void* pCryPhysics = m_CryPhysics.GetHandle();
+
+		Patch::CryPhysics::PatchValidatorLogSpam(pCryPhysics, m_gameBuild);
 	}
 }

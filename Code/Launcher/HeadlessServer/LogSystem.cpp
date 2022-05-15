@@ -4,8 +4,8 @@
 
 #include "CryCommon/CrySystem/ISystem.h"
 #include "CryCommon/CrySystem/IConsole.h"
+#include "CryCommon/CrySystem/CryColorCode.h"
 
-#include "Library/CryColorCode.h"
 #include "Library/Format.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"
@@ -255,6 +255,16 @@ void LogSystem::AddCallback(ILogCallback* pCallback)
 void LogSystem::RemoveCallback(ILogCallback* pCallback)
 {
 	m_callbacks.erase(std::remove(m_callbacks.begin(), m_callbacks.end(), pCallback), m_callbacks.end());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void LogSystem::OnCrashData(const std::string& data)
+{
+	if (m_file.IsOpen())
+	{
+		m_file.Write(data);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

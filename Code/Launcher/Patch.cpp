@@ -19,6 +19,16 @@ namespace
 		}
 	}
 
+	void FillZero(void *base, unsigned int offset, unsigned int count)
+	{
+		void *address = RVA(base, offset);
+
+		if (WinAPI::FillZero(address, count) < 0)
+		{
+			throw WinAPI::CurrentError("Failed to apply memory patch at offset 0x%X!", offset);
+		}
+	}
+
 	void FillMem(void *base, unsigned int offset, const void *data, std::size_t length)
 	{
 		void *address = RVA(base, offset);
@@ -229,6 +239,38 @@ void Patch::CryAction::DisableGameplayStats(void *pCryAction, int gameBuild)
 			// Crysis Wars has no automatically created "gameplaystatsXXX.txt" files
 			break;
 		}
+	}
+}
+
+/**
+ *Removes the logspam: %p times out
+ */
+void Patch::CryAction::PatchSpamTimesOut(void *pCryAction, int gameBuild)
+{
+	switch (gameBuild)
+	{
+	case 5767:
+	case 5879:
+	case 6115:
+	case 6156:
+	case 6527:
+	case 6566:
+	case 6586:
+	case 6627:
+	case 6670:
+	{
+		//Crysis 1 and old Crysis Wars not supported
+		break;
+	}
+	case 6729:
+	{
+#ifdef BUILD_64BIT
+		FillZero(pCryAction, 0x387708, 0xC);
+#else
+		FillZero(pCryAction, 0x29705C, 0xC);
+#endif
+		break;
+	}
 	}
 }
 
@@ -1976,5 +2018,43 @@ void Patch::CryRenderNULL::DisableDebugRenderer(void *pCryRenderNULL, int gameBu
 
 		// inject the new vtable
 		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof newVTable);
+	}
+}
+
+/**
+ * Disables logpsam from the ENTITY_VALIDATE call in CryPhysics
+ */
+void Patch::CryPhysics::PatchValidatorLogSpam(void *pCryPhysics, int gameBuild)
+{
+	unsigned char code[] = {0xEB};
+
+	switch (gameBuild)
+	{
+	case 5767:
+	case 5879:
+	case 6115:
+	case 6156:
+	case 6527:
+	case 6566:
+	case 6586:
+	case 6627:
+	case 6670:
+	{
+		//Crysis 1 and old Crysis Wars not supported
+		break;
+	}
+	case 6729:
+	{
+#ifdef BUILD_64BIT
+		FillMem(pCryPhysics, 0x5423D, code, sizeof code);
+		FillMem(pCryPhysics, 0x543F3, code, sizeof code);
+		FillMem(pCryPhysics, 0x544B8, code, sizeof code);
+#else
+		FillMem(pCryPhysics, 0x6970B, code, sizeof code);
+		FillMem(pCryPhysics, 0x6989B, code, sizeof code);
+		FillMem(pCryPhysics, 0x69946, code, sizeof code);
+#endif
+		break;
+	}
 	}
 }

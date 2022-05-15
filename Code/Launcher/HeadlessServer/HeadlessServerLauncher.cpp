@@ -1,7 +1,7 @@
+#include "Library/CrashLogger.h"
 #include "Library/Path.h"
 #include "Library/WinAPI.h"
 
-#include "../CrashLogger.h"
 #include "../ILauncher.h"
 #include "../Patch.h"
 
@@ -95,7 +95,7 @@ int HeadlessServerLauncher::Run()
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
-		CrashLogger::Init(m_params.logFileName);
+		CrashLogger::SetSink(m_log);
 
 		LoadEngine();
 		PatchEngine();
@@ -111,6 +111,8 @@ int HeadlessServerLauncher::Run()
 		StartEngine(m_CryGame);
 
 		LogSystem::StdErr("Ready");
+		gEnv = m_params.pSystem->GetGlobalEnvironment();
+		CryLogAlways("%s", PROJECT_VERSION_DETAILS);
 
 		return UpdateLoop();
 	}
@@ -174,6 +176,7 @@ void HeadlessServerLauncher::LoadEngine()
 	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
 	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
 	m_CryRenderNULL.Load("CryRenderNULL.dll", DLL::NO_UNLOAD);
+	m_CryPhysics.Load("CryPhysics.dll", DLL::NO_UNLOAD);
 }
 
 void HeadlessServerLauncher::PatchEngine()
@@ -190,6 +193,7 @@ void HeadlessServerLauncher::PatchEngine()
 		void* pCryAction = m_CryAction.GetHandle();
 
 		Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
+		Patch::CryAction::PatchSpamTimesOut(pCryAction, m_gameBuild);
 	}
 
 	if (m_CryNetwork.IsLoaded())
@@ -222,6 +226,13 @@ void HeadlessServerLauncher::PatchEngine()
 		void* pCryRenderNULL = m_CryRenderNULL.GetHandle();
 
 		Patch::CryRenderNULL::DisableDebugRenderer(pCryRenderNULL, m_gameBuild);
+	}
+
+	if (m_CryPhysics.IsLoaded())
+	{
+		void* pCryPhysics = m_CryPhysics.GetHandle();
+
+		Patch::CryPhysics::PatchValidatorLogSpam(pCryPhysics, m_gameBuild);
 	}
 }
 

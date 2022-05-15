@@ -1,6 +1,6 @@
+#include "Library/CrashLogger.h"
 #include "Library/WinAPI.h"
 
-#include "../CrashLogger.h"
 #include "../ILauncher.h"
 #include "../Patch.h"
 
@@ -102,7 +102,8 @@ int GameLauncher::Run()
 
 		SetParamsCmdLine(WinAPI::CmdLine::Get());
 
-		CrashLogger::Init(m_params.logFileName);
+		m_crashSink.SetFileName(m_params.logFileName);
+		CrashLogger::SetSink(m_crashSink);
 
 		ticksPerNanosecond = WinAPI::GetTSCTicksPerNanosecond();
 
@@ -138,6 +139,7 @@ void GameLauncher::LoadEngine()
 	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
 	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
 	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
+	m_CryPhysics.Load("CryPhysics.dll", DLL::NO_UNLOAD);
 
 	if (WinAPI::IsVistaOrLater() && !WinAPI::CmdLine::HasArg("-dx9"))
 	{
@@ -166,6 +168,7 @@ void GameLauncher::PatchEngine()
 
 		Patch::CryAction::AllowDX9ImmersiveMultiplayer(pCryAction, m_gameBuild);
 		Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
+		Patch::CryAction::PatchSpamTimesOut(pCryAction, m_gameBuild);
 	}
 
 	if (m_CryNetwork.IsLoaded())
@@ -204,5 +207,12 @@ void GameLauncher::PatchEngine()
 		void* pCryRenderD3D10 = m_CryRenderD3D10.GetHandle();
 
 		Patch::CryRenderD3D10::FixLowRefreshRateBug(pCryRenderD3D10, m_gameBuild);
+	}
+
+	if (m_CryPhysics.IsLoaded())
+	{
+		void* pCryPhysics = m_CryPhysics.GetHandle();
+
+		Patch::CryPhysics::PatchValidatorLogSpam(pCryPhysics, m_gameBuild);
 	}
 }

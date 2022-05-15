@@ -79,6 +79,7 @@ namespace WinAPI
 	///////////
 
 	int FillNOP(void *address, std::size_t length);
+	int FillZero(void *address, std::size_t length);
 	int FillMem(void *address, const void *data, std::size_t length);
 	double GetTSCTicksPerNanosecond();
 
@@ -121,6 +122,8 @@ namespace WinAPI
 	{
 		bool Create(const char* path, bool *pCreated = NULL);
 	}
+
+	std::string GetDocumentsPath();
 
 	//////////
 	// Time //

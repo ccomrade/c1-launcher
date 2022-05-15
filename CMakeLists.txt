@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11)
 
 ################################################################################
 
-project(CW-Launcher VERSION 3 LANGUAGES CXX RC)
+project(CW-Launcher VERSION 4 LANGUAGES CXX RC)
 
 ################################################################################
 
@@ -39,17 +39,19 @@ if(BUILD_BITS EQUAL 64)
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h
   Code/CryCommon/CryGame/IGameStartup.h
+  Code/CryCommon/CrySystem/CryColorCode.h
   Code/CryCommon/CrySystem/IConsole.h
   Code/CryCommon/CrySystem/ILog.h
   Code/CryCommon/CrySystem/ISystem.h
   Code/CryCommon/CrySystem/IValidator.h
-  Code/Launcher/CrashLogger.cpp
-  Code/Launcher/CrashLogger.h
+  Code/Launcher/CrashLogFileSink.cpp
+  Code/Launcher/CrashLogFileSink.h
   Code/Launcher/ILauncher.h
   Code/Launcher/LauncherBase.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Library/CryColorCode.h
+  Code/Library/CrashLogger.cpp
+  Code/Library/CrashLogger.h
   Code/Library/DLL.h
   Code/Library/File.h
   Code/Library/FileBase.h
@@ -66,17 +68,19 @@ else()
 add_library(LauncherBase STATIC
   Code/CryCommon/CryGame/IGameRef.h
   Code/CryCommon/CryGame/IGameStartup.h
+  Code/CryCommon/CrySystem/CryColorCode.h
   Code/CryCommon/CrySystem/IConsole.h
   Code/CryCommon/CrySystem/ILog.h
   Code/CryCommon/CrySystem/ISystem.h
   Code/CryCommon/CrySystem/IValidator.h
-  Code/Launcher/CrashLogger.cpp
-  Code/Launcher/CrashLogger.h
+  Code/Launcher/CrashLogFileSink.cpp
+  Code/Launcher/CrashLogFileSink.h
   Code/Launcher/ILauncher.h
   Code/Launcher/LauncherBase.h
   Code/Launcher/Patch.cpp
   Code/Launcher/Patch.h
-  Code/Library/CryColorCode.h
+  Code/Library/CrashLogger.cpp
+  Code/Library/CrashLogger.h
   Code/Library/DLL.h
   Code/Library/File.h
   Code/Library/FileBase.h
@@ -90,6 +94,8 @@ add_library(LauncherBase STATIC
   Code/Library/WinAPI.h
 )
 endif()
+
+target_link_libraries(LauncherBase dbghelp)
 
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 

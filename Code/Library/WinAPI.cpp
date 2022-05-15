@@ -2,6 +2,7 @@
 #include <string.h>
 #include <intrin.h>
 #include <windows.h>
+#include <shlobj.h>
 
 #include "WinAPI.h"
 #include "Format.h"
@@ -236,6 +237,28 @@ int WinAPI::FillNOP(void *address, std::size_t length)
 
 	// 0x90 is opcode of NOP instruction on both x86 and x86-64
 	std::memset(address, '\x90', length);
+
+	if (!VirtualProtect(address, length, oldProtection, &oldProtection))
+		return -1;
+
+	return 0;
+}
+
+/**
+ * Fills read-only memory region with zeros
+ *
+ * @param address Address of the memory region.
+ * @param length Size of the memory region in bytes.
+ * @return 0 on success or -1 if some error occurred.
+ */
+int WinAPI::FillZero(void *address, std::size_t length)
+{
+	DWORD oldProtection = 0;
+
+	if (!VirtualProtect(address, length, PAGE_EXECUTE_READWRITE, &oldProtection))
+		return -1;
+
+	std::memset(address, '\x00', length);
 
 	if (!VirtualProtect(address, length, oldProtection, &oldProtection))
 		return -1;
@@ -549,6 +572,19 @@ bool WinAPI::Directory::Create(const char* path, bool *pCreated)
 	}
 
 	return true;
+}
+
+std::string WinAPI::GetDocumentsPath()
+{
+	std::string path;
+
+	char buffer[MAX_PATH];
+	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, buffer) == S_OK)
+	{
+		path = buffer;
+	}
+
+	return path;
 }
 
 //////////

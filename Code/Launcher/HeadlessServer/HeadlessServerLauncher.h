@@ -19,6 +19,7 @@ class HeadlessServerLauncher : public LauncherBase, public ISystemUserCallback
 	DLL m_CryNetwork;
 	DLL m_CrySystem;
 	DLL m_CryRenderNULL;
+	DLL m_CryPhysics;
 
 public:
 	HeadlessServerLauncher();

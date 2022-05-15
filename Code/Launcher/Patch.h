@@ -6,6 +6,7 @@ namespace Patch
 	{
 		void AllowDX9ImmersiveMultiplayer(void *pCryAction, int gameBuild);
 		void DisableGameplayStats(void *pCryAction, int gameBuild);
+		void PatchSpamTimesOut(void *pCryAction, int gameBuild);
 	}
 
 	namespace CryGame
@@ -46,5 +47,10 @@ namespace Patch
 	namespace CryRenderNULL
 	{
 		void DisableDebugRenderer(void *pCryRenderNULL, int gameBuild);
+	}
+
+	namespace CryPhysics
+	{
+		void PatchValidatorLogSpam(void *pCryPhysics, int gameBuild);
 	}
 }
