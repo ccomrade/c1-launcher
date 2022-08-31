@@ -3,17 +3,28 @@
  * @brief Dedicated server launcher.
  */
 
-#include "DedicatedServerLauncher.h"
+#include <stdexcept>
 
+#include "Library/OS.h"
 #include "Project.h"
 
-// declared in CryCommon/CrySystem/ISystem.h
-SSystemGlobalEnvironment* gEnv;
+#include "DedicatedServerLauncher.h"
 
-// declared in Project.h
-const char* const PROJECT_VERSION_DETAILS = PROJECT_MAKE_VERSION_DETAILS("C1-Launcher Dedicated Server");
+////////////////////////////////////////////////////////////////////////////////
+
+const char* const PROJECT_BANNER = "C1-Launcher Dedicated Server " PROJECT_VERSION_DETAILS;
+
+////////////////////////////////////////////////////////////////////////////////
 
 int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {
-	return DedicatedServerLauncher().Run();
+	try
+	{
+		return DedicatedServerLauncher().Run();
+	}
+	catch (const std::runtime_error& ex)
+	{
+		OS::ErrorBox(ex.what());
+		return 1;
+	}
 }

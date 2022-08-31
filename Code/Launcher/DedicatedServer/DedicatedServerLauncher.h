@@ -1,15 +1,23 @@
 #pragma once
 
-#include "../LauncherBase.h"
-#include "../CrashLogFileSink.h"
+#include "CryCommon/CryGame/IGameStartup.h"
+#include "CryCommon/CrySystem/ISystem.h"
 
-class DedicatedServerLauncher : public LauncherBase
+class DedicatedServerLauncher
 {
-	DLL m_CryGame;
-	DLL m_CryNetwork;
-	DLL m_CrySystem;
+	IGameStartup* m_pGameStartup;
+	SSystemInitParams m_params;
 
-	CrashLogFileSink m_crashSink;
+	struct DLLs
+	{
+		void* pCryGame;
+		void* pCryNetwork;
+		void* pCrySystem;
+
+		int gameBuild;
+	};
+
+	DLLs m_dlls;
 
 public:
 	DedicatedServerLauncher();

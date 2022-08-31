@@ -5,7 +5,7 @@
 
 #pragma once
 
-#define RESOURCE_ICON         101
+#define RESOURCE_ICON 101
 
 #define RESOURCE_CURSOR_AMBER 103
 #define RESOURCE_CURSOR_BLUE  104

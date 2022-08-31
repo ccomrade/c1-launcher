@@ -3,17 +3,29 @@
  * @brief Headless server launcher.
  */
 
-#include "HeadlessServerLauncher.h"
+#include <cstdio>
+#include <stdexcept>
 
 #include "Project.h"
 
-// declared in CryCommon/CrySystem/ISystem.h
-SSystemGlobalEnvironment* gEnv;
+#include "HeadlessServerLauncher.h"
 
-// declared in Project.h
-const char* const PROJECT_VERSION_DETAILS = PROJECT_MAKE_VERSION_DETAILS("C1-Launcher Headless Server");
+////////////////////////////////////////////////////////////////////////////////
+
+const char* const PROJECT_BANNER = "C1-Launcher Headless Server " PROJECT_VERSION_DETAILS;
+
+////////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
-	return HeadlessServerLauncher().Run();
+	try
+	{
+		return HeadlessServerLauncher().Run();
+	}
+	catch (const std::runtime_error& ex)
+	{
+		std::fprintf(stderr, "%s\n", ex.what());
+		std::fflush(stderr);
+		return 1;
+	}
 }

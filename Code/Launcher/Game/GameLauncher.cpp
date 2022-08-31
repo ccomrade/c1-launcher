@@ -1,122 +1,113 @@
 #include "Library/CrashLogger.h"
-#include "Library/WinAPI.h"
+#include "Library/OS.h"
+#include "Project.h"
 
-#include "../Patch.h"
+#include "../LauncherCommon.h"
+#include "../MemoryPatch.h"
 
 #include "GameLauncher.h"
 
-#include "Project.h"
+#define DEFAULT_LOG_FILE_NAME "Game.log"
 
-GameLauncher::GameLauncher()
+static std::FILE* OpenLogFile()
+{
+	return LauncherCommon::OpenLogFile(DEFAULT_LOG_FILE_NAME);
+}
+
+GameLauncher::GameLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
 {
 }
 
 GameLauncher::~GameLauncher()
 {
+	if (m_pGameStartup)
+	{
+		m_pGameStartup->Shutdown();
+	}
 }
 
 int GameLauncher::Run()
 {
-	try
-	{
-		m_params.hInstance = WinAPI::EXE::Get();
-		m_params.logFileName = "Game.log";
+	m_params.hInstance = OS::Module::GetEXE();
+	m_params.logFileName = DEFAULT_LOG_FILE_NAME;
 
-		SetParamsCmdLine(WinAPI::CmdLine::Get());
+	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
 
-		m_crashSink.SetFileName(m_params.logFileName);
-		CrashLogger::SetSink(m_crashSink);
+	CrashLogger::Enable(&OpenLogFile);
 
-		LoadEngine();
-		PatchEngine();
-		StartEngine(m_CryGame);
+	this->LoadEngine();
+	this->PatchEngine();
 
-		gEnv = m_params.pSystem->GetGlobalEnvironment();
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
 
-		CryLogAlways("%s", PROJECT_VERSION_DETAILS);
+	gEnv = m_params.pSystem->GetGlobalEnvironment();
 
-		return UpdateLoop();
-	}
-	catch (const std::runtime_error& error)
-	{
-		WinAPI::ErrorBox(error.what());
-		return 1;
-	}
+	CryLogAlways("%s", PROJECT_BANNER);
+
+	return m_pGameStartup->Run(NULL);
 }
 
 void GameLauncher::LoadEngine()
 {
-	m_CrySystem.Load("CrySystem.dll", DLL::NO_UNLOAD);  // unloading Crysis DLLs is not safe
+	m_dlls.pCrySystem = LauncherCommon::LoadModule("CrySystem.dll");
 
-	m_gameBuild = WinAPI::GetCrysisGameBuild(m_CrySystem.GetHandle());
-	if (m_gameBuild < 0)
+	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+
+	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	m_dlls.pCryGame = LauncherCommon::LoadModule("CryGame.dll");
+	m_dlls.pCryAction = LauncherCommon::LoadModule("CryAction.dll");
+	m_dlls.pCryNetwork = LauncherCommon::LoadModule("CryNetwork.dll");
+
+	const bool isDX10 = !OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater());
+
+	if (isDX10)
 	{
-		throw WinAPI::CurrentError("Failed to get the game version!");
-	}
-
-	VerifyGameBuild();
-
-	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
-	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
-	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
-
-	if (!WinAPI::CmdLine::HasArg("-dx9") && (WinAPI::CmdLine::HasArg("-dx10") || WinAPI::IsVistaOrLater()))
-	{
-		m_CryRenderD3D10.Load("CryRenderD3D10.dll", DLL::NO_UNLOAD);
+		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadModule("CryRenderD3D10.dll");
 	}
 }
 
 void GameLauncher::PatchEngine()
 {
-	if (m_CryGame.IsLoaded())
+	if (m_dlls.pCryGame)
 	{
-		void* pCryGame = m_CryGame.GetHandle();
+		MemoryPatch::CryGame::CanJoinDX10Servers(m_dlls.pCryGame, m_dlls.gameBuild);
+		MemoryPatch::CryGame::EnableDX10Menu(m_dlls.pCryGame, m_dlls.gameBuild);
 
-		Patch::CryGame::CanJoinDX10Servers(pCryGame, m_gameBuild);
-		Patch::CryGame::EnableDX10Menu(pCryGame, m_gameBuild);
-
-		if (!WinAPI::CmdLine::HasArg("-splash"))
+		if (!OS::CmdLine::HasArg("-splash"))
 		{
-			Patch::CryGame::DisableIntros(pCryGame, m_gameBuild);
+			MemoryPatch::CryGame::DisableIntros(m_dlls.pCryGame, m_dlls.gameBuild);
 		}
 	}
 
-	if (m_CryAction.IsLoaded())
+	if (m_dlls.pCryAction)
 	{
-		void* pCryAction = m_CryAction.GetHandle();
-
-		Patch::CryAction::AllowDX9ImmersiveMultiplayer(pCryAction, m_gameBuild);
+		MemoryPatch::CryAction::AllowDX9ImmersiveMultiplayer(m_dlls.pCryAction, m_dlls.gameBuild);
 	}
 
-	if (m_CryNetwork.IsLoaded())
+	if (m_dlls.pCryNetwork)
 	{
-		void* pCryNetwork = m_CryNetwork.GetHandle();
-
-		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
+		MemoryPatch::CryNetwork::EnablePreordered(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::AllowSameCDKeys(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
 	}
 
-	if (m_CrySystem.IsLoaded())
+	if (m_dlls.pCrySystem)
 	{
-		void* pCrySystem = m_CrySystem.GetHandle();
+		MemoryPatch::CrySystem::RemoveSecuROM(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::AllowDX9VeryHighSpec(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::AllowMultipleInstances(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 
-		Patch::CrySystem::RemoveSecuROM(pCrySystem, m_gameBuild);
-		Patch::CrySystem::AllowDX9VeryHighSpec(pCrySystem, m_gameBuild);
-		Patch::CrySystem::AllowMultipleInstances(pCrySystem, m_gameBuild);
-
-		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+		if (OS::CPU::IsAMD() && !OS::CPU::Has3DNow())
 		{
-			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
 		}
-
-		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
 	}
 
-	if (m_CryRenderD3D10.IsLoaded())
+	if (m_dlls.pCryRenderD3D10)
 	{
-		void* pCryRenderD3D10 = m_CryRenderD3D10.GetHandle();
-
-		Patch::CryRenderD3D10::FixLowRefreshRateBug(pCryRenderD3D10, m_gameBuild);
+		MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(m_dlls.pCryRenderD3D10, m_dlls.gameBuild);
 	}
 }

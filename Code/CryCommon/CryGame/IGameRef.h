@@ -8,27 +8,25 @@ struct IGame;
 
 class IGameRef
 {
-	IGame **m_ptr;
+	IGame** m_ptr;
 
 public:
-	IGameRef()
-	: m_ptr(NULL)
+	IGameRef() : m_ptr(NULL)
 	{
 	}
 
-	IGameRef(IGame **ptr)
-	: m_ptr(ptr)
+	IGameRef(IGame** ptr) : m_ptr(ptr)
 	{
 	}
 
-	IGameRef & operator=(IGame **ptr)
+	IGameRef& operator=(IGame** ptr)
 	{
 		m_ptr = ptr;
 
 		return *this;
 	}
 
-	IGame *operator->() const
+	IGame* operator->() const
 	{
 		return (m_ptr) ? *m_ptr : NULL;
 	}

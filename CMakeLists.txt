@@ -29,11 +29,24 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DYNAMICBASE:NO /LARGEADDR
 
 math(EXPR BUILD_BITS "${CMAKE_SIZEOF_VOID_P} * 8")
 
-message(STATUS "${BUILD_BITS}-bit build")
+set(VERSION_DETAILS "v${PROJECT_VERSION_MAJOR} ${BUILD_BITS}-bit ${CMAKE_BUILD_TYPE}")
+
+message(STATUS "${PROJECT_NAME} ${VERSION_DETAILS}")
 
 ################################################################################
 
 configure_file(Project.h.in ${PROJECT_BINARY_DIR}/Project.h)
+
+################################################################################
+
+if(BUILD_BITS EQUAL 64)
+	add_compile_definitions(BUILD_64BIT)
+endif()
+
+add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+add_compile_options(/W3)
+
+include_directories(Code ${PROJECT_BINARY_DIR})
 
 ################################################################################
 
@@ -43,35 +56,27 @@ add_library(LauncherBase STATIC
   Code/CryCommon/CrySystem/CryColorCode.h
   Code/CryCommon/CrySystem/IConsole.h
   Code/CryCommon/CrySystem/ILog.h
+  Code/CryCommon/CrySystem/ISystem.cpp
   Code/CryCommon/CrySystem/ISystem.h
   Code/CryCommon/CrySystem/IValidator.h
-  Code/Launcher/CrashLogFileSink.cpp
-  Code/Launcher/CrashLogFileSink.h
-  Code/Launcher/LauncherBase.h
-  Code/Launcher/Patch.cpp
-  Code/Launcher/Patch.h
+  Code/Launcher/LauncherCommon.cpp
+  Code/Launcher/LauncherCommon.h
+  Code/Launcher/MemoryPatch.cpp
+  Code/Launcher/MemoryPatch.h
   Code/Library/CrashLogger.cpp
   Code/Library/CrashLogger.h
-  Code/Library/DLL.h
-  Code/Library/File.h
-  Code/Library/FileBase.h
-  Code/Library/Format.cpp
-  Code/Library/Format.h
-  Code/Library/LockGuard.h
   Code/Library/Mutex.h
-  Code/Library/Path.h
-  Code/Library/ThreadSafeQueue.h
-  Code/Library/WinAPI.cpp
-  Code/Library/WinAPI.h
+  Code/Library/OS.cpp
+  Code/Library/OS.h
+  Code/Library/PathTools.cpp
+  Code/Library/PathTools.h
+  Code/Library/StringTools.cpp
+  Code/Library/StringTools.h
+  Code/Library/StringView.cpp
+  Code/Library/StringView.h
 )
 
 target_link_libraries(LauncherBase dbghelp)
-
-target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
-
-if(BUILD_BITS EQUAL 64)
-	target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
-endif()
 
 ################################################################################
 
@@ -94,12 +99,10 @@ add_executable(CrysisDedicatedServer WIN32
 )
 
 add_executable(CrysisHeadlessServer
-  Code/Launcher/HeadlessServer/Executor.cpp
-  Code/Launcher/HeadlessServer/Executor.h
   Code/Launcher/HeadlessServer/HeadlessServerLauncher.cpp
   Code/Launcher/HeadlessServer/HeadlessServerLauncher.h
-  Code/Launcher/HeadlessServer/LogSystem.cpp
-  Code/Launcher/HeadlessServer/LogSystem.h
+  Code/Launcher/HeadlessServer/Logger.cpp
+  Code/Launcher/HeadlessServer/Logger.h
   Code/Launcher/HeadlessServer/Main.cpp
   Code/Launcher/HeadlessServer/NullValidator.h
   Resources/HeadlessServerLauncher.rc

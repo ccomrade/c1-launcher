@@ -11,7 +11,7 @@ struct IGameStartup
 	/**
 	 * Entry function used to create a new instance of the game.
 	 */
-	typedef IGameStartup *(*TEntryFunction)();
+	typedef IGameStartup* (*TEntryFunction)();
 
 	/**
 	 * Initializes the game and/or any mod and gets the IGame interface.
@@ -21,7 +21,7 @@ struct IGameStartup
 	 * @param startupParams System initialization parameters.
 	 * @return Pointer to a IGame interface or NULL if something went wrong.
 	 */
-	virtual IGameRef Init(SSystemInitParams & startupParams) = 0;
+	virtual IGameRef Init(SSystemInitParams& startupParams) = 0;
 
 	/**
 	 * Shutdowns the game and any loaded mod and deletes itself.
@@ -43,14 +43,14 @@ struct IGameStartup
 	 * @param levelName Pointer to name of the level to load after restart.
 	 * @return True if restart is requested, otherwise false.
 	 */
-	virtual bool GetRestartLevel(char **levelName) = 0;
+	virtual bool GetRestartLevel(char** levelName) = 0;
 
 	/**
 	 * Returns whether a patch needs to be installed.
 	 *
 	 * @return Path to downloaded patch executable or NULL.
 	 */
-	virtual const char *GetPatch() const = 0;
+	virtual const char* GetPatch() const = 0;
 
 	/**
 	 * Retrieves the next mod to use in case the engine got a restart request.
@@ -59,7 +59,7 @@ struct IGameStartup
 	 * @param modNameMaxLength Size of the mod name buffer.
 	 * @return True if mod is requested, otherwise false.
 	 */
-	virtual bool GetRestartMod(char *modName, int modNameMaxLength) = 0;
+	virtual bool GetRestartMod(char* modName, int modNameMaxLength) = 0;
 
 	/**
 	 * Initializes and controls the game loop.
@@ -67,5 +67,5 @@ struct IGameStartup
 	 * @param autoStartLevelName Level to jump into or NULL for normal behaviour.
 	 * @return Zero when the game terminated normally, otherwise non-zero.
 	 */
-	virtual int Run(const char *autoStartLevelName) = 0;
+	virtual int Run(const char* autoStartLevelName) = 0;
 };

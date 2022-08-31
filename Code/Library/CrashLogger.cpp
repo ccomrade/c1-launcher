@@ -1,327 +1,43 @@
+#include <cstdlib>
 #include <cstring>
-#include <cctype>
-#include <string>
-#include <vector>
-#include <algorithm>
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <winternl.h>
 #include <dbghelp.h>
-
-#include "CrashLogger.h"
-#include "Format.h"
-#include "WinAPI.h"
 
 #include "Project.h"
 
-struct CallStackEntry
-{
-	size_t address;
-	std::string name;
-	std::string moduleName;
-	std::string sourceFile;
-	unsigned int sourceLine;
-	unsigned int baseOffset;
-
-	CallStackEntry()
-	: address(),
-	  name(),
-	  moduleName(),
-	  sourceFile(),
-	  sourceLine(),
-	  baseOffset()
-	{
-	}
-
-	std::string ToString() const
-	{
-		std::string result;
+#include "CrashLogger.h"
+#include "Mutex.h"
 
 #ifdef BUILD_64BIT
-		result += Format("%016I64X: ", address);
+#define ADDR_FMT "%016I64X"
 #else
-		result += Format("%08X: ", address);
+#define ADDR_FMT "%08X"
 #endif
 
-		if (name.empty())
-		{
-			result += "??";
-		}
-		else
-		{
-			result += name;
-
-			if (baseOffset)
-			{
-				result += Format(" + 0x%X", baseOffset);
-			}
-		}
-
-		result += " (";
-
-		if (!sourceFile.empty())
-		{
-			result += sourceFile;
-
-			if (sourceLine)
-			{
-				result += Format(":%u", sourceLine);
-			}
-		}
-
-		result += ") in ";
-		result += moduleName.empty() ? "?" : moduleName;
-
-		return result;
-	}
-};
-
-struct Module
+static void* ByteOffset(void* base, std::size_t offset)
 {
-	std::string name;
-	size_t address;
-	size_t size;
-
-	Module()
-	: name(),
-	  address(),
-	  size()
-	{
-	}
-
-	bool operator<(const Module & other) const
-	{
-		return address < other.address;
-	}
-
-	std::string ToString() const
-	{
-#ifdef BUILD_64BIT
-		return Format("%016I64X - %016I64X %s", address, address + size, name.c_str());
-#else
-		return Format("%08X - %08X %s", address, address + size, name.c_str());
-#endif
-	}
-};
-
-static const char *BaseName(const char *name)
-{
-	size_t offset = 0;
-
-	for (size_t i = 0; name[i]; i++)
-	{
-		if (name[i] == '/' || name[i] == '\\')
-		{
-			offset = i + 1;
-		}
-	}
-
-	return name + offset;
+	return static_cast<unsigned char*>(base) + offset;
 }
 
-static bool IsCrysisDLL(const IMAGEHLP_MODULE & moduleInfo)
+static const char* BaseName(const char* name)
 {
-	std::string name = moduleInfo.ModuleName;
+	const char* result = name;
 
-	// convert DLL name to lowercase
-	std::transform(name.begin(), name.end(), name.begin(), std::tolower);
-
-	// optimization
-	if (name.length() < 3 || name[0] != 'c' || name[1] != 'r' || name[2] != 'y')
+	for (; *name; name++)
 	{
-		return false;
+		if (*name == '/' || *name == '\\')
+		{
+			result = name + 1;
+		}
 	}
 
-	return name == "cry3dengine"
-	    || name == "cryaction"
-	    || name == "cryaisystem"
-	    || name == "cryanimation"
-	    || name == "cryentitysystem"
-	    || name == "cryfont"
-	    || name == "crygame"
-	    || name == "cryinput"
-	    || name == "crymovie"
-	    || name == "crynetwork"
-	    || name == "cryphysics"
-	    || name == "cryrenderd3d10"
-	    || name == "cryrenderd3d9"
-	    || name == "cryrendernull"
-	    || name == "cryscriptsystem"
-	    || name == "crysoundsystem"
-	    || name == "crysystem";
+	return result;
 }
 
-#ifdef BUILD_64BIT
-static BOOL CALLBACK EnumerateModulesCallback(PCSTR name, DWORD64 address, ULONG size, PVOID context)
-#else
-static BOOL CALLBACK EnumerateModulesCallback(PCSTR name, ULONG address, ULONG size, PVOID context)
-#endif
-{
-	std::vector<Module> *modules = static_cast<std::vector<Module>*>(context);
-
-	modules->resize(modules->size() + 1);
-
-	Module & result = modules->back();
-	result.name = name;
-	result.address = address;
-	result.size = size;
-
-	return TRUE;
-}
-
-class DebugHelper
-{
-	HANDLE m_process;
-	HANDLE m_thread;
-
-	bool m_isInitialized;
-
-public:
-	DebugHelper()
-	: m_process(),
-	  m_thread(),
-	  m_isInitialized(false)
-	{
-	}
-
-	~DebugHelper()
-	{
-		if (m_isInitialized)
-		{
-			SymCleanup(m_process);
-		}
-	}
-
-	bool Init()
-	{
-		if (m_isInitialized)
-		{
-			return true;
-		}
-
-		m_process = GetCurrentProcess();
-		m_thread  = GetCurrentThread();
-
-		if (!SymInitialize(m_process, NULL, TRUE))
-		{
-			return false;
-		}
-
-		SymSetOptions(SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
-
-		m_isInitialized = true;
-
-		return true;
-	}
-
-	bool IsInitialized() const
-	{
-		return m_isInitialized;
-	}
-
-	std::vector<CallStackEntry> GetCallStack(const CONTEXT *pExceptionContext) const
-	{
-		if (!m_isInitialized)
-		{
-			return std::vector<CallStackEntry>();
-		}
-
-		std::vector<CallStackEntry> result;
-
-		CONTEXT context = {};
-		std::memcpy(&context, pExceptionContext, sizeof (CONTEXT));
-
-		STACKFRAME frame = {};
-		DWORD machine = 0;
-
-#ifdef BUILD_64BIT
-		machine = IMAGE_FILE_MACHINE_AMD64;
-
-		frame.AddrPC.Offset = context.Rip;
-		frame.AddrPC.Mode = AddrModeFlat;
-		frame.AddrFrame.Offset = context.Rbp;
-		frame.AddrFrame.Mode = AddrModeFlat;
-		frame.AddrStack.Offset = context.Rsp;
-		frame.AddrStack.Mode = AddrModeFlat;
-#else
-		machine = IMAGE_FILE_MACHINE_I386;
-
-		frame.AddrPC.Offset = context.Eip;
-		frame.AddrPC.Mode = AddrModeFlat;
-		frame.AddrFrame.Offset = context.Ebp;
-		frame.AddrFrame.Mode = AddrModeFlat;
-		frame.AddrStack.Offset = context.Esp;
-		frame.AddrStack.Mode = AddrModeFlat;
-#endif
-
-		while (StackWalk(machine, m_process, m_thread, &frame, &context, NULL,
-		                 SymFunctionTableAccess, SymGetModuleBase, NULL))
-		{
-			const size_t address = frame.AddrPC.Offset;
-
-			result.resize(result.size() + 1);
-
-			CallStackEntry & entry = result.back();
-			entry.address = address;
-
-			IMAGEHLP_MODULE moduleInfo = {};
-			moduleInfo.SizeOfStruct = sizeof (IMAGEHLP_MODULE);
-
-			if (SymGetModuleInfo(m_process, address, &moduleInfo))
-			{
-				entry.moduleName = BaseName(moduleInfo.ImageName);
-			}
-
-			unsigned char symbolBuffer[sizeof (SYMBOL_INFO) + MAX_SYM_NAME] = {};
-			SYMBOL_INFO *pSymbol = reinterpret_cast<SYMBOL_INFO*>(symbolBuffer);
-			pSymbol->SizeOfStruct = sizeof (SYMBOL_INFO);
-			pSymbol->MaxNameLen = MAX_SYM_NAME;
-
-			DWORD64 symbolOffset = 0;
-
-			if (SymFromAddr(m_process, address, &symbolOffset, pSymbol))
-			{
-				if (pSymbol->Flags & SYMFLAG_EXPORT && IsCrysisDLL(moduleInfo))
-				{
-					// drop useless symbols obtained from export tables of Crysis DLLs
-				}
-				else
-				{
-					entry.name = pSymbol->Name;
-					entry.baseOffset = symbolOffset;
-				}
-			}
-
-			IMAGEHLP_LINE line = {};
-			line.SizeOfStruct = sizeof (IMAGEHLP_LINE);
-
-			DWORD lineOffset = 0;
-
-			if (SymGetLineFromAddr(m_process, address, &lineOffset, &line))
-			{
-				entry.sourceFile = line.FileName;
-				entry.sourceLine = line.LineNumber;
-			}
-		}
-
-		return result;
-	}
-
-	std::vector<Module> GetLoadedModules() const
-	{
-		std::vector<Module> result;
-
-		if (m_isInitialized)
-		{
-			EnumerateLoadedModules(m_process, EnumerateModulesCallback, &result);
-
-			std::sort(result.begin(), result.end());
-		}
-
-		return result;
-	}
-};
-
-static const char *ExceptionCodeToString(unsigned int code)
+static const char* ExceptionCodeToName(unsigned int code)
 {
 	switch (code)
 	{
@@ -350,127 +66,425 @@ static const char *ExceptionCodeToString(unsigned int code)
 	return "Unknown";
 }
 
-static void AddLine(std::string& data, const char* format, ...)
+static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 {
-	va_list args;
-	va_start(args, format);
-	FormatToV(data, format, args);
-	va_end(args);
+	const unsigned int code = info->ExceptionCode;
+	const std::size_t address = reinterpret_cast<std::size_t>(info->ExceptionAddress);
 
-	data += "\r\n";
-}
-
-static void DumpExceptionInfo(std::string& data, const EXCEPTION_RECORD *exception)
-{
-	const unsigned int code = exception->ExceptionCode;
-
-	AddLine(data, "%s exception (0x%08X) at 0x%p", ExceptionCodeToString(code), code, exception->ExceptionAddress);
+	std::fprintf(file, "%s exception (0x%08X) at 0x" ADDR_FMT "\n", ExceptionCodeToName(code), code, address);
 
 	if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 	{
-		void *address = reinterpret_cast<void*>(exception->ExceptionInformation[1]);
+		const std::size_t dataAddress = info->ExceptionInformation[1];
 
-		switch (exception->ExceptionInformation[0])
+		switch (info->ExceptionInformation[0])
 		{
-			case 0:
-			{
-				AddLine(data, "Read from 0x%p failed", address);
-				break;
-			}
-			case 1:
-			{
-				AddLine(data, "Write to 0x%p failed", address);
-				break;
-			}
-			case 8:
-			{
-				AddLine(data, "Execute at 0x%p failed", address);
-				break;
-			}
+			case 0: std::fprintf(file, "Read from 0x"  ADDR_FMT " failed\n", dataAddress); break;
+			case 1: std::fprintf(file, "Write to 0x"   ADDR_FMT " failed\n", dataAddress); break;
+			case 8: std::fprintf(file, "Execute at 0x" ADDR_FMT " failed\n", dataAddress); break;
 		}
 	}
+
+	std::fflush(file);
 }
 
-static void DumpRegisters(std::string& data, const CONTEXT *ctx)
+static void DumpMemoryUsage(std::FILE* file)
 {
-	AddLine(data, "Register dump:");
+	MEMORYSTATUSEX status = {};
+	status.dwLength = sizeof status;
 
-#ifdef BUILD_64BIT
-	AddLine(data, "RIP: %016I64X RSP: %016I64X RBP: %016I64X EFLAGS: %08X", ctx->Rip, ctx->Rsp, ctx->Rbp, ctx->EFlags);
-	AddLine(data, "RAX: %016I64X RBX: %016I64X RCX: %016I64X RDX: %016I64X", ctx->Rax, ctx->Rbx, ctx->Rcx, ctx->Rdx);
-	AddLine(data, "RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X", ctx->Rsi, ctx->Rdi, ctx->R8, ctx->R9);
-	AddLine(data, "R10: %016I64X R11: %016I64X R12: %016I64X R13: %016I64X", ctx->R10, ctx->R11, ctx->R12, ctx->R13);
-	AddLine(data, "R14: %016I64X R15: %016I64X", ctx->R14, ctx->R15);
-#else
-	AddLine(data, "EIP: %08X ESP: %08X EBP: %08X EFLAGS: %08X", ctx->Eip, ctx->Esp, ctx->Ebp, ctx->EFlags);
-	AddLine(data, "EAX: %08X EBX: %08X ECX: %08X EDX: %08X", ctx->Eax, ctx->Ebx, ctx->Ecx, ctx->Edx);
-	AddLine(data, "ESI: %08X EDI: %08X", ctx->Esi, ctx->Edi);
-#endif
-}
-
-static std::string CreateCrashData(_EXCEPTION_POINTERS *pExceptionInfo)
-{
-	std::string data;
-	data.reserve(8192 - 1);
-
-	AddLine(data, "================================ CRASH DETECTED ================================");
-	AddLine(data, "%s", PROJECT_VERSION_DETAILS);
-
-	DumpExceptionInfo(data, pExceptionInfo->ExceptionRecord);
-	DumpRegisters(data, pExceptionInfo->ContextRecord);
-
-	DebugHelper dbghelp;
-	if (dbghelp.Init())
+	if (GlobalMemoryStatusEx(&status))
 	{
-		std::vector<CallStackEntry> callstack = dbghelp.GetCallStack(pExceptionInfo->ContextRecord);
+		std::fprintf(file, "Physical memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
+			static_cast<double>(status.ullTotalPhys) / (1024 * 1024),
+			static_cast<double>(status.ullAvailPhys) / (1024 * 1024),
+			(100.0 * (status.ullTotalPhys - status.ullAvailPhys)) / status.ullTotalPhys
+		);
 
-		AddLine(data, "Callstack:");
-		for (size_t i = 0; i < callstack.size(); i++)
-		{
-			AddLine(data, "%s", callstack[i].ToString().c_str());
-		}
-
-		std::vector<Module> modules = dbghelp.GetLoadedModules();
-
-		AddLine(data, "Modules (%u):", modules.size());
-		for (size_t i = 0; i < modules.size(); i++)
-		{
-			AddLine(data, "%s", modules[i].ToString().c_str());
-		}
+		std::fprintf(file, "Virtual memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
+			static_cast<double>(status.ullTotalVirtual) / (1024 * 1024),
+			static_cast<double>(status.ullAvailVirtual) / (1024 * 1024),
+			(100.0 * (status.ullTotalVirtual - status.ullAvailVirtual)) / status.ullTotalVirtual
+		);
 	}
 	else
 	{
-		AddLine(data, "CrashLogger: DebugHelper initialization failed with error code %lu", GetLastError());
+		std::fprintf(file, "GlobalMemoryStatusEx failed with error code %u\n", GetLastError());
 	}
 
-	AddLine(data, "Command line:");
-	AddLine(data, "%s", GetCommandLineA());
-
-	AddLine(data, "================================================================================");
-
-	return data;
+	std::fflush(file);
 }
 
-static CrashLogger::Sink* g_sink;
-
-static LONG __stdcall CrashHandler(_EXCEPTION_POINTERS *pExceptionInfo)
+static void DumpRegisters(std::FILE* file, const CONTEXT* context)
 {
-	// disable this crash handler to avoid recursive calls
+	std::fprintf(file, "Registers:\n"
+#ifdef BUILD_64BIT
+	  "RIP: %016I64X RSP: %016I64X RBP: %016I64X EFLAGS: %08X\n"
+	  "RAX: %016I64X RBX: %016I64X RCX: %016I64X RDX: %016I64X\n"
+	  "RSI: %016I64X RDI: %016I64X R8:  %016I64X R9:  %016I64X\n"
+	  "R10: %016I64X R11: %016I64X R12: %016I64X R13: %016I64X\n"
+	  "R14: %016I64X R15: %016I64X\n",
+	  context->Rip, context->Rsp, context->Rbp, context->EFlags,
+	  context->Rax, context->Rbx, context->Rcx, context->Rdx,
+	  context->Rsi, context->Rdi, context->R8,  context->R9,
+	  context->R10, context->R11, context->R12, context->R13,
+	  context->R14, context->R15
+#else
+	  "EIP: %08X ESP: %08X EBP: %08X EFLAGS: %08X\n"
+	  "EAX: %08X EBX: %08X ECX: %08X EDX: %08X\n"
+	  "ESI: %08X EDI: %08X\n",
+	  context->Eip, context->Esp, context->Ebp, context->EFlags,
+	  context->Eax, context->Ebx, context->Ecx, context->Edx,
+	  context->Esi, context->Edi
+#endif
+	);
+
+	std::fflush(file);
+}
+
+static void DumpCallStack(std::FILE* file, const CONTEXT* context)
+{
+	std::fprintf(file, "Callstack:\n");
+
+	HANDLE process = GetCurrentProcess();
+	HANDLE thread = GetCurrentThread();
+
+#ifdef BUILD_64BIT
+	DWORD machine = IMAGE_FILE_MACHINE_AMD64;
+
+	STACKFRAME frame = {};
+	frame.AddrPC.Offset = context->Rip;
+	frame.AddrPC.Mode = AddrModeFlat;
+	frame.AddrFrame.Offset = context->Rbp;
+	frame.AddrFrame.Mode = AddrModeFlat;
+	frame.AddrStack.Offset = context->Rsp;
+	frame.AddrStack.Mode = AddrModeFlat;
+#else
+	DWORD machine = IMAGE_FILE_MACHINE_I386;
+
+	STACKFRAME frame = {};
+	frame.AddrPC.Offset = context->Eip;
+	frame.AddrPC.Mode = AddrModeFlat;
+	frame.AddrFrame.Offset = context->Ebp;
+	frame.AddrFrame.Mode = AddrModeFlat;
+	frame.AddrStack.Offset = context->Esp;
+	frame.AddrStack.Mode = AddrModeFlat;
+#endif
+
+	CONTEXT localContext = *context;
+
+	DWORD options = 0;
+	options |= SYMOPT_DEFERRED_LOADS;
+	options |= SYMOPT_EXACT_SYMBOLS;
+	options |= SYMOPT_FAIL_CRITICAL_ERRORS;
+	options |= SYMOPT_LOAD_LINES;
+	options |= SYMOPT_NO_PROMPTS;
+	options |= SYMOPT_UNDNAME;
+
+	SymSetOptions(options);
+
+	if (SymInitialize(process, NULL, TRUE))
+	{
+		while (StackWalk(machine, process, thread, &frame, &localContext, NULL,
+		                 SymFunctionTableAccess, SymGetModuleBase, NULL))
+		{
+			const std::size_t address = frame.AddrPC.Offset;
+
+			std::fprintf(file, ADDR_FMT ":", address);
+
+			unsigned char symbolBuffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME] = {};
+			SYMBOL_INFO& symbol = *reinterpret_cast<SYMBOL_INFO*>(symbolBuffer);
+			symbol.SizeOfStruct = sizeof(SYMBOL_INFO);
+			symbol.MaxNameLen = MAX_SYM_NAME;
+			DWORD64 symbolOffset = 0;
+
+			if (SymFromAddr(process, address, &symbolOffset, &symbol))
+			{
+				std::fprintf(file, " %s + 0x%I64X", symbol.Name, symbolOffset);
+			}
+			else
+			{
+				std::fprintf(file, " ??");
+			}
+
+			IMAGEHLP_LINE line = {};
+			line.SizeOfStruct = sizeof line;
+			DWORD lineOffset = 0;
+
+			if (SymGetLineFromAddr(process, address, &lineOffset, &line))
+			{
+				std::fprintf(file, " (%s:%u)", line.FileName, line.LineNumber);
+			}
+			else
+			{
+				std::fprintf(file, " ()");
+			}
+
+			IMAGEHLP_MODULE moduleInfo = {};
+			moduleInfo.SizeOfStruct = sizeof moduleInfo;
+
+			if (SymGetModuleInfo(process, address, &moduleInfo))
+			{
+				std::fprintf(file, " in %s\n", BaseName(moduleInfo.ImageName));
+			}
+			else
+			{
+				std::fprintf(file, " in ?\n");
+			}
+		}
+
+		SymCleanup(process);
+	}
+	else
+	{
+		std::fprintf(file, "SymInitialize failed with error code %u\n", GetLastError());
+	}
+
+	std::fflush(file);
+}
+
+static void DumpLoadedModules(std::FILE* file)
+{
+	// old Windows SDKs don't provide complete enough definitions of all required structures
+#ifdef BUILD_64BIT
+	const std::size_t pebOffset = 0x60;
+	const std::size_t ldrOffset = 0x18;
+	const std::size_t modListOffset = 0x20;  // InMemoryOrderModuleList
+	const std::size_t modBaseOffset = 0x30 - 0x10;
+	const std::size_t modSizeOffset = 0x40 - 0x10;
+	const std::size_t modNameOffset = 0x48 - 0x10;
+#else
+	const std::size_t pebOffset = 0x30;
+	const std::size_t ldrOffset = 0x0C;
+	const std::size_t modListOffset = 0x14;  // InMemoryOrderModuleList
+	const std::size_t modBaseOffset = 0x18 - 0x8;
+	const std::size_t modSizeOffset = 0x20 - 0x8;
+	const std::size_t modNameOffset = 0x24 - 0x8;
+#endif
+
+	void* teb = NtCurrentTeb();
+	void* peb = *static_cast<void**>(ByteOffset(teb, pebOffset));
+	void* ldr = *static_cast<void**>(ByteOffset(peb, ldrOffset));
+
+	LIST_ENTRY* headMod = static_cast<LIST_ENTRY*>(ByteOffset(ldr, modListOffset));
+
+	LIST_ENTRY* firstMod = NULL;
+	std::size_t firstModBase = -1;
+	unsigned int modCount = 0;
+
+	for (LIST_ENTRY* mod = headMod->Flink; mod != headMod; mod = mod->Flink)
+	{
+		const std::size_t modBase = *static_cast<std::size_t*>(ByteOffset(mod, modBaseOffset));
+
+		if (modBase < firstModBase)
+		{
+			firstMod = mod;
+			firstModBase = modBase;
+		}
+
+		modCount++;
+	}
+
+	std::fprintf(file, "Modules (%u):\n", modCount);
+
+	for (LIST_ENTRY* mod = firstMod; mod != NULL;)
+	{
+		const std::size_t base = *static_cast<std::size_t*>(ByteOffset(mod, modBaseOffset));
+		const std::size_t size = *static_cast<unsigned long*>(ByteOffset(mod, modSizeOffset));
+		const UNICODE_STRING* wideName = static_cast<UNICODE_STRING*>(ByteOffset(mod, modNameOffset));
+
+		char name[512] = {};
+		WideCharToMultiByte(CP_UTF8, 0, wideName->Buffer, wideName->Length, name, sizeof name, NULL, NULL);
+
+		std::fprintf(file, ADDR_FMT " - " ADDR_FMT " %s\n", base, base + size, name);
+
+		LIST_ENTRY* nextMod = NULL;
+		std::size_t nextModBase = -1;
+
+		for (mod = headMod->Flink; mod != headMod; mod = mod->Flink)
+		{
+			const std::size_t modBase = *static_cast<std::size_t*>(ByteOffset(mod, modBaseOffset));
+
+			if (modBase > base && modBase < nextModBase)
+			{
+				nextMod = mod;
+				nextModBase = modBase;
+			}
+		}
+
+		mod = nextMod;
+	}
+
+	std::fflush(file);
+}
+
+static void DumpCommandLine(std::FILE* file)
+{
+	std::fprintf(file, "Command line:\n");
+	std::fprintf(file, "%s\n", GetCommandLineA());
+
+	std::fflush(file);
+}
+
+static void DumpEnvironment(std::FILE* file)
+{
+	std::fprintf(file, "Environment:\n");
+
+	const char* env = GetEnvironmentStringsA();
+
+	if (env)
+	{
+		for (; *env; env += std::strlen(env) + 1)
+		{
+			std::fprintf(file, "%s\n", env);
+		}
+	}
+
+	std::fflush(file);
+}
+
+static void WriteDumpHeader(std::FILE* file)
+{
+	std::fprintf(file, "================================ CRASH DETECTED ================================\n");
+	std::fprintf(file, "%s\n", PROJECT_BANNER);
+	std::fflush(file);
+}
+
+static void WriteDumpFooter(std::FILE* file)
+{
+	std::fprintf(file, "================================================================================\n");
+	std::fflush(file);
+}
+
+static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
+{
+	WriteDumpHeader(file);
+
+	DumpExceptionInfo(file, exception->ExceptionRecord);
+	DumpMemoryUsage(file);
+	DumpRegisters(file, exception->ContextRecord);
+	DumpCallStack(file, exception->ContextRecord);
+	DumpLoadedModules(file);
+	DumpCommandLine(file);
+	DumpEnvironment(file);
+
+	WriteDumpFooter(file);
+}
+
+static void WriteInvalidParameterDump(std::FILE* file, CONTEXT* context)
+{
+	WriteDumpHeader(file);
+
+	std::fprintf(file, "Invalid parameter detected by CRT\n");
+	std::fflush(file);
+
+	DumpMemoryUsage(file);
+	DumpRegisters(file, context);
+	DumpCallStack(file, context);
+	DumpLoadedModules(file);
+	DumpCommandLine(file);
+	DumpEnvironment(file);
+
+	WriteDumpFooter(file);
+}
+
+static void WriteEngineErrorDump(std::FILE* file, CONTEXT* context, const char* format, va_list args)
+{
+	WriteDumpHeader(file);
+
+	std::fprintf(file, "Fatal error: ");
+	std::fflush(file);
+
+	std::vfprintf(file, format, args);
+	std::fputc('\n', file);
+	std::fflush(file);
+
+	DumpMemoryUsage(file);
+	DumpRegisters(file, context);
+	DumpCallStack(file, context);
+	DumpLoadedModules(file);
+	DumpCommandLine(file);
+	DumpEnvironment(file);
+
+	WriteDumpFooter(file);
+}
+
+static Mutex g_mutex;
+static CrashLogger::Handler g_handler;
+
+static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
+{
+	// avoid recursive calls
 	SetUnhandledExceptionFilter(NULL);
 
-	if (g_sink)
-	{
-		const std::string data = CreateCrashData(pExceptionInfo);
+	LockGuard<Mutex> lock(g_mutex);
 
-		g_sink->OnCrashData(data);
+	if (g_handler)
+	{
+		std::FILE* file = g_handler();
+
+		if (file)
+		{
+			WriteCrashDump(file, exception);
+
+			std::fclose(file);
+		}
 	}
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
-void CrashLogger::SetSink(Sink& sink)
+static void InvalidParameterHandler(const wchar_t*, const wchar_t*, const wchar_t*, unsigned int, uintptr_t)
 {
-	g_sink = &sink;
+	CONTEXT context = {};
+	RtlCaptureContext(&context);
 
-	SetUnhandledExceptionFilter(CrashHandler);
+	LockGuard<Mutex> lock(g_mutex);
+
+	if (g_handler)
+	{
+		std::FILE* file = g_handler();
+
+		if (file)
+		{
+			WriteInvalidParameterDump(file, &context);
+
+			std::fclose(file);
+		}
+	}
+
+	std::abort();
+}
+
+void CrashLogger::OnEngineError(const char* format, ...)
+{
+	CONTEXT context = {};
+	RtlCaptureContext(&context);
+
+	LockGuard<Mutex> lock(g_mutex);
+
+	if (g_handler)
+	{
+		std::FILE* file = g_handler();
+
+		if (file)
+		{
+			va_list args;
+			va_start(args, format);
+			WriteEngineErrorDump(file, &context, format, args);
+			va_end(args);
+
+			std::fclose(file);
+		}
+	}
+
+	std::exit(1);
+}
+
+void CrashLogger::Enable(CrashLogger::Handler handler)
+{
+	g_handler = handler;
+
+	SetUnhandledExceptionFilter(&CrashHandler);
+	_set_invalid_parameter_handler(&InvalidParameterHandler);
 }

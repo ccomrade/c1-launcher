@@ -1,13 +1,12 @@
 #pragma once
 
-#include <string>
+#include <cstdio>
 
 namespace CrashLogger
 {
-	struct Sink
-	{
-		virtual void OnCrashData(const std::string& data) = 0;
-	};
+	typedef std::FILE* (*Handler)();
 
-	void SetSink(Sink& sink);
+	void OnEngineError(const char* format, ...);
+
+	void Enable(Handler handler);
 }

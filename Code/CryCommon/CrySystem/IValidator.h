@@ -1,5 +1,7 @@
 // Copyright (C) 2002 Crytek GmbH
 
+#include <cstddef>
+
 #pragma once
 
 enum EValidatorSeverity
@@ -41,18 +43,18 @@ struct SValidatorRecord
 {
 	EValidatorSeverity severity;
 	EValidatorModule subsystem;
-	const char *text;
-	const char *file;
-	const char *description;
+	const char* text;
+	const char* file;
+	const char* description;
 	int flags;
 
 	SValidatorRecord()
 	: severity(VALIDATOR_WARNING),
 	  subsystem(VALIDATOR_MODULE_UNKNOWN),
-	  text(),
-	  file(),
-	  description(),
-	  flags()
+	  text(NULL),
+	  file(NULL),
+	  description(NULL),
+	  flags(0)
 	{
 	}
 };

@@ -1,86 +1,82 @@
 #include "Library/CrashLogger.h"
-#include "Library/WinAPI.h"
+#include "Library/OS.h"
+#include "Project.h"
 
-#include "../Patch.h"
+#include "../LauncherCommon.h"
+#include "../MemoryPatch.h"
 
 #include "DedicatedServerLauncher.h"
 
-#include "Project.h"
+#define DEFAULT_LOG_FILE_NAME "Server.log"
 
-DedicatedServerLauncher::DedicatedServerLauncher()
+static std::FILE* OpenLogFile()
+{
+	return LauncherCommon::OpenLogFile(DEFAULT_LOG_FILE_NAME);
+}
+
+DedicatedServerLauncher::DedicatedServerLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
 {
 }
 
 DedicatedServerLauncher::~DedicatedServerLauncher()
 {
+	if (m_pGameStartup)
+	{
+		m_pGameStartup->Shutdown();
+	}
 }
 
 int DedicatedServerLauncher::Run()
 {
-	try
-	{
-		m_params.hInstance = WinAPI::EXE::Get();
-		m_params.logFileName = "Server.log";
-		m_params.isDedicatedServer = true;
+	m_params.hInstance = OS::Module::GetEXE();
+	m_params.logFileName = DEFAULT_LOG_FILE_NAME;
+	m_params.isDedicatedServer = true;
 
-		SetParamsCmdLine(WinAPI::CmdLine::Get());
+	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
 
-		m_crashSink.SetFileName(m_params.logFileName);
-		CrashLogger::SetSink(m_crashSink);
+	CrashLogger::Enable(&OpenLogFile);
 
-		LoadEngine();
-		PatchEngine();
-		StartEngine(m_CryGame);
+	this->LoadEngine();
+	this->PatchEngine();
 
-		gEnv = m_params.pSystem->GetGlobalEnvironment();
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
 
-		CryLogAlways("%s", PROJECT_VERSION_DETAILS);
+	gEnv = m_params.pSystem->GetGlobalEnvironment();
 
-		return UpdateLoop();
-	}
-	catch (const std::runtime_error& error)
-	{
-		WinAPI::ErrorBox(error.what());
-		return 1;
-	}
+	CryLogAlways("%s", PROJECT_BANNER);
+
+	return m_pGameStartup->Run(NULL);
 }
 
 void DedicatedServerLauncher::LoadEngine()
 {
-	m_CrySystem.Load("CrySystem.dll", DLL::NO_UNLOAD);  // unloading Crysis DLLs is not safe
+	m_dlls.pCrySystem = LauncherCommon::LoadModule("CrySystem.dll");
 
-	m_gameBuild = WinAPI::GetCrysisGameBuild(m_CrySystem.GetHandle());
-	if (m_gameBuild < 0)
-	{
-		throw WinAPI::CurrentError("Failed to get the game version!");
-	}
+	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 
-	VerifyGameBuild();
+	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
-	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
+	m_dlls.pCryGame = LauncherCommon::LoadModule("CryGame.dll");
+	m_dlls.pCryNetwork = LauncherCommon::LoadModule("CryNetwork.dll");
 }
 
 void DedicatedServerLauncher::PatchEngine()
 {
-	if (m_CryNetwork.IsLoaded())
+	if (m_dlls.pCryNetwork)
 	{
-		void* pCryNetwork = m_CryNetwork.GetHandle();
-
-		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
+		MemoryPatch::CryNetwork::EnablePreordered(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::AllowSameCDKeys(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
 	}
 
-	if (m_CrySystem.IsLoaded())
+	if (m_dlls.pCrySystem)
 	{
-		void* pCrySystem = m_CrySystem.GetHandle();
+		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 
-		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
+		if (OS::CPU::IsAMD() && !OS::CPU::Has3DNow())
 		{
-			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
+			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
 		}
-
-		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
 	}
 }

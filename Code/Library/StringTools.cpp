@@ -1,13 +1,14 @@
 #include <stdio.h>  // _vsnprintf
 
-#include "Format.h"
+#include "OS.h"
+#include "StringTools.h"
 
 // va_copy is not available before VS2013
 #if defined(_MSC_VER) && _MSC_VER < 1800
 #define va_copy(dest, src) ((dest) = (src))
 #endif
 
-std::string Format(const char* format, ...)
+std::string StringTools::Format(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -17,7 +18,7 @@ std::string Format(const char* format, ...)
 	return result;
 }
 
-std::string FormatV(const char* format, va_list args)
+std::string StringTools::FormatV(const char* format, va_list args)
 {
 	std::string result;
 	FormatToV(result, format, args);
@@ -25,7 +26,7 @@ std::string FormatV(const char* format, va_list args)
 	return result;
 }
 
-std::size_t FormatTo(std::string& result, const char* format, ...)
+std::size_t StringTools::FormatTo(std::string& result, const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -35,7 +36,7 @@ std::size_t FormatTo(std::string& result, const char* format, ...)
 	return length;
 }
 
-std::size_t FormatToV(std::string& result, const char* format, va_list args)
+std::size_t StringTools::FormatToV(std::string& result, const char* format, va_list args)
 {
 	va_list argsCopy;
 	va_copy(argsCopy, args);
@@ -69,7 +70,7 @@ std::size_t FormatToV(std::string& result, const char* format, va_list args)
 	return length;
 }
 
-std::size_t FormatTo(char* buffer, std::size_t bufferSize, const char* format, ...)
+std::size_t StringTools::FormatTo(char* buffer, std::size_t bufferSize, const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -79,7 +80,7 @@ std::size_t FormatTo(char* buffer, std::size_t bufferSize, const char* format, .
 	return length;
 }
 
-std::size_t FormatToV(char* buffer, std::size_t bufferSize, const char* format, va_list args)
+std::size_t StringTools::FormatToV(char* buffer, std::size_t bufferSize, const char* format, va_list args)
 {
 	if (!buffer || !bufferSize)
 	{
@@ -100,7 +101,7 @@ std::size_t FormatToV(char* buffer, std::size_t bufferSize, const char* format, 
 
 		// snprintf and vsnprintf are not available before C++11, so we have to use Windows-specific stuff
 		// beware of non-standard size prefixes in format string
-		// for example, %zu and %llu are not supported and %Iu and %I64u must be used instead
+		// %zu and %llu are not supported and %Iu and %I64u must be used instead
 		int status = _vsnprintf(buffer, bufferSize, format, args);
 
 		if (status < 0)
@@ -124,4 +125,53 @@ std::size_t FormatToV(char* buffer, std::size_t bufferSize, const char* format, 
 	}
 
 	return length;
+}
+
+std::runtime_error StringTools::Error(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	std::runtime_error error = ErrorV(format, args);
+	va_end(args);
+
+	return error;
+}
+
+std::runtime_error StringTools::ErrorV(const char* format, va_list args)
+{
+	const std::string message = FormatV(format, args);
+
+	return std::runtime_error(message);
+}
+
+std::runtime_error StringTools::OSError(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	std::runtime_error error = OSErrorV(format, args);
+	va_end(args);
+
+	return error;
+}
+
+std::runtime_error StringTools::OSErrorV(const char* format, va_list args)
+{
+	const unsigned long code = OS::GetCurrentErrorCode();
+
+	std::string message = FormatV(format, args);
+
+	if (code)
+	{
+		char description[512];
+		if (OS::GetErrorDescription(description, sizeof description, code))
+		{
+			FormatTo(message, "\n\nError %u: %s", code, description);
+		}
+		else
+		{
+			FormatTo(message, "\n\nError %u", code);
+		}
+	}
+
+	return std::runtime_error(message);
 }

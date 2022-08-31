@@ -3,23 +3,39 @@
  * @brief Game launcher.
  */
 
-#include "GameLauncher.h"
+#include <stdexcept>
 
+#include "Library/OS.h"
 #include "Project.h"
 
-// declared in CryCommon/CrySystem/ISystem.h
-SSystemGlobalEnvironment* gEnv;
+#include "GameLauncher.h"
 
-// declared in Project.h
-const char* const PROJECT_VERSION_DETAILS = PROJECT_MAKE_VERSION_DETAILS("C1-Launcher Game");
+////////////////////////////////////////////////////////////////////////////////
 
-// request discrete graphics card
-// nVidia
-extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
-// AMD
-extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+const char* const PROJECT_BANNER = "C1-Launcher Game " PROJECT_VERSION_DETAILS;
+
+////////////////////////////////////////////////////////////////////////////////
+
+extern "C"
+{
+	// request fast graphics card
+	// nVidia
+	__declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+	// AMD
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {
-	return GameLauncher().Run();
+	try
+	{
+		return GameLauncher().Run();
+	}
+	catch (const std::runtime_error& ex)
+	{
+		OS::ErrorBox(ex.what());
+		return 1;
+	}
 }

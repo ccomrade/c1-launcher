@@ -1,67 +1,138 @@
-#include "Library/CrashLogger.h"
-#include "Library/Path.h"
-#include "Library/WinAPI.h"
+#include <cstdio>
+#include <cstdlib>  // std::atoi
 
-#include "../Patch.h"
+#include "Library/CrashLogger.h"
+#include "Library/OS.h"
+#include "Library/PathTools.h"
+#include "Project.h"
+
+#include "../LauncherCommon.h"
+#include "../MemoryPatch.h"
 
 #include "HeadlessServerLauncher.h"
 
-#include "Project.h"
+#define DEFAULT_LOG_FILE_NAME "Server.log"
+#define DEFAULT_LOG_VERBOSITY "0"
 
-HeadlessServerLauncher::HeadlessServerLauncher() : m_rootFolder(GetRootFolder()), m_log(m_executor, m_rootFolder)
+static void Print(const char* format, ...)
 {
+	va_list args;
+	va_start(args, format);
+	std::vfprintf(stderr, format, args);
+	va_end(args);
+
+	std::fputc('\n', stderr);
+	std::fflush(stderr);
+}
+
+HeadlessServerLauncher* HeadlessServerLauncher::s_self;
+
+HeadlessServerLauncher::HeadlessServerLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
+{
+	s_self = this;
 }
 
 HeadlessServerLauncher::~HeadlessServerLauncher()
 {
+	if (m_pGameStartup)
+	{
+		m_pGameStartup->Shutdown();
+	}
+
+	s_self = NULL;
 }
 
 int HeadlessServerLauncher::Run()
 {
-	try
+	Print("%s", PROJECT_BANNER);
+	Print("Command line: [%s]", OS::CmdLine::GetOnlyArgs());
+
+	m_rootFolder = LauncherCommon::GetRootFolderPath();
+	Print("Root folder: \"%s\"", m_rootFolder.c_str());
+
+	const int verbosity = std::atoi(OS::CmdLine::GetArgValue("-verbosity", DEFAULT_LOG_VERBOSITY));
+	const char* logFileName = OS::CmdLine::GetArgValue("-logfile", DEFAULT_LOG_FILE_NAME);
+	const char* logPrefix = OS::CmdLine::GetArgValue("-logprefix", "");
+
+	m_params.hInstance = OS::Module::GetEXE();
+	m_params.logFileName = DEFAULT_LOG_FILE_NAME;
+	m_params.isDedicatedServer = true;
+	m_params.pLog = &m_logger;
+	m_params.pValidator = &m_validator;
+	m_params.pUserCallback = this;
+
+	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
+
+	CrashLogger::Enable(&HeadlessServerLauncher::OpenLogFile);
+
+	this->LoadEngine();
+	this->PatchEngine();
+
+	Print("Log verbosity: %d", verbosity);
+	m_logger.SetVerbosity(verbosity);
+
+	Print("Log file: %s", logFileName);
+	m_logger.OpenFile(PathTools::Join(m_rootFolder, logFileName).c_str());
+	m_logger.SetPrefix(logPrefix);
+
+	Print("Starting CryEngine...");
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
+
+	Print("Ready");
+
+	return m_pGameStartup->Run(NULL);
+}
+
+void HeadlessServerLauncher::LoadEngine()
+{
+	m_dlls.pCrySystem = LauncherCommon::LoadModule("CrySystem.dll");
+
+	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	Print("Game build: %d", m_dlls.gameBuild);
+
+	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	m_dlls.pCryGame = LauncherCommon::LoadModule("CryGame.dll");
+	m_dlls.pCryAction = LauncherCommon::LoadModule("CryAction.dll");
+	m_dlls.pCryNetwork = LauncherCommon::LoadModule("CryNetwork.dll");
+	m_dlls.pCryRenderNULL = LauncherCommon::LoadModule("CryRenderNULL.dll");
+}
+
+void HeadlessServerLauncher::PatchEngine()
+{
+	if (m_dlls.pCryAction)
 	{
-		LogSystem::StdErr("%s", PROJECT_VERSION_DETAILS);
-		LogSystem::StdErr("Command line: [%s]", WinAPI::CmdLine::GetOnlyArgs());
-		LogSystem::StdErr("Root folder: \"%s\"", m_rootFolder.c_str());
+		MemoryPatch::CryAction::DisableGameplayStats(m_dlls.pCryAction, m_dlls.gameBuild);
+	}
 
-		m_params.hInstance = WinAPI::EXE::Get();
-		m_params.logFileName = LogSystem::GetDefaultFileName();
-		m_params.isDedicatedServer = true;
-		m_params.pLog = &m_log;
-		m_params.pValidator = &m_validator;
-		m_params.pUserCallback = this;
+	if (m_dlls.pCryNetwork)
+	{
+		MemoryPatch::CryNetwork::EnablePreordered(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::AllowSameCDKeys(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::DisableServerProfile(m_dlls.pCryNetwork, m_dlls.gameBuild);
+	}
 
-		SetParamsCmdLine(WinAPI::CmdLine::Get());
-
-		CrashLogger::SetSink(m_log);
-
-		LoadEngine();
-		PatchEngine();
-
-		LogSystem::StdErr("Log file: %s", m_params.logFileName);
-
-		if (!m_log.SetFileName(m_params.logFileName))
+	if (m_dlls.pCrySystem)
+	{
+		if (OS::CPU::IsAMD() && !OS::CPU::Has3DNow())
 		{
-			return 1;
+			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
 		}
 
-		LogSystem::StdErr("Starting CryEngine...");
-		StartEngine(m_CryGame);
-
-		LogSystem::StdErr("Ready");
-
-		return UpdateLoop();
+		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 	}
-	catch (const std::runtime_error& error)
+
+	if (m_dlls.pCryRenderNULL)
 	{
-		LogSystem::StdErr("%s", error.what());
-		return 1;
+		MemoryPatch::CryRenderNULL::DisableDebugRenderer(m_dlls.pCryRenderNULL, m_dlls.gameBuild);
 	}
 }
 
 bool HeadlessServerLauncher::OnError(const char* error)
 {
-	return true;
+	return false;
 }
 
 void HeadlessServerLauncher::OnSaveDocument()
@@ -87,89 +158,14 @@ void HeadlessServerLauncher::OnShutdown()
 
 void HeadlessServerLauncher::OnUpdate()
 {
-	m_executor.ExecuteMainThreadTasks();
+	m_logger.OnUpdate();
 }
 
 void HeadlessServerLauncher::GetMemoryUsage(ICrySizer* pSizer)
 {
 }
 
-void HeadlessServerLauncher::LoadEngine()
+std::FILE* HeadlessServerLauncher::OpenLogFile()
 {
-	m_CrySystem.Load("CrySystem.dll", DLL::NO_UNLOAD);  // unloading Crysis DLLs is not safe
-
-	m_gameBuild = WinAPI::GetCrysisGameBuild(m_CrySystem.GetHandle());
-	if (m_gameBuild < 0)
-	{
-		throw WinAPI::CurrentError("Failed to get the game version!");
-	}
-
-	LogSystem::StdErr("Game build: %d", m_gameBuild);
-
-	VerifyGameBuild();
-
-	m_CryGame.Load("CryGame.dll", DLL::NO_UNLOAD);
-	m_CryAction.Load("CryAction.dll", DLL::NO_UNLOAD);
-	m_CryNetwork.Load("CryNetwork.dll", DLL::NO_UNLOAD);
-	m_CryRenderNULL.Load("CryRenderNULL.dll", DLL::NO_UNLOAD);
-}
-
-void HeadlessServerLauncher::PatchEngine()
-{
-	if (m_CryAction.IsLoaded())
-	{
-		void* pCryAction = m_CryAction.GetHandle();
-
-		Patch::CryAction::DisableGameplayStats(pCryAction, m_gameBuild);
-	}
-
-	if (m_CryNetwork.IsLoaded())
-	{
-		void* pCryNetwork = m_CryNetwork.GetHandle();
-
-		Patch::CryNetwork::EnablePreordered(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::AllowSameCDKeys(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::FixInternetConnect(pCryNetwork, m_gameBuild);
-		Patch::CryNetwork::DisableServerProfile(pCryNetwork, m_gameBuild);
-	}
-
-	if (m_CrySystem.IsLoaded())
-	{
-		void* pCrySystem = m_CrySystem.GetHandle();
-
-		if (WinAPI::CPU::IsAMD() && !WinAPI::CPU::Has3DNow())
-		{
-			Patch::CrySystem::Disable3DNow(pCrySystem, m_gameBuild);
-		}
-
-		Patch::CrySystem::UnhandledExceptions(pCrySystem, m_gameBuild);
-	}
-
-	if (m_CryRenderNULL.IsLoaded())
-	{
-		void* pCryRenderNULL = m_CryRenderNULL.GetHandle();
-
-		Patch::CryRenderNULL::DisableDebugRenderer(pCryRenderNULL, m_gameBuild);
-	}
-}
-
-std::string HeadlessServerLauncher::GetRootFolder()
-{
-	std::string rootFolder = WinAPI::CmdLine::GetArgValue("-root");
-
-	if (rootFolder.empty())
-	{
-		// Bin32 or Bin64 folder
-		rootFolder = Path::DirName(WinAPI::EXE::GetPath());
-
-		const std::string binFolder = Path::BaseName(rootFolder);
-
-		if (Path::IsNameEqual(binFolder, "Bin32") || Path::IsNameEqual(binFolder, "Bin64"))
-		{
-			// Crysis main folder
-			rootFolder = Path::DirName(rootFolder);
-		}
-	}
-
-	return rootFolder;
+	return (s_self) ? s_self->m_logger.ReleaseFile() : NULL;
 }

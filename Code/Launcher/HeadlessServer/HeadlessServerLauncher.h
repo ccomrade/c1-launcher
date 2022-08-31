@@ -1,24 +1,35 @@
 #pragma once
 
-#include "../LauncherBase.h"
+#include <string>
 
-#include "Executor.h"
-#include "LogSystem.h"
+#include "CryCommon/CryGame/IGameStartup.h"
+#include "CryCommon/CrySystem/ISystem.h"
+
+#include "Logger.h"
 #include "NullValidator.h"
 
-class HeadlessServerLauncher : public LauncherBase, public ISystemUserCallback
+class HeadlessServerLauncher : private ISystemUserCallback
 {
-	std::string m_rootFolder;
+	IGameStartup* m_pGameStartup;
+	SSystemInitParams m_params;
 
-	Executor m_executor;
-	LogSystem m_log;
+	struct DLLs
+	{
+		void* pCryGame;
+		void* pCryAction;
+		void* pCryNetwork;
+		void* pCrySystem;
+		void* pCryRenderNULL;
+
+		int gameBuild;
+	};
+
+	DLLs m_dlls;
+
+	Logger m_logger;
 	NullValidator m_validator;
 
-	DLL m_CryGame;
-	DLL m_CryAction;
-	DLL m_CryNetwork;
-	DLL m_CrySystem;
-	DLL m_CryRenderNULL;
+	std::string m_rootFolder;
 
 public:
 	HeadlessServerLauncher();
@@ -26,6 +37,11 @@ public:
 
 	int Run();
 
+private:
+	void LoadEngine();
+	void PatchEngine();
+
+	// ISystemUserCallback
 	bool OnError(const char* error) override;
 	void OnSaveDocument() override;
 	void OnProcessSwitch() override;
@@ -33,13 +49,8 @@ public:
 	void OnInit(ISystem* pSystem) override;
 	void OnShutdown() override;
 	void OnUpdate() override;
-
 	void GetMemoryUsage(ICrySizer* pSizer) override;
 
-private:
-
-	void LoadEngine();
-	void PatchEngine();
-
-	static std::string GetRootFolder();
+	static HeadlessServerLauncher* s_self;
+	static std::FILE* OpenLogFile();
 };

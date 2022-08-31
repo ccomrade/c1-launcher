@@ -3,7 +3,6 @@
 #include <winver.h>
 
 #include "Launcher/Game/Resources.h"
-
 #include "Project.h"
 
 RESOURCE_ICON ICON "GameIcon.ico"

@@ -10,8 +10,8 @@
 #define PROJECT_VERSION @PROJECT_VERSION_MAJOR@
 #define PROJECT_VERSION_STRING "@PROJECT_VERSION_MAJOR@"
 
-#define PROJECT_MAKE_VERSION_DETAILS(name) name \
-	" [v@PROJECT_VERSION_MAJOR@] [@BUILD_BITS@-bit] [@CMAKE_BUILD_TYPE@] [" __DATE__ " " __TIME__ "]"
+#define PROJECT_VERSION_DETAILS "@VERSION_DETAILS@"
 
+// contains launcher name and version details
 // defined in Main.cpp of each launcher
-extern const char* const PROJECT_VERSION_DETAILS;
+extern const char* const PROJECT_BANNER;
