@@ -190,13 +190,5 @@ namespace OS
 	// System information //
 	////////////////////////
 
-	namespace CPU
-	{
-		bool IsAMD();
-		bool IsIntel();
-
-		bool Has3DNow();
-	}
-
 	bool IsVistaOrLater();
 }

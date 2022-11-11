@@ -2,7 +2,6 @@
 #include <string.h>
 
 #define WIN32_LEAN_AND_MEAN
-#include <intrin.h>
 #include <shlobj.h>
 #include <windows.h>
 
@@ -607,44 +606,6 @@ long OS::GetCurrentTimeZoneBias()
 ////////////////////////
 // System information //
 ////////////////////////
-
-namespace
-{
-	bool IsVendor(const char (&vendor)[12 + 1])
-	{
-		const int* id = reinterpret_cast<const int*>(vendor);
-
-		int registers[4];
-		__cpuid(registers, 0x0);
-
-		return registers[1] == id[0]
-		    && registers[3] == id[1]
-		    && registers[2] == id[2];
-	}
-
-	bool QueryIDBit(int query, int reg, int bit)
-	{
-		int registers[4];
-		__cpuid(registers, query);
-
-		return (registers[reg] & (1 << bit)) != 0;
-	}
-}
-
-bool OS::CPU::IsAMD()
-{
-	return IsVendor("AuthenticAMD");
-}
-
-bool OS::CPU::IsIntel()
-{
-	return IsVendor("GenuineIntel");
-}
-
-bool OS::CPU::Has3DNow()
-{
-	return QueryIDBit(0x80000001, 3, 31);
-}
 
 bool OS::IsVistaOrLater()
 {

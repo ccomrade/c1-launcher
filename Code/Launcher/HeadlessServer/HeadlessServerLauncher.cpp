@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>  // std::atoi
 
+#include "Library/CPUID.h"
 #include "Library/CrashLogger.h"
 #include "Library/OS.h"
 #include "Library/PathTools.h"
@@ -116,7 +117,7 @@ void HeadlessServerLauncher::PatchEngine()
 
 	if (m_dlls.pCrySystem)
 	{
-		if (OS::CPU::IsAMD() && !OS::CPU::Has3DNow())
+		if (!g_cpuid.Has3DNow())
 		{
 			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
 		}

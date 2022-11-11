@@ -63,6 +63,8 @@ add_library(LauncherBase STATIC
   Code/Launcher/LauncherCommon.h
   Code/Launcher/MemoryPatch.cpp
   Code/Launcher/MemoryPatch.h
+  Code/Library/CPUID.cpp
+  Code/Library/CPUID.h
   Code/Library/CrashLogger.cpp
   Code/Library/CrashLogger.h
   Code/Library/Mutex.h
