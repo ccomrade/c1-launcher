@@ -862,6 +862,197 @@ void MemoryPatch::CryNetwork::FixInternetConnect(void* pCryNetwork, int gameBuil
 }
 
 /**
+ * Fixes the sporadic crash when file check (sv_cheatProtection) is enabled.
+ *
+ * Both client and server are affected. Although server is much less prone to crashing. This patch fixes both.
+ */
+void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild)
+{
+#ifdef BUILD_64BIT
+	const unsigned char codeA[] = {
+		0x48, 0x89, 0x0A,  // mov qword ptr ds:[rdx], rcx
+		0x90               // nop
+	};
+
+	const unsigned char codeB[] = {
+		0x48, 0x89, 0x4A, 0x08  // mov qword ptr ds:[rdx+0x8], rcx
+	};
+#else
+	const unsigned char clientCode[] = {
+		0x8B, 0x4D, 0xC0,  // mov ecx, dword ptr ss:[ebp-0x40]
+		0xFF, 0x49, 0xF4,  // dec dword ptr ds:[ecx-0xC]
+		0x8B, 0x4D, 0xBC,  // mov ecx, dword ptr ss:[ebp-0x44]
+		0x89, 0x4D, 0xC0   // mov dword ptr ss:[ebp-0x40], ecx
+	};
+
+	const unsigned char serverCode[] = {
+		0x90,              // nop
+		0x90,              // nop
+		0xEB, 0x02,        // jmp -------------------------------+
+		0x33, 0xC0,        // xor eax, eax                       |
+		0x8B, 0x4F, 0x04,  // mov ecx, dword ptr ds:[edi+0x4] <--+
+		0xFF, 0x49, 0xF4,  // dec dword ptr ds:[ecx-0xC]
+		0x8B, 0x0F,        // mov ecx, dword ptr ds:[edi]
+		0x89, 0x4F, 0x04,  // mov dword ptr ds:[edi+0x4], ecx
+		0x90,              // nop
+		0x90,              // nop
+		0x90               // nop
+	};
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			// client
+			FillMem(pCryNetwork, 0x1540C1, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x1540D9, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x154411, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x154429, codeB, sizeof codeB);
+			break;
+		}
+		case 5879:
+		{
+			// Crysis 1.1 does not have file check
+			break;
+		}
+		case 6115:
+		{
+			// client
+			FillMem(pCryNetwork, 0x14F151, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x14F169, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x14F481, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x14F499, codeB, sizeof codeB);
+			break;
+		}
+		case 6156:
+		{
+			// client
+			FillMem(pCryNetwork, 0x14F5B1, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x14F5C9, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x14F8E1, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x14F8F9, codeB, sizeof codeB);
+			break;
+		}
+		case 6566:
+		{
+			// client
+			FillMem(pCryNetwork, 0x158991, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x1589A9, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x158CC1, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x158CD9, codeB, sizeof codeB);
+			break;
+		}
+		case 6586:
+		{
+			// client
+			FillMem(pCryNetwork, 0x151571, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x151589, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x1518A1, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x1518B9, codeB, sizeof codeB);
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// client
+			FillMem(pCryNetwork, 0x151301, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x151319, codeB, sizeof codeB);
+			// server
+			FillMem(pCryNetwork, 0x151641, codeA, sizeof codeA);
+			FillMem(pCryNetwork, 0x151659, codeB, sizeof codeB);
+			break;
+		}
+#else
+		case 5767:
+		{
+			// client
+			FillNop(pCryNetwork, 0x49E66, 0xC);
+			FillMem(pCryNetwork, 0x49EB5, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x49A7F, 0xC);
+			FillMem(pCryNetwork, 0x30D62, serverCode, sizeof serverCode);
+			break;
+		}
+		case 5879:
+		{
+			// Crysis 1.1 does not have file check
+			break;
+		}
+		case 6115:
+		{
+			// client
+			FillNop(pCryNetwork, 0x4A268, 0xC);
+			FillMem(pCryNetwork, 0x4A2B7, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x49E81, 0xC);
+			FillMem(pCryNetwork, 0x30E1C, serverCode, sizeof serverCode);
+			break;
+		}
+		case 6156:
+		{
+			// client
+			FillNop(pCryNetwork, 0x4A34F, 0xC);
+			FillMem(pCryNetwork, 0x4A39E, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x49F68, 0xC);
+			FillMem(pCryNetwork, 0x30E7B, serverCode, sizeof serverCode);
+			break;
+		}
+		case 6527:
+		{
+			// client
+			FillNop(pCryNetwork, 0x4A361, 0xC);
+			FillMem(pCryNetwork, 0x4A3B0, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x49F7A, 0xC);
+			FillMem(pCryNetwork, 0x31123, serverCode, sizeof serverCode);
+			break;
+		}
+		case 6566:
+		{
+			// client
+			FillNop(pCryNetwork, 0x5B3A6, 0xC);
+			FillMem(pCryNetwork, 0x5B3F5, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x5ADE1, 0xC);
+			FillMem(pCryNetwork, 0x3D633, serverCode, sizeof serverCode);
+			break;
+		}
+		case 6586:
+		{
+			// client
+			FillNop(pCryNetwork, 0x4A9B5, 0xC);
+			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x4A3CB, 0xC);
+			FillMem(pCryNetwork, 0x31333, serverCode, sizeof serverCode);
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// client
+			FillNop(pCryNetwork, 0x4A9B5, 0xC);
+			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof clientCode);
+			// server
+			FillNop(pCryNetwork, 0x4A3CB, 0xC);
+			FillMem(pCryNetwork, 0x3141A, serverCode, sizeof serverCode);
+			break;
+		}
+#endif
+	}
+}
+
+/**
  * Disables creation of the "server_profile.txt" file.
  */
 void MemoryPatch::CryNetwork::DisableServerProfile(void* pCryNetwork, int gameBuild)

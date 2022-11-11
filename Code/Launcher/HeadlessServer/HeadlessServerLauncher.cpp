@@ -110,6 +110,7 @@ void HeadlessServerLauncher::PatchEngine()
 		MemoryPatch::CryNetwork::EnablePreordered(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::AllowSameCDKeys(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::FixFileCheckCrash(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::DisableServerProfile(m_dlls.pCryNetwork, m_dlls.gameBuild);
 	}
 

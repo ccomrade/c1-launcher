@@ -20,6 +20,7 @@ namespace MemoryPatch
 		void EnablePreordered(void* pCryNetwork, int gameBuild);
 		void AllowSameCDKeys(void* pCryNetwork, int gameBuild);
 		void FixInternetConnect(void* pCryNetwork, int gameBuild);
+		void FixFileCheckCrash(void* pCryNetwork, int gameBuild);
 		void DisableServerProfile(void* pCryNetwork, int gameBuild);
 	}
 
