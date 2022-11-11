@@ -101,6 +101,8 @@ add_executable(CrysisDedicatedServer WIN32
 )
 
 add_executable(CrysisHeadlessServer
+  Code/Launcher/HeadlessServer/CPUInfo.cpp
+  Code/Launcher/HeadlessServer/CPUInfo.h
   Code/Launcher/HeadlessServer/HeadlessServerLauncher.cpp
   Code/Launcher/HeadlessServer/HeadlessServerLauncher.h
   Code/Launcher/HeadlessServer/Logger.cpp

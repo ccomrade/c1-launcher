@@ -1,5 +1,7 @@
 #pragma once
 
+struct CPUInfo;
+
 namespace MemoryPatch
 {
 	namespace CryAction
@@ -30,6 +32,7 @@ namespace MemoryPatch
 		void AllowDX9VeryHighSpec(void* pCrySystem, int gameBuild);
 		void AllowMultipleInstances(void* pCrySystem, int gameBuild);
 		void UnhandledExceptions(void* pCrySystem, int gameBuild);
+		void HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info));
 		void HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, ...));
 		void Disable3DNow(void* pCrySystem, int gameBuild);
 	}

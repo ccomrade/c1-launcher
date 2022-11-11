@@ -191,4 +191,6 @@ namespace OS
 	////////////////////////
 
 	bool IsVistaOrLater();
+
+	unsigned int GetLogicalProcessorCount();
 }

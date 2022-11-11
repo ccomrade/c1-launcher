@@ -615,3 +615,11 @@ bool OS::IsVistaOrLater()
 
 	return info.dwMajorVersion >= 6;
 }
+
+unsigned int OS::GetLogicalProcessorCount()
+{
+	SYSTEM_INFO info;
+	GetSystemInfo(&info);
+
+	return info.dwNumberOfProcessors;
+}

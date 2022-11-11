@@ -10,6 +10,7 @@
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
+#include "CPUInfo.h"
 #include "HeadlessServerLauncher.h"
 
 #define DEFAULT_LOG_FILE_NAME "Server.log"
@@ -117,12 +118,8 @@ void HeadlessServerLauncher::PatchEngine()
 
 	if (m_dlls.pCrySystem)
 	{
-		if (!g_cpuid.Has3DNow())
-		{
-			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
-		}
-
 		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 	}
 

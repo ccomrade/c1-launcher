@@ -1494,6 +1494,129 @@ void MemoryPatch::CrySystem::UnhandledExceptions(void* pCrySystem, int gameBuild
 }
 
 /**
+ * Hooks CryEngine CPU detection.
+ */
+void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0xFF, 0xE0                                                   // jmp rax
+	};
+
+	std::memcpy(&code[2], &handler, 8);
+#else
+	unsigned char code[] = {
+		0x51,                          // push ecx
+		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
+		0xFF, 0xD0,                    // call eax
+		0x83, 0xC4, 0x04,              // add esp, 0x4
+		0xC3                           // ret
+	};
+
+	std::memcpy(&code[2], &handler, 4);
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pCrySystem, 0xA890, &code, sizeof code);
+			break;
+		}
+		case 5879:
+		{
+			FillMem(pCrySystem, 0xA7E0, &code, sizeof code);
+			break;
+		}
+		case 6115:
+		{
+			FillMem(pCrySystem, 0xA7A0, &code, sizeof code);
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCrySystem, 0xA7E0, &code, sizeof code);
+			break;
+		}
+		case 6566:
+		{
+			FillMem(pCrySystem, 0xB420, &code, sizeof code);
+			break;
+		}
+		case 6586:
+		{
+			FillMem(pCrySystem, 0xAA10, &code, sizeof code);
+			break;
+		}
+		case 6627:
+		{
+			FillMem(pCrySystem, 0xA950, &code, sizeof code);
+			break;
+		}
+		case 6670:
+		case 6729:
+		{
+			FillMem(pCrySystem, 0xAA10, &code, sizeof code);
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillMem(pCrySystem, 0xA3D0, &code, sizeof code);
+			break;
+		}
+		case 5879:
+		{
+			FillMem(pCrySystem, 0xA410, &code, sizeof code);
+			break;
+		}
+		case 6115:
+		{
+			FillMem(pCrySystem, 0xA3C0, &code, sizeof code);
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCrySystem, 0xA380, &code, sizeof code);
+			break;
+		}
+		case 6527:
+		{
+			FillMem(pCrySystem, 0xA410, &code, sizeof code);
+			break;
+		}
+		case 6566:
+		{
+			FillMem(pCrySystem, 0xA8F0, &code, sizeof code);
+			break;
+		}
+		case 6586:
+		{
+			FillMem(pCrySystem, 0xA370, &code, sizeof code);
+			break;
+		}
+		case 6627:
+		{
+			FillMem(pCrySystem, 0xA3A0, &code, sizeof code);
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pCrySystem, 0xA3B0, &code, sizeof code);
+			break;
+		}
+		case 6729:
+		{
+			FillMem(pCrySystem, 0xA3C0, &code, sizeof code);
+			break;
+		}
+#endif
+	}
+}
+
+/**
  * Hooks CryEngine fatal error handler.
  */
 void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, ...))
