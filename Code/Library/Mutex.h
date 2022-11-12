@@ -2,7 +2,6 @@
 
 // WinAPI headers must not be included in a header
 #ifndef _INC_WINDOWS
-
 #pragma pack(push, 8)
 #ifdef BUILD_64BIT
 struct CRITICAL_SECTION { unsigned char reserved[40]; };
@@ -15,7 +14,6 @@ extern "C" void __stdcall InitializeCriticalSection(CRITICAL_SECTION* cs);
 extern "C" void __stdcall DeleteCriticalSection(CRITICAL_SECTION* cs);
 extern "C" void __stdcall EnterCriticalSection(CRITICAL_SECTION* cs);
 extern "C" void __stdcall LeaveCriticalSection(CRITICAL_SECTION* cs);
-
 #endif
 
 class Mutex

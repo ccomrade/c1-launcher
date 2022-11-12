@@ -2147,6 +2147,9 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 	{
 		void** oldVTable = static_cast<void**>(ByteOffset(pCryRenderNULL, renderAuxGeomVTableOffset));
 
+		// CNULLRenderAuxGeom::SetRenderFlags is empty and returns nothing
+		void* emptyFunc = oldVTable[0];
+
 		// create a new CNULLRenderAuxGeom vtable
 		void* newVTable[27] = {};
 
@@ -2155,9 +2158,6 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		newVTable[0] = oldVTable[0];
 		newVTable[1] = oldVTable[1];
 
-		// CNULLRenderAuxGeom::SetRenderFlags is empty and returns nothing
-		void* emptyFunc = newVTable[0];
-
 		// make the rest of CNULLRenderAuxGeom functions empty
 		// note that all the functions return nothing
 		for (unsigned int i = 2; i < (sizeof newVTable / sizeof newVTable[0]); i++)
@@ -2165,7 +2165,7 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 			newVTable[i] = emptyFunc;
 		}
 
-		// inject the new vtable
+		// install the new vtable
 		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof newVTable);
 	}
 }

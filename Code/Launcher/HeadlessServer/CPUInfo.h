@@ -26,7 +26,7 @@ struct CPUInfo
 	unsigned int coreCountTotal;
 	unsigned int coreCountAvailable;
 	unsigned int coreCountPhysical;
-	unsigned int reserved1;
+	unsigned int reserved;
 
 	struct Core
 	{
