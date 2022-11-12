@@ -572,18 +572,18 @@ void Logger::BuildMessageContent(Message& message, const char* format, va_list a
 		case ILog::eWarning:
 		case ILog::eWarningAlways:
 		{
-			message.content += CRY_COLOR_CODE_YELLOW "[Warning] ";
+			message.content += CRY_COLOR_CODE_YELLOW_STRING "[Warning] ";
 			break;
 		}
 		case ILog::eError:
 		case ILog::eErrorAlways:
 		{
-			message.content += CRY_COLOR_CODE_RED "[Error] ";
+			message.content += CRY_COLOR_CODE_RED_STRING "[Error] ";
 			break;
 		}
 		case ILog::eComment:
 		{
-			message.content += CRY_COLOR_CODE_GRAY;
+			message.content += CRY_COLOR_CODE_GRAY_STRING;
 			break;
 		}
 		case ILog::eMessage:
