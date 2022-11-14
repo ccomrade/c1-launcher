@@ -628,21 +628,32 @@ void Logger::WriteMessageToFile(const Message& message)
 		buffer += message.prefix;
 	}
 
-	if (OS_NEWLINE_LENGTH == 1)
+	for (std::size_t i = 0; i < message.content.length(); i++)
 	{
-		buffer += message.content;
-	}
-	else
-	{
-		for (std::size_t i = 0; i < message.content.length(); i++)
+		switch (message.content[i])
 		{
-			if (message.content[i] == '\n')
+			case '\n':
 			{
 				buffer += OS_NEWLINE;
+				break;
 			}
-			else
+			case '$':
+			{
+				// drop color codes
+				i++;
+
+				// "$$" => "$"
+				if (i < message.content.length() && message.content[i] == '$')
+				{
+					buffer += '$';
+				}
+
+				break;
+			}
+			default:
 			{
 				buffer += message.content[i];
+				break;
 			}
 		}
 	}
