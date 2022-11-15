@@ -6,20 +6,20 @@ It provides a better game launcher and dedicated server launcher with additional
 ## Features
 
 - Supports all game versions in one executable.
+- Provides additional headless server executable optimized for running Crysis servers on Linux.
 - Completely DRM-free launcher.
 - No compatibility mode is required to make the game work on modern systems.
 - Fixes all startup issues, including the well-known crash of 32-bit Crysis on modern AMD processors.
 - Smaller files, especially game launcher.
 - Annoying startup video ads are automatically skipped.
 - Very High settings are available in DX9 mode.
-- Game running in DX9 mode can connect to DX10 servers. Everything works just like in the DX10 mode.
+- Game running in DX9 mode can connect to DX10 servers. Everything works just like in DX10 mode.
 - Server does not kick players with the same CD key anymore.
 - It is possible to run multiple Crysis instances at once.
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
-- The source code is still compatible with the legacy VS2005 compiler that was used to build Crysis.
 
 ## Supported game versions
 
@@ -93,10 +93,9 @@ Yes, you can rename the executables of this launcher to whatever you want and us
 ### How can I play Crysis multiplayer?
 
 The official multiplayer no longer works due to [GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown).
-However, there are community projects that provide their own multiplayer services.
-The most successful one is [CryMP Network](https://crymp.net).
+However, there is [CryMP Network](https://crymp.net) community providing their own multiplayer services.
 
-For Crysis Wars take a look [here](https://crysiswarsmp.com).
+For Crysis Wars take a look [here](https://crysiswarsmp.com) or [here](https://cryserv.de).
 
 ### How can I run Crysis in DX9 mode instead of the default DX10 mode?
 
@@ -135,7 +134,9 @@ All this nonsense is skipped by this launcher. That means you can safely delete 
 - Microsoft Visual C++ compiler (MSVC) >= VS2005
 - CMake >= 3.15
 
-MSVC is the only supported compiler due to the required ABI compatibility with Crysis DLLs.
+The source code is compatible with the legacy VS2005 compiler that was used to build Crysis.
+
+MSVC is the only supported compiler due to required ABI compatibility with Crysis DLLs.
 
 ### Building
 
