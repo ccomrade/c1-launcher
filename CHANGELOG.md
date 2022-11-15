@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Headless server launcher.
 ### Fixed
 - CryRenderD3D10 DLL is not being loaded in DX9 mode anymore.
 - Static linking of MSVC runtime library is automatically disabled when VS2005 compiler is used.
+- No more sporadic crashes when file check is enabled on server.
+### Changed
+- Improved crash logger.
+- Version is now just one number.
+- Released executables are now digitally signed.
 
 ## [2.7] - 2021-11-09
 ### Added
