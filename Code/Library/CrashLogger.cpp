@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <cstring>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -326,23 +325,6 @@ static void DumpCommandLine(std::FILE* file)
 	std::fflush(file);
 }
 
-static void DumpEnvironment(std::FILE* file)
-{
-	std::fprintf(file, "Environment:\n");
-
-	const char* env = GetEnvironmentStringsA();
-
-	if (env)
-	{
-		for (; *env; env += std::strlen(env) + 1)
-		{
-			std::fprintf(file, "%s\n", env);
-		}
-	}
-
-	std::fflush(file);
-}
-
 static void WriteDumpHeader(std::FILE* file)
 {
 	std::fprintf(file, "================================ CRASH DETECTED ================================\n");
@@ -366,7 +348,6 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 	DumpCallStack(file, exception->ContextRecord);
 	DumpLoadedModules(file);
 	DumpCommandLine(file);
-	DumpEnvironment(file);
 
 	WriteDumpFooter(file);
 }
@@ -383,7 +364,6 @@ static void WriteInvalidParameterDump(std::FILE* file, CONTEXT* context)
 	DumpCallStack(file, context);
 	DumpLoadedModules(file);
 	DumpCommandLine(file);
-	DumpEnvironment(file);
 
 	WriteDumpFooter(file);
 }
@@ -404,7 +384,6 @@ static void WriteEngineErrorDump(std::FILE* file, CONTEXT* context, const char* 
 	DumpCallStack(file, context);
 	DumpLoadedModules(file);
 	DumpCommandLine(file);
-	DumpEnvironment(file);
 
 	WriteDumpFooter(file);
 }
