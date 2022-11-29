@@ -1,3 +1,3 @@
 #include "CPUID.h"
 
-CPUID g_cpuid;
+const CPUID g_cpuid;

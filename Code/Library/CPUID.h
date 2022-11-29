@@ -124,4 +124,4 @@ struct CPUID
 	}
 };
 
-extern CPUID g_cpuid;
+extern const CPUID g_cpuid;
