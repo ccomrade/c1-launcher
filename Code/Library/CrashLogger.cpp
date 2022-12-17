@@ -396,10 +396,10 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 	// avoid recursive calls
 	SetUnhandledExceptionFilter(NULL);
 
-	LockGuard<Mutex> lock(g_mutex);
-
 	if (g_handler)
 	{
+		LockGuard<Mutex> lock(g_mutex);
+
 		std::FILE* file = g_handler();
 
 		if (file)
@@ -418,10 +418,10 @@ static void InvalidParameterHandler(const wchar_t*, const wchar_t*, const wchar_
 	CONTEXT context = {};
 	RtlCaptureContext(&context);
 
-	LockGuard<Mutex> lock(g_mutex);
-
 	if (g_handler)
 	{
+		LockGuard<Mutex> lock(g_mutex);
+
 		std::FILE* file = g_handler();
 
 		if (file)
@@ -440,10 +440,10 @@ void CrashLogger::OnEngineError(const char* format, va_list args)
 	CONTEXT context = {};
 	RtlCaptureContext(&context);
 
-	LockGuard<Mutex> lock(g_mutex);
-
 	if (g_handler)
 	{
+		LockGuard<Mutex> lock(g_mutex);
+
 		std::FILE* file = g_handler();
 
 		if (file)

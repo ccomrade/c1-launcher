@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Fixed
-- CryEngine fatal error handler hook.
+- Few crash logger issues.
 
 ## [v3] - 2022-11-17
 ### Added
