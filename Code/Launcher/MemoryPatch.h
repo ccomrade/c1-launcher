@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdarg>
+
 struct CPUInfo;
 
 namespace MemoryPatch
@@ -33,7 +35,7 @@ namespace MemoryPatch
 		void AllowMultipleInstances(void* pCrySystem, int gameBuild);
 		void UnhandledExceptions(void* pCrySystem, int gameBuild);
 		void HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info));
-		void HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, ...));
+		void HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, va_list args));
 		void Disable3DNow(void* pCrySystem, int gameBuild);
 	}
 
