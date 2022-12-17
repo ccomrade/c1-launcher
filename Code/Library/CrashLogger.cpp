@@ -476,7 +476,7 @@ void CrashLogger::OnEngineError(const char* format, va_list args)
 		}
 	}
 
-	std::exit(1);
+	std::abort();
 }
 
 void CrashLogger::Enable(CrashLogger::Handler handler)
