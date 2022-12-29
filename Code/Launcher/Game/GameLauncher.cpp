@@ -3,6 +3,7 @@
 #include "Library/OS.h"
 #include "Project.h"
 
+#include "../CPUInfo.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -100,6 +101,7 @@ void GameLauncher::PatchEngine()
 		MemoryPatch::CrySystem::AllowDX9VeryHighSpec(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::AllowMultipleInstances(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 
 		if (!g_cpuid.Has3DNow())

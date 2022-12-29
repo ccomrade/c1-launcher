@@ -7,10 +7,10 @@
 #include "Library/PathTools.h"
 #include "Project.h"
 
+#include "../CPUInfo.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
-#include "CPUInfo.h"
 #include "HeadlessServerLauncher.h"
 
 #define DEFAULT_LOG_FILE_NAME "Server.log"
