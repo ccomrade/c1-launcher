@@ -42,8 +42,6 @@ int GameLauncher::Run()
 
 	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
 
-	gEnv = m_params.pSystem->GetGlobalEnvironment();
-
 	CryLogAlways("%s", PROJECT_BANNER);
 
 	return m_pGameStartup->Run(NULL);

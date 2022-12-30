@@ -1496,25 +1496,48 @@ void MemoryPatch::CrySystem::UnhandledExceptions(void* pCrySystem, int gameBuild
 /**
  * Hooks CryEngine CPU detection.
  */
-void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info))
+void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info, ISystem* pSystem))
 {
+	unsigned char code[] = {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
-		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
-		0xFF, 0xE0                                                   // jmp rax
-	};
-
-	std::memcpy(&code[2], &handler, 8);
+		0x48, 0x89, 0x85, 0x28, 0x06, 0x00, 0x00,                    // mov qword ptr ss:[rbp+0x628], rax
+		0x48, 0x8B, 0xC8,                                            // mov rcx, rax
+		0x48, 0x8B, 0xD5,                                            // mov rdx, rbp
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x102030405060708
+		0xFF, 0xD0,                                                  // call rax
+		0x90,                                                        // nop
+		0x90,                                                        // nop
 #else
-	unsigned char code[] = {
-		0x51,                          // push ecx
-		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
-		0xFF, 0xD0,                    // call eax
-		0x83, 0xC4, 0x04,              // add esp, 0x4
-		0xC3                           // ret
+		0x89, 0x85, 0x58, 0x05, 0x00, 0x00,                          // mov dword ptr ss:[ebp+0x558], eax
+		0x55,                                                        // push ebp
+		0x50,                                                        // push eax
+		0xB8, 0x00, 0x00, 0x00, 0x00,                                // mov eax, 0x0
+		0xFF, 0xD0,                                                  // call eax
+		0x83, 0xC4, 0x08,                                            // add esp, 0x8
+#endif
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90,                                                        // nop
+		0x90                                                         // nop
 	};
 
-	std::memcpy(&code[2], &handler, 4);
+#ifdef BUILD_64BIT
+	std::memcpy(&code[15], &handler, 8);
+#else
+	std::memcpy(&code[9], &handler, 4);
 #endif
 
 	switch (gameBuild)
@@ -1522,94 +1545,96 @@ void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCrySystem, 0xA890, &code, sizeof code);
+			FillMem(pCrySystem, 0x45851, &code, sizeof code);
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0xA7E0, &code, sizeof code);
+			FillMem(pCrySystem, 0x46E21, &code, sizeof code);
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0xA7A0, &code, sizeof code);
+			FillMem(pCrySystem, 0x462B0, &code, sizeof code);
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0xA7E0, &code, sizeof code);
+			FillMem(pCrySystem, 0x4636C, &code, sizeof code);
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0xB420, &code, sizeof code);
+			FillMem(pCrySystem, 0x4D3C8, &code, sizeof code);
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0xAA10, &code, sizeof code);
+			FillMem(pCrySystem, 0x479CE, &code, sizeof code);
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0xA950, &code, sizeof code);
+			FillMem(pCrySystem, 0x4A51E, &code, sizeof code);
 			break;
 		}
 		case 6670:
 		case 6729:
 		{
-			FillMem(pCrySystem, 0xAA10, &code, sizeof code);
+			code[3] = 0x30;  // 0x630 instead of 0x628
+
+			FillMem(pCrySystem, 0x4A6AE, &code, sizeof code);
 			break;
 		}
 #else
 		case 5767:
 		{
-			FillMem(pCrySystem, 0xA3D0, &code, sizeof code);
+			FillMem(pCrySystem, 0x59CD7, &code, sizeof code);
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0xA410, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A257, &code, sizeof code);
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0xA3C0, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A037, &code, sizeof code);
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0xA380, &code, sizeof code);
+			FillMem(pCrySystem, 0x59B77, &code, sizeof code);
 			break;
 		}
 		case 6527:
 		{
-			FillMem(pCrySystem, 0xA410, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A547, &code, sizeof code);
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0xA8F0, &code, sizeof code);
+			FillMem(pCrySystem, 0x5CFC7, &code, sizeof code);
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0xA370, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A477, &code, sizeof code);
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0xA3A0, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B407, &code, sizeof code);
 			break;
 		}
 		case 6670:
 		{
-			FillMem(pCrySystem, 0xA3B0, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B6F7, &code, sizeof code);
 			break;
 		}
 		case 6729:
 		{
-			FillMem(pCrySystem, 0xA3C0, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B707, &code, sizeof code);
 			break;
 		}
 #endif

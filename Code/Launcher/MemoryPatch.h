@@ -3,6 +3,7 @@
 #include <cstdarg>
 
 struct CPUInfo;
+struct ISystem;
 
 namespace MemoryPatch
 {
@@ -34,7 +35,7 @@ namespace MemoryPatch
 		void AllowDX9VeryHighSpec(void* pCrySystem, int gameBuild);
 		void AllowMultipleInstances(void* pCrySystem, int gameBuild);
 		void UnhandledExceptions(void* pCrySystem, int gameBuild);
-		void HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info));
+		void HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info, ISystem* pSystem));
 		void HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, va_list args));
 		void Disable3DNow(void* pCrySystem, int gameBuild);
 	}

@@ -148,7 +148,6 @@ void HeadlessServerLauncher::OnInitProgress(const char* message)
 
 void HeadlessServerLauncher::OnInit(ISystem* pSystem)
 {
-	gEnv = pSystem->GetGlobalEnvironment();
 }
 
 void HeadlessServerLauncher::OnShutdown()

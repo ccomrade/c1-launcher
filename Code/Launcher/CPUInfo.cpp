@@ -45,8 +45,11 @@ static unsigned int GetFeatures()
 	return features;
 }
 
-void CPUInfo::Detect(CPUInfo* self)
+void CPUInfo::Detect(CPUInfo* self, ISystem* pSystem)
 {
+	// CPU detection is the earliest intercepted stage of CryEngine initialization
+	gEnv = pSystem->GetGlobalEnvironment();
+
 	const unsigned int coreCount = GetCoreCount();
 	const unsigned int features = GetFeatures();
 
@@ -58,15 +61,12 @@ void CPUInfo::Detect(CPUInfo* self)
 	self->coreCountPhysical = coreCount;
 	self->cores[0].flags = features;
 
-	if (gEnv)
-	{
-		CryLogAlways("%s [Count: %u] [Features:%s%s%s%s]",
-			g_cpuid.brand_string,
-			coreCount,
-			(features & FLAG_MMX)   ? " MMX"    : "",
-			(features & FLAG_3DNOW) ? " 3DNow!" : "",
-			(features & FLAG_SSE)   ? " SSE"    : "",
-			(features & FLAG_SSE2)  ? " SSE2"   : ""
-		);
-	}
+	CryLogAlways("%s [Count: %u] [Features:%s%s%s%s]",
+		g_cpuid.brand_string,
+		coreCount,
+		(features & FLAG_MMX)   ? " MMX"    : "",
+		(features & FLAG_3DNOW) ? " 3DNow!" : "",
+		(features & FLAG_SSE)   ? " SSE"    : "",
+		(features & FLAG_SSE2)  ? " SSE2"   : ""
+	);
 }
