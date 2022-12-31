@@ -7,6 +7,7 @@
 #include "Library/PathTools.h"
 #include "Library/StringTools.h"
 #include "Library/StringView.h"
+#include "Project.h"
 
 #include "LauncherCommon.h"
 
@@ -151,6 +152,13 @@ IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& par
 	}
 
 	return pGameStartup;
+}
+
+void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
+{
+	gEnv = pSystem->GetGlobalEnvironment();
+
+	CryLogAlways("%s", PROJECT_BANNER);
 }
 
 std::FILE* LauncherCommon::OpenLogFile(const char* defaultFileName)

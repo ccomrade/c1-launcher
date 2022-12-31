@@ -1,7 +1,6 @@
 #include "Library/CPUID.h"
 #include "Library/CrashLogger.h"
 #include "Library/OS.h"
-#include "Project.h"
 
 #include "../CPUInfo.h"
 #include "../LauncherCommon.h"
@@ -42,8 +41,6 @@ int DedicatedServerLauncher::Run()
 	this->PatchEngine();
 
 	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
-
-	CryLogAlways("%s", PROJECT_BANNER);
 
 	return m_pGameStartup->Run(NULL);
 }

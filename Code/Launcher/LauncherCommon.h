@@ -4,6 +4,7 @@
 #include <string>
 
 struct IGameStartup;
+struct ISystem;
 struct SSystemInitParams;
 
 namespace LauncherCommon
@@ -20,6 +21,8 @@ namespace LauncherCommon
 	void SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine);
 
 	IGameStartup* StartEngine(void* pCryGame, SSystemInitParams& params);
+
+	void OnEarlyEngineInit(ISystem* pSystem);
 
 	std::FILE* OpenLogFile(const char* defaultFileName);
 }

@@ -5,6 +5,7 @@
 #include "Library/OS.h"
 
 #include "CPUInfo.h"
+#include "LauncherCommon.h"
 
 static unsigned int GetCoreCount()
 {
@@ -48,7 +49,7 @@ static unsigned int GetFeatures()
 void CPUInfo::Detect(CPUInfo* self, ISystem* pSystem)
 {
 	// CPU detection is the earliest intercepted stage of CryEngine initialization
-	gEnv = pSystem->GetGlobalEnvironment();
+	LauncherCommon::OnEarlyEngineInit(pSystem);
 
 	const unsigned int coreCount = GetCoreCount();
 	const unsigned int features = GetFeatures();
