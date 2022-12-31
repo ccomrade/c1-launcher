@@ -6,7 +6,6 @@
 
 #include "CryCommon/CrySystem/ILog.h"
 
-#include "Library/Mutex.h"
 #include "Library/OS.h"
 
 struct ICVar;
@@ -42,7 +41,7 @@ class Logger : public ILog
 
 	CVars m_cvars;
 
-	Mutex m_mutex;
+	OS::Mutex m_mutex;
 	unsigned long m_mainThreadID;
 	std::vector<Message> m_messages;
 

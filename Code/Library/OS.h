@@ -1,7 +1,69 @@
 #pragma once
 
+#include <cstdarg>
 #include <cstddef>
-#include <utility>
+
+#ifndef _INC_WINDOWS
+typedef unsigned long DWORD;
+typedef void* HANDLE;
+typedef void* HMODULE;
+typedef void* HWND;
+
+#ifdef _WIN64
+typedef __int64 (__stdcall *FARPROC)();
+#else
+typedef int (__stdcall *FARPROC)();
+#endif
+
+#pragma pack(push, 8)
+struct CRITICAL_SECTION
+{
+	void* reserved1;
+	long reserved2;
+	long reserved3;
+	void* reserved4;
+	void* reserved5;
+	void* reserved6;
+};
+#pragma pack(pop)
+#endif
+
+extern "C"
+{
+	__declspec(dllimport) char* __stdcall GetCommandLineA();
+
+	__declspec(dllimport) DWORD __stdcall GetLastError();
+	__declspec(dllimport) DWORD __stdcall FormatMessageA(
+		DWORD flags,
+		const void* source,
+		DWORD message,
+		DWORD language,
+		char* buffer,
+		DWORD bufferSize,
+		va_list* args
+	);
+
+	__declspec(dllimport) HMODULE __stdcall GetModuleHandleA(const char* name);
+	__declspec(dllimport) HMODULE __stdcall LoadLibraryA(const char* name);
+	__declspec(dllimport) int __stdcall FreeLibrary(HMODULE handle);
+	__declspec(dllimport) FARPROC __stdcall GetProcAddress(HMODULE handle, const char* name);
+	__declspec(dllimport) DWORD __stdcall GetModuleFileNameA(HMODULE handle, char* buffer, DWORD bufferSize);
+
+	__declspec(dllimport) int __stdcall MessageBoxA(
+		HWND parentWindow,
+		const char* text,
+		const char* title,
+		unsigned int type
+	);
+
+	__declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
+	__declspec(dllimport) void __stdcall InitializeCriticalSection(CRITICAL_SECTION* cs);
+	__declspec(dllimport) void __stdcall DeleteCriticalSection(CRITICAL_SECTION* cs);
+	__declspec(dllimport) void __stdcall EnterCriticalSection(CRITICAL_SECTION* cs);
+	__declspec(dllimport) void __stdcall LeaveCriticalSection(CRITICAL_SECTION* cs);
+
+	__declspec(dllimport) int __stdcall CloseHandle(HANDLE handle);
+}
 
 #define OS_NEWLINE "\r\n"
 #define OS_NEWLINE_LENGTH 2
@@ -16,7 +78,11 @@ namespace OS
 
 	namespace CmdLine
 	{
-		const char* Get();
+		inline const char* Get()
+		{
+			return ::GetCommandLineA();
+		}
+
 		const char* GetOnlyArgs();
 
 		bool HasArg(const char* arg);
@@ -28,9 +94,17 @@ namespace OS
 	// Errors //
 	////////////
 
-	unsigned long GetCurrentErrorCode();
+	inline unsigned long GetCurrentErrorCode()
+	{
+		return ::GetLastError();
+	}
 
-	std::size_t GetErrorDescription(char* buffer, std::size_t bufferSize, unsigned long code);
+	inline std::size_t GetErrorDescription(char* buffer, std::size_t bufferSize, unsigned long code)
+	{
+		const DWORD flags = 0x200 | 0x1000;  // FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS
+
+		return ::FormatMessageA(flags, NULL, code, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
+	}
 
 	/////////////
 	// Modules //
@@ -38,16 +112,40 @@ namespace OS
 
 	namespace Module
 	{
-		void* Get(const char* name);
-		void* GetEXE();
+		inline void* Get(const char* name)
+		{
+			return ::GetModuleHandleA(name);
+		}
 
-		void* Load(const char* name);
-		void Unload(void* mod);
+		inline void* GetEXE()
+		{
+			return ::GetModuleHandleA(NULL);
+		}
 
-		void* FindSymbol(void* mod, const char* symbolName);
+		inline void* Load(const char* name)
+		{
+			return ::LoadLibraryA(name);
+		}
 
-		std::size_t GetPath(char* buffer, std::size_t bufferSize, void* mod);
-		std::size_t GetEXEPath(char* buffer, std::size_t bufferSize);
+		inline void Unload(void* mod)
+		{
+			::FreeLibrary(static_cast<HMODULE>(mod));
+		}
+
+		inline void* FindSymbol(void* mod, const char* symbolName)
+		{
+			return ::GetProcAddress(static_cast<HMODULE>(mod), symbolName);
+		}
+
+		inline std::size_t GetPath(char* buffer, std::size_t bufferSize, void* mod)
+		{
+			return ::GetModuleFileNameA(static_cast<HMODULE>(mod), buffer, static_cast<DWORD>(bufferSize));
+		}
+
+		inline std::size_t GetEXEPath(char* buffer, std::size_t bufferSize)
+		{
+			return ::GetModuleFileNameA(NULL, buffer, static_cast<DWORD>(bufferSize));
+		}
 
 		namespace Version
 		{
@@ -62,7 +160,10 @@ namespace OS
 	// Dialog boxes //
 	//////////////////
 
-	void ErrorBox(const char* message, const char* title = "Error");
+	inline void ErrorBox(const char* message, const char* title = "Error")
+	{
+		::MessageBoxA(NULL, message, title, 0x0 | 0x10);  // MB_OK | MB_ICONERROR
+	}
 
 	///////////
 	// Hacks //
@@ -78,13 +179,66 @@ namespace OS
 	// Threads //
 	/////////////
 
-	unsigned long GetCurrentThreadID();
+	inline unsigned long GetCurrentThreadID()
+	{
+		return ::GetCurrentThreadId();
+	}
+
+	class Mutex
+	{
+		CRITICAL_SECTION m_cs;
+
+		// no copies
+		Mutex(const Mutex&);
+		Mutex& operator=(const Mutex&);
+
+	public:
+		Mutex()
+		{
+			::InitializeCriticalSection(&m_cs);
+		}
+
+		~Mutex()
+		{
+			::DeleteCriticalSection(&m_cs);
+		}
+
+		void Lock()
+		{
+			::EnterCriticalSection(&m_cs);
+		}
+
+		void Unlock()
+		{
+			::LeaveCriticalSection(&m_cs);
+		}
+	};
+
+	template<class T>
+	class LockGuard
+	{
+		T& m_lock;
+
+	public:
+		explicit LockGuard(T& lock) : m_lock(lock)
+		{
+			m_lock.Lock();
+		}
+
+		~LockGuard()
+		{
+			m_lock.Unlock();
+		}
+	};
 
 	///////////
 	// Files //
 	///////////
 
-	void ReleaseHandle(void* handle);
+	inline void ReleaseHandle(void* handle)
+	{
+		::CloseHandle(static_cast<HANDLE>(handle));
+	}
 
 	struct File
 	{
@@ -128,7 +282,9 @@ namespace OS
 
 		void Swap(File& other)
 		{
-			std::swap(this->handle, other.handle);
+			void* tmp = this->handle;
+			this->handle = other.handle;
+			other.handle = tmp;
 		}
 
 		bool Open(const char* path, Access access, bool* pCreated = NULL);

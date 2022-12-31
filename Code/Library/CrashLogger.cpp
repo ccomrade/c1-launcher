@@ -8,7 +8,7 @@
 #include "Project.h"
 
 #include "CrashLogger.h"
-#include "Mutex.h"
+#include "OS.h"
 
 #ifdef BUILD_64BIT
 #define ADDR_FMT "%016I64X"
@@ -388,7 +388,7 @@ static void WriteEngineErrorDump(std::FILE* file, CONTEXT* context, const char* 
 	WriteDumpFooter(file);
 }
 
-static Mutex g_mutex;
+static OS::Mutex g_mutex;
 static CrashLogger::Handler g_handler;
 
 static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
@@ -398,7 +398,7 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 
 	if (g_handler)
 	{
-		LockGuard<Mutex> lock(g_mutex);
+		OS::LockGuard<OS::Mutex> lock(g_mutex);
 
 		std::FILE* file = g_handler();
 
@@ -420,7 +420,7 @@ static void PureCallHandler()
 
 	if (g_handler)
 	{
-		LockGuard<Mutex> lock(g_mutex);
+		OS::LockGuard<OS::Mutex> lock(g_mutex);
 
 		std::FILE* file = g_handler();
 
@@ -442,7 +442,7 @@ static void InvalidParameterHandler(const wchar_t*, const wchar_t*, const wchar_
 
 	if (g_handler)
 	{
-		LockGuard<Mutex> lock(g_mutex);
+		OS::LockGuard<OS::Mutex> lock(g_mutex);
 
 		std::FILE* file = g_handler();
 
@@ -464,7 +464,7 @@ void CrashLogger::OnEngineError(const char* format, va_list args)
 
 	if (g_handler)
 	{
-		LockGuard<Mutex> lock(g_mutex);
+		OS::LockGuard<OS::Mutex> lock(g_mutex);
 
 		std::FILE* file = g_handler();
 

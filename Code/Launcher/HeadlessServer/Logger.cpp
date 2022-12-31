@@ -20,7 +20,7 @@ Logger::~Logger()
 
 void Logger::OnUpdate()
 {
-	LockGuard<Mutex> lock(m_mutex);
+	OS::LockGuard<OS::Mutex> lock(m_mutex);
 
 	for (std::size_t i = 0; i < m_messages.size(); i++)
 	{
@@ -396,7 +396,7 @@ void Logger::PushMessageV(ILog::ELogType type, unsigned int flags, const char* f
 	}
 	else
 	{
-		LockGuard<Mutex> lock(m_mutex);
+		OS::LockGuard<OS::Mutex> lock(m_mutex);
 
 		m_messages.push_back(message);
 	}

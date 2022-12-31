@@ -24,29 +24,6 @@ static int FindArgIndex(const char* arg)
 	return -1;
 }
 
-static const char* GetNextArg(int index)
-{
-	if (index < 0 || (index + 1) >= __argc)
-	{
-		return NULL;
-	}
-	else
-	{
-		return __argv[index + 1];
-	}
-}
-
-static bool IsArgValue(const char* value)
-{
-	// make sure the value is not another argument
-	return value && *value != '-' && *value != '+';
-}
-
-const char* OS::CmdLine::Get()
-{
-	return GetCommandLineA();
-}
-
 const char* OS::CmdLine::GetOnlyArgs()
 {
 	char separator = ' ';
@@ -88,67 +65,28 @@ bool OS::CmdLine::HasArg(const char* arg)
 const char* OS::CmdLine::GetArgValue(const char* arg, const char* defaultValue)
 {
 	const int index = FindArgIndex(arg);
-	const char* value = GetNextArg(index);
 
-	return IsArgValue(value) ? value : defaultValue;
-}
+	if (index < 0 || (index + 1) >= __argc)
+	{
+		return defaultValue;
+	}
 
-////////////
-// Errors //
-////////////
+	const char* value = __argv[index + 1];
 
-unsigned long OS::GetCurrentErrorCode()
-{
-	return GetLastError();
-}
+	// make sure the value is not another argument
+	if (*value == '-' || *value == '+')
+	{
+		return defaultValue;
+	}
 
-std::size_t OS::GetErrorDescription(char* buffer, std::size_t bufferSize, unsigned long code)
-{
-	const DWORD flags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
-
-	return FormatMessageA(flags, NULL, code, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
+	return value;
 }
 
 /////////////
 // Modules //
 /////////////
 
-void* OS::Module::Get(const char* name)
-{
-	return GetModuleHandleA(name);
-}
-
-void* OS::Module::GetEXE()
-{
-	return GetModuleHandleA(NULL);
-}
-
-void* OS::Module::Load(const char* name)
-{
-	return LoadLibraryA(name);
-}
-
-void OS::Module::Unload(void* mod)
-{
-	FreeLibrary(static_cast<HMODULE>(mod));
-}
-
-void* OS::Module::FindSymbol(void* mod, const char* symbolName)
-{
-	return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(mod), symbolName));
-}
-
-std::size_t OS::Module::GetPath(char* buffer, std::size_t bufferSize, void* mod)
-{
-	return GetModuleFileNameA(static_cast<HMODULE>(mod), buffer, static_cast<DWORD>(bufferSize));
-}
-
-std::size_t OS::Module::GetEXEPath(char* buffer, std::size_t bufferSize)
-{
-	return GetModuleFileNameA(NULL, buffer, static_cast<DWORD>(bufferSize));
-}
-
-static const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
+static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
 {
 	HMODULE hMod = static_cast<HMODULE>(mod);
 
@@ -217,15 +155,6 @@ int OS::Module::Version::GetPatch(void* mod)
 	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionLS) : -1;
 }
 
-//////////////////
-// Dialog boxes //
-//////////////////
-
-void OS::ErrorBox(const char* message, const char* title)
-{
-	MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
-}
-
 ///////////
 // Hacks //
 ///////////
@@ -267,23 +196,9 @@ bool OS::Hack::FillMem(void* address, const void* data, std::size_t dataSize)
 	return true;
 }
 
-/////////////
-// Threads //
-/////////////
-
-unsigned long OS::GetCurrentThreadID()
-{
-	return GetCurrentThreadId();
-}
-
 ///////////
 // Files //
 ///////////
-
-void OS::ReleaseHandle(void* handle)
-{
-	CloseHandle(static_cast<HANDLE>(handle));
-}
 
 static DWORD ToNativeFileAccessMode(OS::File::Access access)
 {
@@ -386,7 +301,7 @@ std::size_t OS::File::Read(void* buffer, std::size_t bufferSize, bool* pError)
 
 std::size_t OS::File::Write(const void* data, std::size_t dataSize, bool* pError)
 {
-#ifdef BUILD_64BIT
+#ifdef _WIN64
 	// WriteFile cannot write more than 4 GiB - 1 at once because DWORD is 32-bit even in 64-bit code
 	if (dataSize >= 0xFFFFFFFF)
 	{
