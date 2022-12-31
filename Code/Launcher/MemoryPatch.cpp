@@ -5,12 +5,19 @@
 
 #include "MemoryPatch.h"
 
+// prevent the compiler from inlining certain functions to reduce code size
+#ifdef _MSC_VER
+#define NOINLINE __declspec(noinline)
+#else
+#define NOINLINE
+#endif
+
 static void* ByteOffset(void* base, std::size_t offset)
 {
 	return static_cast<unsigned char*>(base) + offset;
 }
 
-static void FillNop(void* base, std::size_t offset, std::size_t size)
+static NOINLINE void FillNop(void* base, std::size_t offset, std::size_t size)
 {
 	void* address = ByteOffset(base, offset);
 
@@ -20,7 +27,7 @@ static void FillNop(void* base, std::size_t offset, std::size_t size)
 	}
 }
 
-static void FillMem(void* base, std::size_t offset, const void* data, std::size_t dataSize)
+static NOINLINE void FillMem(void* base, std::size_t offset, const void* data, std::size_t dataSize)
 {
 	void* address = ByteOffset(base, offset);
 
