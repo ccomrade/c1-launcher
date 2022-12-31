@@ -1,4 +1,3 @@
-#include "Library/CPUID.h"
 #include "Library/CrashLogger.h"
 #include "Library/OS.h"
 
@@ -98,11 +97,6 @@ void GameLauncher::PatchEngine()
 		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
-
-		if (!g_cpuid.Has3DNow())
-		{
-			MemoryPatch::CrySystem::Disable3DNow(m_dlls.pCrySystem, m_dlls.gameBuild);
-		}
 	}
 
 	if (m_dlls.pCryRenderD3D10)

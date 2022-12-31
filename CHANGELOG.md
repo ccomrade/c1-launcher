@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Fixed
-- Few crash logger issues.
+- Fixed engine crash on systems with more than 32 CPU cores/threads.
+### Changed
+- Improved crash logger.
 
 ## [v3] - 2022-11-17
 ### Added

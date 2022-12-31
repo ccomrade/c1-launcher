@@ -37,7 +37,6 @@ namespace MemoryPatch
 		void UnhandledExceptions(void* pCrySystem, int gameBuild);
 		void HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info, ISystem* pSystem));
 		void HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, va_list args));
-		void Disable3DNow(void* pCrySystem, int gameBuild);
 	}
 
 	namespace CryRenderD3D10
