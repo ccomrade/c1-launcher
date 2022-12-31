@@ -25,9 +25,8 @@ endif()
 ################################################################################
 
 math(EXPR BUILD_BITS "${CMAKE_SIZEOF_VOID_P} * 8")
-set(VERSION_DETAILS "v${PROJECT_VERSION_MAJOR} ${BUILD_BITS}-bit ${CMAKE_BUILD_TYPE}")
 
-message(STATUS "${PROJECT_NAME} ${VERSION_DETAILS}")
+message(STATUS "${PROJECT_NAME} v${PROJECT_VERSION_MAJOR} ${BUILD_BITS}-bit")
 
 configure_file(Project.h.in ${PROJECT_BINARY_DIR}/Project.h)
 
