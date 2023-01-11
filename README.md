@@ -51,15 +51,13 @@ It provides a better game launcher and dedicated server launcher with additional
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 5767  | Y      | Y      | Y         |
 | [GOG](https://www.gog.com/game/crysis)                            | 1.2.1   | 6156  | Y      | Y      | Y         |
-| [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | -      | Y         |
+| [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | Y      | Y         |
 | Origin                                                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 
 - The latest official version is 1.2.1 (6156).
 - If you have DVD version, install the
 [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
 [1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version.
-- If you have Steam version, missing 64-bit files can be downloaded
-[here](https://crysis.nullptr.one/Crysis_6156_Bin64.zip).
 
 ### Crysis Wars
 
