@@ -164,5 +164,5 @@ void HeadlessServerLauncher::GetMemoryUsage(ICrySizer* pSizer)
 
 std::FILE* HeadlessServerLauncher::OpenLogFile()
 {
-	return (s_self) ? s_self->m_logger.ReleaseFile() : NULL;
+	return (s_self) ? s_self->m_logger.GetFileHandle() : NULL;
 }

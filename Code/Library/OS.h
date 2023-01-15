@@ -3,6 +3,10 @@
 #include <cstdarg>
 #include <cstddef>
 
+////////////////////////////////////////////////////////////////////////////////
+// windows.h
+////////////////////////////////////////////////////////////////////////////////
+
 #ifndef _INC_WINDOWS
 typedef unsigned long DWORD;
 typedef void* HANDLE;
@@ -15,6 +19,8 @@ typedef __int64 (__stdcall *FARPROC)();
 typedef int (__stdcall *FARPROC)();
 #endif
 
+struct SECURITY_ATTRIBUTES;
+
 #pragma pack(push, 8)
 struct CRITICAL_SECTION
 {
@@ -26,7 +32,7 @@ struct CRITICAL_SECTION
 	void* reserved6;
 };
 #pragma pack(pop)
-#endif
+#endif  // _INC_WINDOWS
 
 extern "C"
 {
@@ -62,8 +68,11 @@ extern "C"
 	__declspec(dllimport) void __stdcall EnterCriticalSection(CRITICAL_SECTION* cs);
 	__declspec(dllimport) void __stdcall LeaveCriticalSection(CRITICAL_SECTION* cs);
 
-	__declspec(dllimport) int __stdcall CloseHandle(HANDLE handle);
+	__declspec(dllimport) int __stdcall CopyFileA(const char* srcPath, const char* dstPath, int failIfExists);
+	__declspec(dllimport) int __stdcall CreateDirectoryA(const char* path, SECURITY_ATTRIBUTES*);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #define OS_NEWLINE "\r\n"
 #define OS_NEWLINE_LENGTH 2
@@ -235,81 +244,19 @@ namespace OS
 	// Files //
 	///////////
 
-	inline void ReleaseHandle(void* handle)
+	namespace FileSystem
 	{
-		::CloseHandle(static_cast<HANDLE>(handle));
-	}
-
-	struct File
-	{
-		enum Access
+		inline bool CopyFile(const char* srcPath, const char* dstPath)
 		{
-			READ_ONLY,
-			WRITE_ONLY,
-			WRITE_ONLY_CREATE,
-			READ_WRITE,
-			READ_WRITE_CREATE,
-		};
+			const int failIfExists = 0;
 
-		enum SeekBase
-		{
-			BEGIN,
-			CURRENT,
-			END,
-		};
-
-		void* handle;
-
-	private:
-		// no copies
-		File(const File&);
-		File& operator=(const File&);
-
-	public:
-		File() : handle(NULL)
-		{
+			return ::CopyFileA(srcPath, dstPath, failIfExists) != 0;
 		}
 
-		~File()
+		inline bool CreateDirectory(const char* path)
 		{
-			this->Close();
+			return ::CreateDirectoryA(path, NULL) != 0 || ::GetLastError() == 183;  // ERROR_ALREADY_EXISTS
 		}
-
-		bool IsOpen() const
-		{
-			return this->handle != NULL;
-		}
-
-		void Swap(File& other)
-		{
-			void* tmp = this->handle;
-			this->handle = other.handle;
-			other.handle = tmp;
-		}
-
-		bool Open(const char* path, Access access, bool* pCreated = NULL);
-
-		std::size_t Read(void* buffer, std::size_t bufferSize, bool* pError = NULL);
-		std::size_t Write(const void* data, std::size_t dataSize, bool* pError = NULL);
-
-		bool Seek(SeekBase base, __int64 offset = 0, unsigned __int64* pNewPos = NULL);
-		bool Resize(unsigned __int64 size);
-
-		void Close()
-		{
-			if (this->handle != NULL)
-			{
-				ReleaseHandle(this->handle);
-				this->handle = NULL;
-			}
-		}
-
-		static bool Copy(const char* srcPath, const char* dstPath);
-	};
-
-	namespace Directory
-	{
-		bool Create(const char* path, bool* pCreated = NULL);
 	}
 
 	std::size_t GetDocumentsPath(char* buffer, std::size_t bufferSize);
@@ -332,9 +279,6 @@ namespace OS
 		DateTime() : year(0), month(0), dayOfWeek(0), day(0), hour(0), minute(0), second(0), millisecond(0)
 		{
 		}
-
-		const char* GetDayName();
-		const char* GetMonthName();
 	};
 
 	DateTime GetCurrentDateTimeUTC();

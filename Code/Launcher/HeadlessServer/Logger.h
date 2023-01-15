@@ -7,6 +7,7 @@
 #include "CryCommon/CrySystem/ILog.h"
 
 #include "Library/OS.h"
+#include "Library/StdFile.h"
 
 struct ICVar;
 
@@ -14,21 +15,15 @@ class Logger : public ILog
 {
 	struct Message
 	{
-		enum Flags
-		{
-			FLAG_FILE    = (1 << 0),
-			FLAG_CONSOLE = (1 << 1),
-			FLAG_APPEND  = (1 << 2),
-		};
-
 		ILog::ELogType type;
-		unsigned int flags;
+		bool isFile;
+		bool isConsole;
 		std::string prefix;
 		std::string content;
 	};
 
 	int m_verbosity;
-	OS::File m_file;
+	StdFile m_file;
 	std::string m_filePath;
 	std::string m_prefix;
 
@@ -53,9 +48,10 @@ public:
 
 	void OnUpdate();
 
-	void OpenFile(const char* filePath);
+	void OpenFile(const char* logPath);
 	void CloseFile();
-	std::FILE* ReleaseFile();
+
+	std::FILE* GetFileHandle() { return m_file.handle; }
 
 	void SetPrefix(const char* prefix);
 
@@ -94,8 +90,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 
 private:
-	void PushMessage(ILog::ELogType type, unsigned int flags, const char* format, ...);
-	void PushMessageV(ILog::ELogType type, unsigned int flags, const char* format, va_list args);
+	void PushMessageV(ILog::ELogType type, bool isFile, bool isConsole, const char* format, va_list args);
 
 	int GetRequiredVerbosity(ILog::ELogType type);
 
