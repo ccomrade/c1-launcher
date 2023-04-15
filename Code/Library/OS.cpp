@@ -127,28 +127,28 @@ static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
 	return fileInfo;
 }
 
-int OS::Module::Version::GetMajor(void* mod)
+int OS::DLL::Version::GetMajor(void* mod)
 {
 	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
 
 	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionMS) : -1;
 }
 
-int OS::Module::Version::GetMinor(void* mod)
+int OS::DLL::Version::GetMinor(void* mod)
 {
 	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
 
 	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionMS) : -1;
 }
 
-int OS::Module::Version::GetTweak(void* mod)
+int OS::DLL::Version::GetTweak(void* mod)
 {
 	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
 
 	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionLS) : -1;
 }
 
-int OS::Module::Version::GetPatch(void* mod)
+int OS::DLL::Version::GetPatch(void* mod)
 {
 	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
 

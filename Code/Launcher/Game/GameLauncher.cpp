@@ -28,7 +28,7 @@ GameLauncher::~GameLauncher()
 
 int GameLauncher::Run()
 {
-	m_params.hInstance = OS::Module::GetEXE();
+	m_params.hInstance = OS::EXE::Get();
 	m_params.logFileName = DEFAULT_LOG_FILE_NAME;
 
 	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
@@ -45,21 +45,21 @@ int GameLauncher::Run()
 
 void GameLauncher::LoadEngine()
 {
-	m_dlls.pCrySystem = LauncherCommon::LoadModule("CrySystem.dll");
+	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_dlls.pCryGame = LauncherCommon::LoadModule("CryGame.dll");
-	m_dlls.pCryAction = LauncherCommon::LoadModule("CryAction.dll");
-	m_dlls.pCryNetwork = LauncherCommon::LoadModule("CryNetwork.dll");
+	m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+	m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 
 	const bool isDX10 = !OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater());
 
 	if (isDX10)
 	{
-		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadModule("CryRenderD3D10.dll");
+		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
 	}
 }
 

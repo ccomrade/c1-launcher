@@ -13,7 +13,7 @@ namespace LauncherCommon
 	std::string GetRootFolderPath();
 	std::string GetUserFolderPath();
 
-	void* LoadModule(const char* name);
+	void* LoadDLL(const char* name);
 
 	int GetGameBuild(void* pCrySystem);
 	void VerifyGameBuild(int gameBuild);

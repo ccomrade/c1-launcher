@@ -119,16 +119,11 @@ namespace OS
 	// Modules //
 	/////////////
 
-	namespace Module
+	namespace DLL
 	{
 		inline void* Get(const char* name)
 		{
 			return ::GetModuleHandleA(name);
-		}
-
-		inline void* GetEXE()
-		{
-			return ::GetModuleHandleA(NULL);
 		}
 
 		inline void* Load(const char* name)
@@ -151,17 +146,30 @@ namespace OS
 			return ::GetModuleFileNameA(static_cast<HMODULE>(mod), buffer, static_cast<DWORD>(bufferSize));
 		}
 
-		inline std::size_t GetEXEPath(char* buffer, std::size_t bufferSize)
-		{
-			return ::GetModuleFileNameA(NULL, buffer, static_cast<DWORD>(bufferSize));
-		}
-
 		namespace Version
 		{
 			int GetMajor(void* mod);
 			int GetMinor(void* mod);
 			int GetTweak(void* mod);
 			int GetPatch(void* mod);
+		}
+	}
+
+	namespace EXE
+	{
+		inline void* Get()
+		{
+			return ::GetModuleHandleA(NULL);
+		}
+
+		inline std::size_t GetPath(char* buffer, std::size_t bufferSize)
+		{
+			return ::GetModuleFileNameA(NULL, buffer, static_cast<DWORD>(bufferSize));
+		}
+
+		namespace Version
+		{
+			using namespace DLL::Version;
 		}
 	}
 

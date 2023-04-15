@@ -14,7 +14,7 @@
 std::string LauncherCommon::GetMainFolderPath()
 {
 	char buffer[512];
-	const StringView exePath(buffer, OS::Module::GetEXEPath(buffer, sizeof buffer));
+	const StringView exePath(buffer, OS::EXE::GetPath(buffer, sizeof buffer));
 
 	if (exePath.IsEmpty() || exePath.length >= sizeof buffer)
 	{
@@ -58,9 +58,9 @@ std::string LauncherCommon::GetUserFolderPath()
 	return PathTools::Join(documentsPath, userFolder);
 }
 
-void* LauncherCommon::LoadModule(const char* name)
+void* LauncherCommon::LoadDLL(const char* name)
 {
-	void* mod = OS::Module::Load(name);
+	void* mod = OS::DLL::Load(name);
 	if (!mod)
 	{
 		throw StringTools::OSError("Failed to load %s", name);
@@ -71,7 +71,7 @@ void* LauncherCommon::LoadModule(const char* name)
 
 int LauncherCommon::GetGameBuild(void* pCrySystem)
 {
-	int gameBuild = OS::Module::Version::GetPatch(pCrySystem);
+	int gameBuild = OS::DLL::Version::GetPatch(pCrySystem);
 	if (gameBuild < 0)
 	{
 		throw StringTools::OSError("Failed to get the game version!");
@@ -134,7 +134,7 @@ void LauncherCommon::SetParamsCmdLine(SSystemInitParams& params, const char* cmd
 
 IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& params)
 {
-	void* entry = OS::Module::FindSymbol(pCryGame, "CreateGameStartup");
+	void* entry = OS::DLL::FindSymbol(pCryGame, "CreateGameStartup");
 	if (!entry)
 	{
 		throw StringTools::Error("The CryGame DLL is not valid!");

@@ -28,7 +28,7 @@ DedicatedServerLauncher::~DedicatedServerLauncher()
 
 int DedicatedServerLauncher::Run()
 {
-	m_params.hInstance = OS::Module::GetEXE();
+	m_params.hInstance = OS::EXE::Get();
 	m_params.logFileName = DEFAULT_LOG_FILE_NAME;
 	m_params.isDedicatedServer = true;
 
@@ -46,14 +46,14 @@ int DedicatedServerLauncher::Run()
 
 void DedicatedServerLauncher::LoadEngine()
 {
-	m_dlls.pCrySystem = LauncherCommon::LoadModule("CrySystem.dll");
+	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_dlls.pCryGame = LauncherCommon::LoadModule("CryGame.dll");
-	m_dlls.pCryNetwork = LauncherCommon::LoadModule("CryNetwork.dll");
+	m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 }
 
 void DedicatedServerLauncher::PatchEngine()
