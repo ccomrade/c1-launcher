@@ -1,111 +1,97 @@
 #include "OS.h"
 #include "PathTools.h"
 
-static bool IsSlash(char ch)
+static bool is_slash(char ch)
 {
 	return ch == '/' || ch == '\\';
 }
 
 StringView PathTools::BaseName(StringView path)
 {
-	// remove trailing slashes
-	while (path.IsNotEmpty() && IsSlash(path.Back()))
-	{
-		path.PopBack();
-	}
+	std::size_t length = path.length();
 
-	std::size_t length = path.length;
+	// remove trailing slashes
+	for (; length > 0 && is_slash(path[length - 1]); length--) {}
 
 	// find the beginning of the last path component
-	while (length > 0 && !IsSlash(path[length - 1]))
-	{
-		length--;
-	}
+	for (; length > 0 && !is_slash(path[length - 1]); length--) {}
 
-	// keep only the last path component
-	path.RemovePrefix(length);
+	path.remove_prefix(length);
 
 	return path;
 }
 
 StringView PathTools::DirName(StringView path)
 {
+	std::size_t length = path.length();
+
 	// remove trailing slashes
-	while (path.IsNotEmpty() && IsSlash(path.Back()))
-	{
-		path.PopBack();
-	}
+	for (; length > 0 && is_slash(path[length - 1]); length--) {}
 
 	// remove the last path component
-	while (path.IsNotEmpty() && !IsSlash(path.Back()))
-	{
-		path.PopBack();
-	}
+	for (; length > 0 && !is_slash(path[length - 1]); length--) {}
 
 	// remove trailing slashes
-	while (path.IsNotEmpty() && IsSlash(path.Back()))
-	{
-		path.PopBack();
-	}
+	for (; length > 0 && is_slash(path[length - 1]); length--) {}
+
+	path.remove_suffix(path.length() - length);
 
 	return path;
 }
 
 StringView PathTools::GetFileExtension(StringView path)
 {
-	path.RemovePrefix(RemoveFileExtension(path).length);
+	path.remove_prefix(RemoveFileExtension(path).length());
 
 	return path;
 }
 
 StringView PathTools::RemoveFileExtension(StringView path)
 {
-	StringView originalPath = path;
-
-	while (path.IsNotEmpty() && !IsSlash(path.Back()))
+	for (std::size_t length = path.length(); length > 0; length--)
 	{
-		if (path.Back() == '.')
-		{
-			path.PopBack();
+		char ch = path[length - 1];
 
-			if (path.IsEmpty() || IsSlash(path.Back()))
+		if (is_slash(ch))
+		{
+			// no file extension to remove
+			break;
+		}
+
+		if (ch == '.')
+		{
+			length--;
+
+			// make sure there is something before the dot
+			if (length > 0 && !is_slash(path[length - 1]))
 			{
-				// ignore leading dot
-				break;
+				path.remove_suffix(path.length() - length);
 			}
 
-			return path;
-		}
-		else
-		{
-			path.PopBack();
+			break;
 		}
 	}
 
-	// no file extension to remove
-	return originalPath;
+	return path;
 }
 
 std::string PathTools::Join(StringView pathA, StringView pathB)
 {
-	const std::size_t totalLength = pathA.length + pathB.length;
-
 	std::string result;
 
-	if (pathA.IsNotEmpty() && !IsSlash(pathA.Back())
-	 && pathB.IsNotEmpty() && !IsSlash(pathB.Front()))
+	if (pathA.empty() || is_slash(pathA.back()) || pathB.empty() || is_slash(pathB.front()))
 	{
-		result.reserve(totalLength + 1);
+		result.reserve(pathA.length() + pathB.length());
 
 		result += pathA;
-		result += OS_PATH_SLASH;
 		result += pathB;
 	}
 	else
 	{
-		result.reserve(totalLength);
+		result.reserve(pathA.length() + pathB.length() + 1);
 
 		result += pathA;
+		result += OS_PATH_SLASH;
 		result += pathB;
 	}
 

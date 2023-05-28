@@ -16,7 +16,7 @@ std::string LauncherCommon::GetMainFolderPath()
 	char buffer[512];
 	const StringView exePath(buffer, OS::EXE::GetPath(buffer, sizeof buffer));
 
-	if (exePath.IsEmpty() || exePath.length >= sizeof buffer)
+	if (exePath.empty() || exePath.length() >= sizeof buffer)
 	{
 		return std::string();
 	}
@@ -24,7 +24,8 @@ std::string LauncherCommon::GetMainFolderPath()
 	StringView mainFolderPath = PathTools::DirName(exePath);
 
 	const StringView exeFolderName = PathTools::BaseName(mainFolderPath);
-	const bool insideBin = exeFolderName.IsEqualNoCase("Bin32") || exeFolderName.IsEqualNoCase("Bin64");
+	const bool insideBin = exeFolderName.compare_no_case("Bin32") == 0
+	                    || exeFolderName.compare_no_case("Bin64") == 0;
 
 	if (insideBin)
 	{
@@ -32,7 +33,7 @@ std::string LauncherCommon::GetMainFolderPath()
 		mainFolderPath = PathTools::DirName(mainFolderPath);
 	}
 
-	return mainFolderPath.ToStdString();
+	return std::string(mainFolderPath.data(), mainFolderPath.length());
 }
 
 std::string LauncherCommon::GetRootFolderPath()
@@ -47,13 +48,13 @@ std::string LauncherCommon::GetUserFolderPath()
 	char buffer[512];
 	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof buffer));
 
-	if (documentsPath.IsEmpty() || documentsPath.length >= sizeof buffer)
+	if (documentsPath.empty() || documentsPath.length() >= sizeof buffer)
 	{
 		return std::string();
 	}
 
 	// TODO: parse Game/Config/Folders.ini
-	const StringView userFolder = "My Games" OS_PATH_SLASH "Crysis";
+	const StringView userFolder("My Games" OS_PATH_SLASH "Crysis");
 
 	return PathTools::Join(documentsPath, userFolder);
 }

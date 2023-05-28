@@ -58,7 +58,6 @@ add_library(LauncherBase STATIC
 	Code/Library/StdFile.h
 	Code/Library/StringTools.cpp
 	Code/Library/StringTools.h
-	Code/Library/StringView.cpp
 	Code/Library/StringView.h
 )
 

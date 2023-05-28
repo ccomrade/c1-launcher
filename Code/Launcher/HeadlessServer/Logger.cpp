@@ -32,24 +32,22 @@ void Logger::OnUpdate()
 
 static StringView ExtractBackupNameAttachment(StringView header)
 {
-	const StringView prefix = "BackupNameAttachment=";
+	const StringView prefix("BackupNameAttachment=");
 
-	if (header.StartsWith(prefix))
+	if (header.starts_with(prefix))
 	{
-		header.RemovePrefix(prefix.length);
+		header.remove_prefix(prefix.length());
 
-		std::size_t pos;
-
-		pos = 0;
-		if (header.Find('"', pos))
+		std::size_t pos = header.find('"');
+		if (pos != StringView::npos)
 		{
-			header.RemovePrefix(pos + 1);
+			header.remove_prefix(pos + 1);
 		}
 
-		pos = 0;
-		if (header.Find('"', pos) || header.Find('\r', pos) || header.Find('\n', pos))
+		pos = header.find_first_of("\"\r\n");
+		if (pos != StringView::npos)
 		{
-			header.RemoveSuffix(header.length - pos);
+			header.remove_suffix(header.length() - pos);
 		}
 
 		return header;
@@ -72,7 +70,7 @@ static void BackupLogFile(const char* logPath)
 	char headerBuffer[256];
 	const StringView header(headerBuffer, logFile.Read(headerBuffer, sizeof headerBuffer));
 
-	if (header.IsEmpty() && logFile.IsEndOfFile())
+	if (header.empty() && logFile.IsEndOfFile())
 	{
 		// the existing log file is empty, so no backup is needed
 		return;
@@ -180,7 +178,7 @@ bool Logger::SetFileName(const char* fileName)
 
 const char* Logger::GetFileName()
 {
-	return PathTools::BaseName(m_filePath).string;
+	return PathTools::BaseName(m_filePath).data();
 }
 
 void Logger::LogPlus(const char* format, ...)
@@ -511,13 +509,13 @@ static void FormatPrefix(std::string& result, const StringView& prefix)
 {
 	const OS::DateTime currentTime = OS::GetCurrentDateTimeLocal();
 
-	result.reserve(result.length() + prefix.length);
+	result.reserve(result.length() + prefix.length());
 
-	for (std::size_t i = 0; i < prefix.length; i++)
+	for (std::size_t i = 0; i < prefix.length(); i++)
 	{
 		if (prefix[i] == '%')
 		{
-			if ((i+1) < prefix.length)
+			if ((i+1) < prefix.length())
 			{
 				i++;
 				ExpandMessagePrefixSpecifier(result, prefix[i], currentTime);
@@ -540,7 +538,7 @@ void Logger::BuildMessagePrefix(Message& message)
 
 	const StringView prefix = m_cvars.prefix->GetString();
 
-	if (prefix.IsEmpty() || prefix == "0")
+	if (prefix.empty() || prefix == "0")
 	{
 		// empty string or "0" means log prefix is disabled
 		return;
