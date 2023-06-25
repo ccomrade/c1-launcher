@@ -1,7 +1,7 @@
 #include <cstring>
 
 #include "Library/OS.h"
-#include "Library/StringTools.h"
+#include "Library/StringFormat.h"
 
 #include "MemoryPatch.h"
 
@@ -23,7 +23,7 @@ static NOINLINE void FillNop(void* base, std::size_t offset, std::size_t size)
 
 	if (!OS::Hack::FillNop(address, size))
 	{
-		throw StringTools::OSError("Failed to apply patch at 0x%IX", reinterpret_cast<std::size_t>(address));
+		throw StringFormat_OSError("Failed to apply patch at %p", address);
 	}
 }
 
@@ -33,7 +33,7 @@ static NOINLINE void FillMem(void* base, std::size_t offset, const void* data, s
 
 	if (!OS::Hack::FillMem(address, data, dataSize))
 	{
-		throw StringTools::OSError("Failed to apply patch at 0x%IX", reinterpret_cast<std::size_t>(address));
+		throw StringFormat_OSError("Failed to apply patch at %p", address);
 	}
 }
 
@@ -476,7 +476,7 @@ void MemoryPatch::CryGame::CanJoinDX10Servers(void* pCryGame, int gameBuild)
 /**
  * Forces true value for DX10 flag in Flash UI scripts (ActionScript).
  *
- * It unlocks DX10 features in "CREATE GAME" menu in DX9 game.
+ * This unlocks DX10 features in "CREATE GAME" menu in DX9 game.
  */
 void MemoryPatch::CryGame::EnableDX10Menu(void* pCryGame, int gameBuild)
 {
@@ -620,9 +620,9 @@ void MemoryPatch::CryNetwork::EnablePreordered(void* pCryNetwork, int gameBuild)
 {
 	unsigned char code[] = {
 #ifdef BUILD_64BIT
-		0xC6, 0x83, 0x70, 0xFA, 0x00, 0x00, 0x01  // mov byte ptr ds:[rbx + 0xFA70], 0x1
+		0xC6, 0x83, 0x70, 0xFA, 0x00, 0x00, 0x01  // mov byte ptr ds:[rbx+0xFA70], 0x1
 #else
-		0xC6, 0x83, 0xC8, 0xF3, 0x00, 0x00, 0x01  // mov byte ptr ds:[ebx + 0xF3C8], 0x1
+		0xC6, 0x83, 0xC8, 0xF3, 0x00, 0x00, 0x01  // mov byte ptr ds:[ebx+0xF3C8], 0x1
 #endif
 	};
 
@@ -869,7 +869,7 @@ void MemoryPatch::CryNetwork::FixInternetConnect(void* pCryNetwork, int gameBuil
 }
 
 /**
- * Fixes the sporadic crash when file check (sv_cheatProtection) is enabled.
+ * Fixes sporadic crashes when file check (sv_cheatProtection) is enabled.
  *
  * Both client and server are affected. Although server is much less prone to crashing. This patch fixes both.
  */
@@ -1060,7 +1060,7 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 }
 
 /**
- * Disables creation of the "server_profile.txt" file.
+ * Disables creation of "server_profile.txt" file.
  */
 void MemoryPatch::CryNetwork::DisableServerProfile(void* pCryNetwork, int gameBuild)
 {
@@ -1361,9 +1361,11 @@ void MemoryPatch::CrySystem::AllowMultipleInstances(void* pCrySystem, int gameBu
 }
 
 /**
- * Prevents the engine from installing its own broken unhandled exceptions handler.
+ * Prevents the engine from installing its own broken crash handler.
+ *
+ * This is needed for our crash logger. It also prevents hanging after a crash when running under Wine.
  */
-void MemoryPatch::CrySystem::UnhandledExceptions(void* pCrySystem, int gameBuild)
+void MemoryPatch::CrySystem::DisableCrashHandler(void* pCrySystem, int gameBuild)
 {
 	switch (gameBuild)
 	{
@@ -1503,7 +1505,8 @@ void MemoryPatch::CrySystem::UnhandledExceptions(void* pCrySystem, int gameBuild
 /**
  * Hooks CryEngine CPU detection.
  */
-void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void (*handler)(CPUInfo* info, ISystem* pSystem))
+void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,
+	void (*handler)(CPUInfo* info, ISystem* pSystem))
 {
 	unsigned char code[] = {
 #ifdef BUILD_64BIT
@@ -1651,7 +1654,8 @@ void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild, void
 /**
  * Hooks CryEngine fatal error handler.
  */
-void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild, void (*handler)(const char* format, va_list args))
+void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild,
+	void (*handler)(const char* format, va_list args))
 {
 	// convert thiscall into a normal function call
 	// and call our handler
@@ -1893,7 +1897,7 @@ void MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(void* pCryRenderD3D10, in
 /**
  * Disables the debug renderer in CryRenderNULL DLL.
  *
- * This patch gets rid of the wasteful hidden debug renderer window with OpenGL context.
+ * This patch gets rid of the wasteful debug renderer with its hidden window and OpenGL context.
  *
  * The 1st FillNop disables debug renderer stuff in CNULLRenderAuxGeom constructor.
  * The 2nd FillNop disables debug renderer stuff in CNULLRenderAuxGeom destructor.

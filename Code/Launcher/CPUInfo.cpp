@@ -11,6 +11,7 @@ static unsigned int GetCoreCount()
 {
 	unsigned int coreCount = OS::GetLogicalProcessorCount();
 
+	// fix crash on systems with more than 32 logical processors
 	if (coreCount > CPUInfo::MAX_CORE_COUNT)
 	{
 		coreCount = CPUInfo::MAX_CORE_COUNT;

@@ -4,6 +4,17 @@
 
 #include <cstddef>
 
+#define CONSOLE_COLOR_BLACK   "$0"
+#define CONSOLE_COLOR_WHITE   "$1"
+#define CONSOLE_COLOR_BLUE    "$2"
+#define CONSOLE_COLOR_GREEN   "$3"
+#define CONSOLE_COLOR_RED     "$4"
+#define CONSOLE_COLOR_CYAN    "$5"
+#define CONSOLE_COLOR_YELLOW  "$6"
+#define CONSOLE_COLOR_MAGENTA "$7"
+#define CONSOLE_COLOR_ORANGE  "$8"
+#define CONSOLE_COLOR_GRAY    "$9"
+
 class  ICrySizer;
 struct ICVar;
 class  ITexture;

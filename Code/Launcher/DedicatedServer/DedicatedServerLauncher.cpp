@@ -68,7 +68,7 @@ void DedicatedServerLauncher::PatchEngine()
 
 	if (m_dlls.pCrySystem)
 	{
-		MemoryPatch::CrySystem::UnhandledExceptions(m_dlls.pCrySystem, m_dlls.gameBuild);
+		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 	}

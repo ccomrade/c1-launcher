@@ -64,8 +64,7 @@ struct SSystemInitParams
 
 	ISystem* pSystem;                    // Initialized by IGameStartup::Init
 
-	void* pCheckFunc;                    // Not used
-	void* pProtectedFunctions[10];       // Not used
+	void* reserved[11];                  // Not used
 };
 
 /**

@@ -27,7 +27,7 @@ static int FindArgIndex(const char* arg)
 const char* OS::CmdLine::GetOnlyArgs()
 {
 	char separator = ' ';
-	const char* args = Get();
+	const char* args = ::GetCommandLineA();
 
 	if (*args == '"')
 	{
@@ -205,34 +205,24 @@ std::size_t OS::GetDocumentsPath(char* buffer, std::size_t bufferSize)
 	const int id = CSIDL_PERSONAL | CSIDL_FLAG_CREATE;
 	const DWORD flags = SHGFP_TYPE_CURRENT;
 
-	char* targetBuffer = buffer;
-
 	char safeBuffer[MAX_PATH + 1];
-	if (bufferSize <= MAX_PATH)
-	{
-		targetBuffer = safeBuffer;
-	}
-
-	if (SHGetFolderPathA(NULL, id, NULL, flags, targetBuffer) != S_OK)
+	if (SHGetFolderPathA(NULL, id, NULL, flags, safeBuffer) != S_OK)
 	{
 		SetLastError(ERROR_PATH_NOT_FOUND);
 		return 0;
 	}
 
-	const std::size_t resultLength = strlen(targetBuffer);
+	const std::size_t length = strlen(safeBuffer);
 
-	if (targetBuffer != buffer)
+	if (length >= bufferSize)
 	{
-		if (resultLength >= bufferSize)
-		{
-			SetLastError(ERROR_BUFFER_OVERFLOW);
-			return 0;
-		}
-
-		memcpy(buffer, targetBuffer, resultLength + 1);
+		SetLastError(ERROR_BUFFER_OVERFLOW);
+		return 0;
 	}
 
-	return resultLength;
+	memcpy(buffer, safeBuffer, length + 1);
+
+	return length;
 }
 
 //////////

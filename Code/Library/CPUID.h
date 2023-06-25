@@ -5,6 +5,9 @@
 
 #ifdef _MSC_VER
 #include <intrin.h>
+#endif
+
+#ifdef _MSC_VER
 #define SUPPRESS_STUPID_MSVC_WARNING_C4351 __pragma(warning(suppress:4351))
 #else
 #define SUPPRESS_STUPID_MSVC_WARNING_C4351

@@ -68,7 +68,7 @@ extern "C"
 	__declspec(dllimport) void __stdcall EnterCriticalSection(CRITICAL_SECTION* cs);
 	__declspec(dllimport) void __stdcall LeaveCriticalSection(CRITICAL_SECTION* cs);
 
-	__declspec(dllimport) int __stdcall CopyFileA(const char* srcPath, const char* dstPath, int failIfExists);
+	__declspec(dllimport) int __stdcall CopyFileA(const char* source, const char* destination, int failIfExists);
 	__declspec(dllimport) int __stdcall CreateDirectoryA(const char* path, SECURITY_ATTRIBUTES*);
 }
 
@@ -254,11 +254,11 @@ namespace OS
 
 	namespace FileSystem
 	{
-		inline bool CopyFile(const char* srcPath, const char* dstPath)
+		inline bool CopyFile(const char* source, const char* destination)
 		{
 			const int failIfExists = 0;
 
-			return ::CopyFileA(srcPath, dstPath, failIfExists) != 0;
+			return ::CopyFileA(source, destination, failIfExists) != 0;
 		}
 
 		inline bool CreateDirectory(const char* path)

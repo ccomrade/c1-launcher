@@ -5,7 +5,7 @@
 
 #include "Library/OS.h"
 #include "Library/PathTools.h"
-#include "Library/StringTools.h"
+#include "Library/StringFormat.h"
 #include "Library/StringView.h"
 #include "Project.h"
 
@@ -64,7 +64,7 @@ void* LauncherCommon::LoadDLL(const char* name)
 	void* mod = OS::DLL::Load(name);
 	if (!mod)
 	{
-		throw StringTools::OSError("Failed to load %s", name);
+		throw StringFormat_OSError("Failed to load %s", name);
 	}
 
 	return mod;
@@ -75,7 +75,7 @@ int LauncherCommon::GetGameBuild(void* pCrySystem)
 	int gameBuild = OS::DLL::Version::GetPatch(pCrySystem);
 	if (gameBuild < 0)
 	{
-		throw StringTools::OSError("Failed to get the game version!");
+		throw StringFormat_OSError("Failed to get the game version!");
 	}
 
 	return gameBuild;
@@ -112,11 +112,11 @@ void LauncherCommon::VerifyGameBuild(int gameBuild)
 		case 711:
 		{
 			// Crysis Warhead
-			throw StringTools::Error("Crysis Warhead is not supported!");
+			throw StringFormat_Error("Crysis Warhead is not supported!");
 		}
 		default:
 		{
-			throw StringTools::Error("Unknown game build %d", gameBuild);
+			throw StringFormat_Error("Unknown game build %d", gameBuild);
 		}
 	}
 }
@@ -127,7 +127,7 @@ void LauncherCommon::SetParamsCmdLine(SSystemInitParams& params, const char* cmd
 
 	if (length >= sizeof params.cmdLine)
 	{
-		throw StringTools::Error("Command line is too long!");
+		throw StringFormat_Error("Command line is too long!");
 	}
 
 	std::memcpy(params.cmdLine, cmdLine, length + 1);
@@ -138,18 +138,18 @@ IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& par
 	void* entry = OS::DLL::FindSymbol(pCryGame, "CreateGameStartup");
 	if (!entry)
 	{
-		throw StringTools::Error("The CryGame DLL is not valid!");
+		throw StringFormat_Error("The CryGame DLL is not valid!");
 	}
 
 	IGameStartup* pGameStartup = static_cast<IGameStartup::TEntryFunction>(entry)();
 	if (!pGameStartup)
 	{
-		throw StringTools::Error("Failed to create the GameStartup Interface!");
+		throw StringFormat_Error("Failed to create the GameStartup Interface!");
 	}
 
 	if (!pGameStartup->Init(params))
 	{
-		throw StringTools::Error("Game initialization failed!");
+		throw StringFormat_Error("Game initialization failed!");
 	}
 
 	return pGameStartup;
