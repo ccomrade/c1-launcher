@@ -286,7 +286,7 @@ long OS::GetCurrentTimeZoneBias()
 bool OS::IsVistaOrLater()
 {
 	OSVERSIONINFOW info = {};
-	info.dwOSVersionInfoSize = sizeof info;
+	info.dwOSVersionInfoSize = sizeof(info);
 	GetVersionExW(&info);
 
 	return info.dwMajorVersion >= 6;

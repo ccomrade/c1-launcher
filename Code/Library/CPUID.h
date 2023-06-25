@@ -71,7 +71,9 @@ struct CPUID
 			{ "GenuineIntel", VENDOR_INTEL },
 		};
 
-		for (unsigned int i = 0; i < (sizeof vendors / sizeof vendors[0]); i++)
+		const int vendorCount = sizeof(vendors) / sizeof(vendors[0]);
+
+		for (int i = 0; i < vendorCount; i++)
 		{
 			if (std::memcmp(this->vendor_string, vendors[i].string, 12) == 0)
 			{

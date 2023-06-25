@@ -114,7 +114,7 @@ std::runtime_error StringFormat_OSError(const char* format, ...)
 	if (code != 0)
 	{
 		char description[512];
-		if (OS::GetErrorDescription(description, sizeof description, code))
+		if (OS::GetErrorDescription(description, sizeof(description), code))
 		{
 			StringFormatTo(message, "\n\nError %u: %s", code, description);
 		}

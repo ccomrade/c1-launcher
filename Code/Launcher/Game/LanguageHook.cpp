@@ -43,12 +43,12 @@ static const char* GetLanguageFromSystem()
 		{ "th", "Thai" },
 	};
 
-	const int language_count = sizeof(languages) / sizeof(languages[0]);
+	const int languageCount = sizeof(languages) / sizeof(languages[0]);
 
 	char code[8] = {};
 	OS::GetSystemLanguageCode(code, sizeof(code));
 
-	for (int i = 0; i < language_count; i++)
+	for (int i = 0; i < languageCount; i++)
 	{
 		if (std::memcmp(languages[i].code, code, 2 + 1) == 0)
 		{

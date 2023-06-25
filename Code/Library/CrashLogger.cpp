@@ -90,7 +90,7 @@ static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 static void DumpMemoryUsage(std::FILE* file)
 {
 	MEMORYSTATUSEX status = {};
-	status.dwLength = sizeof status;
+	status.dwLength = sizeof(status);
 
 	if (GlobalMemoryStatusEx(&status))
 	{
@@ -207,7 +207,7 @@ static void DumpCallStack(std::FILE* file, const CONTEXT* context)
 			}
 
 			IMAGEHLP_LINE line = {};
-			line.SizeOfStruct = sizeof line;
+			line.SizeOfStruct = sizeof(line);
 			DWORD lineOffset = 0;
 
 			if (SymGetLineFromAddr(process, address, &lineOffset, &line))
@@ -220,7 +220,7 @@ static void DumpCallStack(std::FILE* file, const CONTEXT* context)
 			}
 
 			IMAGEHLP_MODULE moduleInfo = {};
-			moduleInfo.SizeOfStruct = sizeof moduleInfo;
+			moduleInfo.SizeOfStruct = sizeof(moduleInfo);
 
 			if (SymGetModuleInfo(process, address, &moduleInfo))
 			{
@@ -293,7 +293,7 @@ static void DumpLoadedModules(std::FILE* file)
 		const UNICODE_STRING* wideName = static_cast<UNICODE_STRING*>(ByteOffset(mod, modNameOffset));
 
 		char name[512] = {};
-		WideCharToMultiByte(CP_UTF8, 0, wideName->Buffer, wideName->Length, name, sizeof name, NULL, NULL);
+		WideCharToMultiByte(CP_UTF8, 0, wideName->Buffer, wideName->Length, name, sizeof(name), NULL, NULL);
 
 		std::fprintf(file, ADDR_FMT " - " ADDR_FMT " %s\n", base, base + size, name);
 

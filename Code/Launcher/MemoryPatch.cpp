@@ -190,22 +190,22 @@ void MemoryPatch::CryAction::DisableGameplayStats(void* pCryAction, int gameBuil
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCryAction, 0x2F21D6, code, sizeof code);
+			FillMem(pCryAction, 0x2F21D6, code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCryAction, 0x2F59E6, code, sizeof code);
+			FillMem(pCryAction, 0x2F59E6, code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCryAction, 0x2FA686, code, sizeof code);
+			FillMem(pCryAction, 0x2FA686, code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCryAction, 0x2FA976, code, sizeof code);
+			FillMem(pCryAction, 0x2FA976, code, sizeof(code));
 			break;
 		}
 #else
@@ -490,117 +490,117 @@ void MemoryPatch::CryGame::EnableDX10Menu(void* pCryGame, int gameBuild)
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCryGame, 0x2ECE24, code, sizeof code);
-			FillMem(pCryGame, 0x2ED3FE, code, sizeof code);
+			FillMem(pCryGame, 0x2ECE24, code, sizeof(code));
+			FillMem(pCryGame, 0x2ED3FE, code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCryGame, 0x2EBEE4, code, sizeof code);
-			FillMem(pCryGame, 0x2EC4BE, code, sizeof code);
+			FillMem(pCryGame, 0x2EBEE4, code, sizeof(code));
+			FillMem(pCryGame, 0x2EC4BE, code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCryGame, 0x2F5792, code, sizeof code);
-			FillMem(pCryGame, 0x2F5DBC, code, sizeof code);
+			FillMem(pCryGame, 0x2F5792, code, sizeof(code));
+			FillMem(pCryGame, 0x2F5DBC, code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCryGame, 0x2F5D7D, code, sizeof code);
-			FillMem(pCryGame, 0x2F63B7, code, sizeof code);
+			FillMem(pCryGame, 0x2F5D7D, code, sizeof(code));
+			FillMem(pCryGame, 0x2F63B7, code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCryGame, 0x3150C1, code, sizeof code);
-			FillMem(pCryGame, 0x3156F7, code, sizeof code);
+			FillMem(pCryGame, 0x3150C1, code, sizeof(code));
+			FillMem(pCryGame, 0x3156F7, code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCryGame, 0x30AED1, code, sizeof code);
-			FillMem(pCryGame, 0x30B507, code, sizeof code);
+			FillMem(pCryGame, 0x30AED1, code, sizeof(code));
+			FillMem(pCryGame, 0x30B507, code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCryGame, 0x30AF91, code, sizeof code);
-			FillMem(pCryGame, 0x30B5C7, code, sizeof code);
+			FillMem(pCryGame, 0x30AF91, code, sizeof(code));
+			FillMem(pCryGame, 0x30B5C7, code, sizeof(code));
 			break;
 		}
 		case 6670:
 		{
-			FillMem(pCryGame, 0x30B6A1, code, sizeof code);
-			FillMem(pCryGame, 0x30BCD7, code, sizeof code);
+			FillMem(pCryGame, 0x30B6A1, code, sizeof(code));
+			FillMem(pCryGame, 0x30BCD7, code, sizeof(code));
 			break;
 		}
 		case 6729:
 		{
-			FillMem(pCryGame, 0x30CBA1, code, sizeof code);
-			FillMem(pCryGame, 0x30D1D7, code, sizeof code);
+			FillMem(pCryGame, 0x30CBA1, code, sizeof(code));
+			FillMem(pCryGame, 0x30D1D7, code, sizeof(code));
 			break;
 		}
 #else
 		case 5767:
 		{
-			FillMem(pCryGame, 0x21A00E, code, sizeof code);
-			FillMem(pCryGame, 0x21A401, code, sizeof code);
+			FillMem(pCryGame, 0x21A00E, code, sizeof(code));
+			FillMem(pCryGame, 0x21A401, code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCryGame, 0x21A3CE, code, sizeof code);
-			FillMem(pCryGame, 0x21A7C1, code, sizeof code);
+			FillMem(pCryGame, 0x21A3CE, code, sizeof(code));
+			FillMem(pCryGame, 0x21A7C1, code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCryGame, 0x22034F, code, sizeof code);
-			FillMem(pCryGame, 0x220789, code, sizeof code);
+			FillMem(pCryGame, 0x22034F, code, sizeof(code));
+			FillMem(pCryGame, 0x220789, code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCryGame, 0x22029A, code, sizeof code);
-			FillMem(pCryGame, 0x2206E2, code, sizeof code);
+			FillMem(pCryGame, 0x22029A, code, sizeof(code));
+			FillMem(pCryGame, 0x2206E2, code, sizeof(code));
 			break;
 		}
 		case 6527:
 		{
-			FillMem(pCryGame, 0x22C35E, code, sizeof code);
-			FillMem(pCryGame, 0x22C7A2, code, sizeof code);
+			FillMem(pCryGame, 0x22C35E, code, sizeof(code));
+			FillMem(pCryGame, 0x22C7A2, code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCryGame, 0x23936E, code, sizeof code);
-			FillMem(pCryGame, 0x2397B2, code, sizeof code);
+			FillMem(pCryGame, 0x23936E, code, sizeof(code));
+			FillMem(pCryGame, 0x2397B2, code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCryGame, 0x22CEAE, code, sizeof code);
-			FillMem(pCryGame, 0x22D2F2, code, sizeof code);
+			FillMem(pCryGame, 0x22CEAE, code, sizeof(code));
+			FillMem(pCryGame, 0x22D2F2, code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCryGame, 0x22C9CE, code, sizeof code);
-			FillMem(pCryGame, 0x22CE12, code, sizeof code);
+			FillMem(pCryGame, 0x22C9CE, code, sizeof(code));
+			FillMem(pCryGame, 0x22CE12, code, sizeof(code));
 			break;
 		}
 		case 6670:
 		{
-			FillMem(pCryGame, 0x22CDCE, code, sizeof code);
-			FillMem(pCryGame, 0x22D212, code, sizeof code);
+			FillMem(pCryGame, 0x22CDCE, code, sizeof(code));
+			FillMem(pCryGame, 0x22D212, code, sizeof(code));
 			break;
 		}
 		case 6729:
 		{
-			FillMem(pCryGame, 0x22E64E, code, sizeof code);
-			FillMem(pCryGame, 0x22EA92, code, sizeof code);
+			FillMem(pCryGame, 0x22E64E, code, sizeof(code));
+			FillMem(pCryGame, 0x22EA92, code, sizeof(code));
 			break;
 		}
 #endif
@@ -631,45 +631,45 @@ void MemoryPatch::CryNetwork::EnablePreordered(void* pCryNetwork, int gameBuild)
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCryNetwork, 0x17F0C7, code, sizeof code);
+			FillMem(pCryNetwork, 0x17F0C7, code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
 			code[2] = 0x68;  // 0xFA68 instead of 0xFA70
 
-			FillMem(pCryNetwork, 0x1765F0, code, sizeof code);
+			FillMem(pCryNetwork, 0x1765F0, code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCryNetwork, 0x17C077, code, sizeof code);
+			FillMem(pCryNetwork, 0x17C077, code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCryNetwork, 0x17C377, code, sizeof code);
+			FillMem(pCryNetwork, 0x17C377, code, sizeof(code));
 			break;
 		}
 #else
 		case 5767:
 		{
-			FillMem(pCryNetwork, 0x42C10, code, sizeof code);
+			FillMem(pCryNetwork, 0x42C10, code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCryNetwork, 0x412FD, code, sizeof code);
+			FillMem(pCryNetwork, 0x412FD, code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCryNetwork, 0x430A8, code, sizeof code);
+			FillMem(pCryNetwork, 0x430A8, code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCryNetwork, 0x43188, code, sizeof code);
+			FillMem(pCryNetwork, 0x43188, code, sizeof(code));
 			break;
 		}
 #endif
@@ -913,11 +913,11 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		case 5767:
 		{
 			// client
-			FillMem(pCryNetwork, 0x1540C1, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x1540D9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x1540C1, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x1540D9, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x154411, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x154429, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x154411, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x154429, codeB, sizeof(codeB));
 			break;
 		}
 		case 5879:
@@ -928,41 +928,41 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		case 6115:
 		{
 			// client
-			FillMem(pCryNetwork, 0x14F151, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x14F169, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x14F151, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x14F169, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x14F481, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x14F499, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x14F481, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x14F499, codeB, sizeof(codeB));
 			break;
 		}
 		case 6156:
 		{
 			// client
-			FillMem(pCryNetwork, 0x14F5B1, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x14F5C9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x14F5B1, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x14F5C9, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x14F8E1, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x14F8F9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x14F8E1, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x14F8F9, codeB, sizeof(codeB));
 			break;
 		}
 		case 6566:
 		{
 			// client
-			FillMem(pCryNetwork, 0x158991, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x1589A9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x158991, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x1589A9, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x158CC1, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x158CD9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x158CC1, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x158CD9, codeB, sizeof(codeB));
 			break;
 		}
 		case 6586:
 		{
 			// client
-			FillMem(pCryNetwork, 0x151571, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x151589, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x151571, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x151589, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x1518A1, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x1518B9, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x1518A1, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x1518B9, codeB, sizeof(codeB));
 			break;
 		}
 		case 6627:
@@ -970,11 +970,11 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		case 6729:
 		{
 			// client
-			FillMem(pCryNetwork, 0x151301, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x151319, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x151301, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x151319, codeB, sizeof(codeB));
 			// server
-			FillMem(pCryNetwork, 0x151641, codeA, sizeof codeA);
-			FillMem(pCryNetwork, 0x151659, codeB, sizeof codeB);
+			FillMem(pCryNetwork, 0x151641, codeA, sizeof(codeA));
+			FillMem(pCryNetwork, 0x151659, codeB, sizeof(codeB));
 			break;
 		}
 #else
@@ -982,10 +982,10 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		{
 			// client
 			FillNop(pCryNetwork, 0x49E66, 0xC);
-			FillMem(pCryNetwork, 0x49EB5, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x49EB5, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x49A7F, 0xC);
-			FillMem(pCryNetwork, 0x30D62, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x30D62, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 5879:
@@ -997,50 +997,50 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		{
 			// client
 			FillNop(pCryNetwork, 0x4A268, 0xC);
-			FillMem(pCryNetwork, 0x4A2B7, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x4A2B7, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x49E81, 0xC);
-			FillMem(pCryNetwork, 0x30E1C, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x30E1C, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 6156:
 		{
 			// client
 			FillNop(pCryNetwork, 0x4A34F, 0xC);
-			FillMem(pCryNetwork, 0x4A39E, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x4A39E, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x49F68, 0xC);
-			FillMem(pCryNetwork, 0x30E7B, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x30E7B, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 6527:
 		{
 			// client
 			FillNop(pCryNetwork, 0x4A361, 0xC);
-			FillMem(pCryNetwork, 0x4A3B0, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x4A3B0, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x49F7A, 0xC);
-			FillMem(pCryNetwork, 0x31123, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x31123, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 6566:
 		{
 			// client
 			FillNop(pCryNetwork, 0x5B3A6, 0xC);
-			FillMem(pCryNetwork, 0x5B3F5, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x5B3F5, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x5ADE1, 0xC);
-			FillMem(pCryNetwork, 0x3D633, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x3D633, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 6586:
 		{
 			// client
 			FillNop(pCryNetwork, 0x4A9B5, 0xC);
-			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x4A3CB, 0xC);
-			FillMem(pCryNetwork, 0x31333, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x31333, serverCode, sizeof(serverCode));
 			break;
 		}
 		case 6627:
@@ -1049,10 +1049,10 @@ void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild
 		{
 			// client
 			FillNop(pCryNetwork, 0x4A9B5, 0xC);
-			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof clientCode);
+			FillMem(pCryNetwork, 0x4AA04, clientCode, sizeof(clientCode));
 			// server
 			FillNop(pCryNetwork, 0x4A3CB, 0xC);
-			FillMem(pCryNetwork, 0x3141A, serverCode, sizeof serverCode);
+			FillMem(pCryNetwork, 0x3141A, serverCode, sizeof(serverCode));
 			break;
 		}
 #endif
@@ -1555,37 +1555,37 @@ void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCrySystem, 0x45851, &code, sizeof code);
+			FillMem(pCrySystem, 0x45851, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0x46E21, &code, sizeof code);
+			FillMem(pCrySystem, 0x46E21, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0x462B0, &code, sizeof code);
+			FillMem(pCrySystem, 0x462B0, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0x4636C, &code, sizeof code);
+			FillMem(pCrySystem, 0x4636C, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0x4D3C8, &code, sizeof code);
+			FillMem(pCrySystem, 0x4D3C8, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0x479CE, &code, sizeof code);
+			FillMem(pCrySystem, 0x479CE, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0x4A51E, &code, sizeof code);
+			FillMem(pCrySystem, 0x4A51E, &code, sizeof(code));
 			break;
 		}
 		case 6670:
@@ -1593,58 +1593,58 @@ void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,
 		{
 			code[3] = 0x30;  // 0x630 instead of 0x628
 
-			FillMem(pCrySystem, 0x4A6AE, &code, sizeof code);
+			FillMem(pCrySystem, 0x4A6AE, &code, sizeof(code));
 			break;
 		}
 #else
 		case 5767:
 		{
-			FillMem(pCrySystem, 0x59CD7, &code, sizeof code);
+			FillMem(pCrySystem, 0x59CD7, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0x5A257, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A257, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0x5A037, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A037, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0x59B77, &code, sizeof code);
+			FillMem(pCrySystem, 0x59B77, &code, sizeof(code));
 			break;
 		}
 		case 6527:
 		{
-			FillMem(pCrySystem, 0x5A547, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A547, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0x5CFC7, &code, sizeof code);
+			FillMem(pCrySystem, 0x5CFC7, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0x5A477, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A477, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0x5B407, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B407, &code, sizeof(code));
 			break;
 		}
 		case 6670:
 		{
-			FillMem(pCrySystem, 0x5B6F7, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B6F7, &code, sizeof(code));
 			break;
 		}
 		case 6729:
 		{
-			FillMem(pCrySystem, 0x5B707, &code, sizeof code);
+			FillMem(pCrySystem, 0x5B707, &code, sizeof(code));
 			break;
 		}
 #endif
@@ -1694,94 +1694,94 @@ void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild,
 #ifdef BUILD_64BIT
 		case 5767:
 		{
-			FillMem(pCrySystem, 0x52180, &code, sizeof code);
+			FillMem(pCrySystem, 0x52180, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0x53850, &code, sizeof code);
+			FillMem(pCrySystem, 0x53850, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0x52D50, &code, sizeof code);
+			FillMem(pCrySystem, 0x52D50, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0x52D00, &code, sizeof code);
+			FillMem(pCrySystem, 0x52D00, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0x59A90, &code, sizeof code);
+			FillMem(pCrySystem, 0x59A90, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0x543F0, &code, sizeof code);
+			FillMem(pCrySystem, 0x543F0, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0x570E0, &code, sizeof code);
+			FillMem(pCrySystem, 0x570E0, &code, sizeof(code));
 			break;
 		}
 		case 6670:
 		case 6729:
 		{
-			FillMem(pCrySystem, 0x571A0, &code, sizeof code);
+			FillMem(pCrySystem, 0x571A0, &code, sizeof(code));
 			break;
 		}
 #else
 		case 5767:
 		{
-			FillMem(pCrySystem, 0x655C0, &code, sizeof code);
+			FillMem(pCrySystem, 0x655C0, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
-			FillMem(pCrySystem, 0x65C50, &code, sizeof code);
+			FillMem(pCrySystem, 0x65C50, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
-			FillMem(pCrySystem, 0x65920, &code, sizeof code);
+			FillMem(pCrySystem, 0x65920, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
-			FillMem(pCrySystem, 0x63290, &code, sizeof code);
+			FillMem(pCrySystem, 0x63290, &code, sizeof(code));
 			break;
 		}
 		case 6527:
 		{
-			FillMem(pCrySystem, 0x63F90, &code, sizeof code);
+			FillMem(pCrySystem, 0x63F90, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
-			FillMem(pCrySystem, 0x668A0, &code, sizeof code);
+			FillMem(pCrySystem, 0x668A0, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
-			FillMem(pCrySystem, 0x63C90, &code, sizeof code);
+			FillMem(pCrySystem, 0x63C90, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
-			FillMem(pCrySystem, 0x64C20, &code, sizeof code);
+			FillMem(pCrySystem, 0x64C20, &code, sizeof(code));
 			break;
 		}
 		case 6670:
 		{
-			FillMem(pCrySystem, 0x64D30, &code, sizeof code);
+			FillMem(pCrySystem, 0x64D30, &code, sizeof(code));
 			break;
 		}
 		case 6729:
 		{
-			FillMem(pCrySystem, 0x64D40, &code, sizeof code);
+			FillMem(pCrySystem, 0x64D40, &code, sizeof(code));
 			break;
 		}
 #endif
@@ -1846,111 +1846,111 @@ void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
 		case 5767:
 		{
 			FillNop(pCrySystem, 0x448D9, 0x146);
-			FillMem(pCrySystem, 0x448D9, &code, sizeof code);
+			FillMem(pCrySystem, 0x448D9, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
 			FillNop(pCrySystem, 0x45EA9, 0x146);
-			FillMem(pCrySystem, 0x45EA9, &code, sizeof code);
+			FillMem(pCrySystem, 0x45EA9, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
 			FillNop(pCrySystem, 0x45359, 0x146);
-			FillMem(pCrySystem, 0x45359, &code, sizeof code);
+			FillMem(pCrySystem, 0x45359, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
 			FillNop(pCrySystem, 0x45409, 0x146);
-			FillMem(pCrySystem, 0x45409, &code, sizeof code);
+			FillMem(pCrySystem, 0x45409, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
 			FillNop(pCrySystem, 0x4C55F, 0x14C);
-			FillMem(pCrySystem, 0x4C55F, &code, sizeof code);
+			FillMem(pCrySystem, 0x4C55F, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
 			FillNop(pCrySystem, 0x46A4F, 0x14C);
-			FillMem(pCrySystem, 0x46A4F, &code, sizeof code);
+			FillMem(pCrySystem, 0x46A4F, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
 			FillNop(pCrySystem, 0x4959F, 0x14C);
-			FillMem(pCrySystem, 0x4959F, &code, sizeof code);
+			FillMem(pCrySystem, 0x4959F, &code, sizeof(code));
 			break;
 		}
 		case 6670:
 		case 6729:
 		{
 			FillNop(pCrySystem, 0x4972F, 0x14C);
-			FillMem(pCrySystem, 0x4972F, &code, sizeof code);
+			FillMem(pCrySystem, 0x4972F, &code, sizeof(code));
 			break;
 		}
 #else
 		case 5767:
 		{
 			FillNop(pCrySystem, 0x56C66, 0x7B);
-			FillMem(pCrySystem, 0x56C66, &code, sizeof code);
+			FillMem(pCrySystem, 0x56C66, &code, sizeof(code));
 			break;
 		}
 		case 5879:
 		{
 			FillNop(pCrySystem, 0x571D6, 0x7B);
-			FillMem(pCrySystem, 0x571D6, &code, sizeof code);
+			FillMem(pCrySystem, 0x571D6, &code, sizeof(code));
 			break;
 		}
 		case 6115:
 		{
 			FillNop(pCrySystem, 0x56FC6, 0x7B);
-			FillMem(pCrySystem, 0x56FC6, &code, sizeof code);
+			FillMem(pCrySystem, 0x56FC6, &code, sizeof(code));
 			break;
 		}
 		case 6156:
 		{
 			FillNop(pCrySystem, 0x56B46, 0x7B);
-			FillMem(pCrySystem, 0x56B46, &code, sizeof code);
+			FillMem(pCrySystem, 0x56B46, &code, sizeof(code));
 			break;
 		}
 		case 6527:
 		{
 			FillNop(pCrySystem, 0x57516, 0x7B);
-			FillMem(pCrySystem, 0x57516, &code, sizeof code);
+			FillMem(pCrySystem, 0x57516, &code, sizeof(code));
 			break;
 		}
 		case 6566:
 		{
 			FillNop(pCrySystem, 0x5A0D6, 0x7B);
-			FillMem(pCrySystem, 0x5A0D6, &code, sizeof code);
+			FillMem(pCrySystem, 0x5A0D6, &code, sizeof(code));
 			break;
 		}
 		case 6586:
 		{
 			FillNop(pCrySystem, 0x57546, 0x7B);
-			FillMem(pCrySystem, 0x57546, &code, sizeof code);
+			FillMem(pCrySystem, 0x57546, &code, sizeof(code));
 			break;
 		}
 		case 6627:
 		{
 			FillNop(pCrySystem, 0x584D6, 0x7B);
-			FillMem(pCrySystem, 0x584D6, &code, sizeof code);
+			FillMem(pCrySystem, 0x584D6, &code, sizeof(code));
 			break;
 		}
 		case 6670:
 		{
 			FillNop(pCrySystem, 0x587E6, 0x7B);
-			FillMem(pCrySystem, 0x587E6, &code, sizeof code);
+			FillMem(pCrySystem, 0x587E6, &code, sizeof(code));
 			break;
 		}
 		case 6729:
 		{
 			FillNop(pCrySystem, 0x587F6, 0x7B);
-			FillMem(pCrySystem, 0x587F6, &code, sizeof code);
+			FillMem(pCrySystem, 0x587F6, &code, sizeof(code));
 			break;
 		}
 #endif
@@ -2096,8 +2096,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD2B9, 0x175);
 			FillNop(pCryRenderNULL, 0xD473, 0x35);
-			FillMem(pCryRenderNULL, 0x16BE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x16D0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16BE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x16D0, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x97578;
 			break;
 		}
@@ -2105,8 +2105,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD489, 0x175);
 			FillNop(pCryRenderNULL, 0xD393, 0x35);
-			FillMem(pCryRenderNULL, 0x16CE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x16E0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16CE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x16E0, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x97538;
 			break;
 		}
@@ -2114,8 +2114,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD049, 0x175);
 			FillNop(pCryRenderNULL, 0xD203, 0x35);
-			FillMem(pCryRenderNULL, 0x16BE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x16D0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16BE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x16D0, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x974A8;
 			break;
 		}
@@ -2123,8 +2123,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD379, 0x175);
 			FillNop(pCryRenderNULL, 0xD533, 0x35);
-			FillMem(pCryRenderNULL, 0x16CE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x16E0, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16CE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x16E0, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x97588;
 			break;
 		}
@@ -2132,8 +2132,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xC332, 0x175);
 			FillNop(pCryRenderNULL, 0xC4EC, 0x35);
-			FillMem(pCryRenderNULL, 0x176E, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x1780, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x176E, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x1780, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x98918;
 			break;
 		}
@@ -2141,8 +2141,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xCFC9, 0x175);
 			FillNop(pCryRenderNULL, 0xD183, 0x35);
-			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x984B8;
 			break;
 		}
@@ -2150,8 +2150,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD369, 0x175);
 			FillNop(pCryRenderNULL, 0xD523, 0x35);
-			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x984B8;
 			break;
 		}
@@ -2160,8 +2160,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0xD0D9, 0x175);
 			FillNop(pCryRenderNULL, 0xD293, 0x35);
-			FillMem(pCryRenderNULL, 0x16FE, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x1710, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x16FE, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x1710, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0x984B8;
 			break;
 		}
@@ -2170,8 +2170,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CF3E, 0x101);
 			FillNop(pCryRenderNULL, 0x1D051, 0xE);
-			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA677C;
 			break;
 		}
@@ -2179,8 +2179,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CF78, 0x101);
 			FillNop(pCryRenderNULL, 0x1CEFE, 0xE);
-			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA6734;
 			break;
 		}
@@ -2188,8 +2188,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CF4F, 0x101);
 			FillNop(pCryRenderNULL, 0x1D062, 0xE);
-			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA6784;
 			break;
 		}
@@ -2197,8 +2197,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CEE6, 0x101);
 			FillNop(pCryRenderNULL, 0x1CFF9, 0xE);
-			FillMem(pCryRenderNULL, 0x1895, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18A9, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x1895, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18A9, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA778C;
 			break;
 		}
@@ -2206,8 +2206,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CE41, 0x101);
 			FillNop(pCryRenderNULL, 0x1CF54, 0xE);
-			FillMem(pCryRenderNULL, 0x189B, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18AF, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x189B, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18AF, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA779C;
 			break;
 		}
@@ -2215,8 +2215,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1D3D9, 0x10C);
 			FillNop(pCryRenderNULL, 0x1D4F7, 0xE);
-			FillMem(pCryRenderNULL, 0x18A0, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18B4, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A0, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18B4, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xB078C;
 			break;
 		}
@@ -2224,8 +2224,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CF67, 0x101);
 			FillNop(pCryRenderNULL, 0x1D07A, 0xE);
-			FillMem(pCryRenderNULL, 0x18A0, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18B4, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18A0, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18B4, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA779C;
 			break;
 		}
@@ -2235,8 +2235,8 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		{
 			FillNop(pCryRenderNULL, 0x1CF7C, 0x101);
 			FillNop(pCryRenderNULL, 0x1D08F, 0xE);
-			FillMem(pCryRenderNULL, 0x18AD, code, sizeof code);
-			FillMem(pCryRenderNULL, 0x18C1, code, sizeof code);
+			FillMem(pCryRenderNULL, 0x18AD, code, sizeof(code));
+			FillMem(pCryRenderNULL, 0x18C1, code, sizeof(code));
 			renderAuxGeomVTableOffset = 0xA779C;
 			break;
 		}
@@ -2260,12 +2260,12 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 
 		// make the rest of CNULLRenderAuxGeom functions empty
 		// note that all the functions return nothing
-		for (unsigned int i = 2; i < (sizeof newVTable / sizeof newVTable[0]); i++)
+		for (int i = 2; i < 27; i++)
 		{
 			newVTable[i] = emptyFunc;
 		}
 
 		// install the new vtable
-		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof newVTable);
+		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof(newVTable));
 	}
 }

@@ -14,9 +14,9 @@
 std::string LauncherCommon::GetMainFolderPath()
 {
 	char buffer[512];
-	const StringView exePath(buffer, OS::EXE::GetPath(buffer, sizeof buffer));
+	const StringView exePath(buffer, OS::EXE::GetPath(buffer, sizeof(buffer)));
 
-	if (exePath.empty() || exePath.length() >= sizeof buffer)
+	if (exePath.empty() || exePath.length() >= sizeof(buffer))
 	{
 		return std::string();
 	}
@@ -46,9 +46,9 @@ std::string LauncherCommon::GetRootFolderPath()
 std::string LauncherCommon::GetUserFolderPath()
 {
 	char buffer[512];
-	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof buffer));
+	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof(buffer)));
 
-	if (documentsPath.empty() || documentsPath.length() >= sizeof buffer)
+	if (documentsPath.empty() || documentsPath.length() >= sizeof(buffer))
 	{
 		return std::string();
 	}
@@ -125,7 +125,7 @@ void LauncherCommon::SetParamsCmdLine(SSystemInitParams& params, const char* cmd
 {
 	const std::size_t length = std::strlen(cmdLine);
 
-	if (length >= sizeof params.cmdLine)
+	if (length >= sizeof(params.cmdLine))
 	{
 		throw StringFormat_Error("Command line is too long!");
 	}

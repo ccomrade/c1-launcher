@@ -67,7 +67,7 @@ static void BackupLogFile(const char* logPath)
 	}
 
 	char headerBuffer[256];
-	const StringView header(headerBuffer, logFile.Read(headerBuffer, sizeof headerBuffer));
+	const StringView header(headerBuffer, logFile.Read(headerBuffer, sizeof(headerBuffer)));
 
 	if (header.empty() && logFile.IsEndOfFile())
 	{
