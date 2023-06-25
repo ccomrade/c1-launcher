@@ -6,6 +6,7 @@
 #include "../MemoryPatch.h"
 
 #include "GameLauncher.h"
+#include "LanguageHook.h"
 
 #define DEFAULT_LOG_FILE_NAME "Game.log"
 
@@ -97,6 +98,7 @@ void GameLauncher::PatchEngine()
 		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
+		MemoryPatch::CrySystem::HookLanguageInit(m_dlls.pCrySystem, m_dlls.gameBuild, &LanguageHook::OnInit);
 	}
 
 	if (m_dlls.pCryRenderD3D10)

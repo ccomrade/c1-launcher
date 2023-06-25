@@ -4,6 +4,7 @@
 
 struct CPUInfo;
 struct ISystem;
+struct ILocalizationManager;
 
 namespace MemoryPatch
 {
@@ -39,6 +40,8 @@ namespace MemoryPatch
 			void (*handler)(CPUInfo* info, ISystem* pSystem));
 		void HookError(void* pCrySystem, int gameBuild,
 			void (*handler)(const char* format, va_list args));
+		void HookLanguageInit(void* pCrySystem, int gameBuild,
+			void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager));
 	}
 
 	namespace CryRenderD3D10

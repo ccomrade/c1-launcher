@@ -79,6 +79,8 @@ target_link_libraries(LauncherBase PUBLIC dbghelp)
 add_executable(Crysis WIN32
 	Code/Launcher/Game/GameLauncher.cpp
 	Code/Launcher/Game/GameLauncher.h
+	Code/Launcher/Game/LanguageHook.cpp
+	Code/Launcher/Game/LanguageHook.h
 	Code/Launcher/Game/Main.cpp
 	Code/Launcher/Game/Resources.h
 	Resources/Launcher.manifest

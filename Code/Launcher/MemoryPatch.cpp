@@ -1788,6 +1788,175 @@ void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild,
 	}
 }
 
+/**
+ * Hooks CryEngine language initialization.
+ *
+ * The handler is called right after Game/Localized/Default.lng is parsed and localization manager is constructed.
+ */
+void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
+	void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		// call ISystem::GetLocalizationManager
+		0x49, 0x8B, 0x45, 0x00,                                      // mov rax, qword ptr ds:[r13]
+		0x49, 0x8B, 0xCD,                                            // mov rcx, r13
+		0xFF, 0x90, 0x48, 0x03, 0x00, 0x00,                          // call qword ptr ds:[rax+0x348]
+		// call handler
+		0x48, 0x8B, 0xD0,                                            // mov rdx, rax
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0x48, 0x8B, 0x4C, 0x24, 0x30,                                // mov rcx, qword ptr ss:[rsp+0x30]
+		0xFF, 0xD0                                                   // call rax
+	};
+
+	std::memcpy(&code[18], &handler, 8);
+
+	// ISystem::GetLocalizationManager is at vtable index 107 instead of 105 in Crysis Wars 1.4+
+	if (gameBuild >= 6670)
+	{
+		code[9] = 0x58;
+	}
+#else
+	unsigned char code[] = {
+		// call ISystem::GetLocalizationManager
+		0x8B, 0x07,                          // mov eax, dword ptr ds:[edi]
+		0x8B, 0x90, 0xA4, 0x01, 0x00, 0x00,  // mov edx, dword ptr ds:[eax+0x1A4]
+		0x8B, 0xCF,                          // mov ecx, edi
+		0xFF, 0xD2,                          // call edx
+		// call handler
+		0x50,                                // push eax
+		0xB8, 0x00, 0x00, 0x00, 0x00,        // mov eax, 0x0
+		0xFF, 0x74, 0x24, 0x20,              // push dword ptr ss:[esp+0x20]
+		0xFF, 0xD0,                          // call eax
+		0x83, 0xC4, 0x08                     // add esp, 0x8
+	};
+
+	std::memcpy(&code[14], &handler, 4);
+
+	// ISystem::GetLocalizationManager is at vtable index 107 instead of 105 in Crysis Wars 1.4+
+	if (gameBuild >= 6670)
+	{
+		code[4] = 0xAC;
+	}
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillNop(pCrySystem, 0x448D9, 0x146);
+			FillMem(pCrySystem, 0x448D9, &code, sizeof code);
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCrySystem, 0x45EA9, 0x146);
+			FillMem(pCrySystem, 0x45EA9, &code, sizeof code);
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCrySystem, 0x45359, 0x146);
+			FillMem(pCrySystem, 0x45359, &code, sizeof code);
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCrySystem, 0x45409, 0x146);
+			FillMem(pCrySystem, 0x45409, &code, sizeof code);
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCrySystem, 0x4C55F, 0x14C);
+			FillMem(pCrySystem, 0x4C55F, &code, sizeof code);
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCrySystem, 0x46A4F, 0x14C);
+			FillMem(pCrySystem, 0x46A4F, &code, sizeof code);
+			break;
+		}
+		case 6627:
+		{
+			FillNop(pCrySystem, 0x4959F, 0x14C);
+			FillMem(pCrySystem, 0x4959F, &code, sizeof code);
+			break;
+		}
+		case 6670:
+		case 6729:
+		{
+			FillNop(pCrySystem, 0x4972F, 0x14C);
+			FillMem(pCrySystem, 0x4972F, &code, sizeof code);
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNop(pCrySystem, 0x56C66, 0x7B);
+			FillMem(pCrySystem, 0x56C66, &code, sizeof code);
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCrySystem, 0x571D6, 0x7B);
+			FillMem(pCrySystem, 0x571D6, &code, sizeof code);
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCrySystem, 0x56FC6, 0x7B);
+			FillMem(pCrySystem, 0x56FC6, &code, sizeof code);
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCrySystem, 0x56B46, 0x7B);
+			FillMem(pCrySystem, 0x56B46, &code, sizeof code);
+			break;
+		}
+		case 6527:
+		{
+			FillNop(pCrySystem, 0x57516, 0x7B);
+			FillMem(pCrySystem, 0x57516, &code, sizeof code);
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCrySystem, 0x5A0D6, 0x7B);
+			FillMem(pCrySystem, 0x5A0D6, &code, sizeof code);
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCrySystem, 0x57546, 0x7B);
+			FillMem(pCrySystem, 0x57546, &code, sizeof code);
+			break;
+		}
+		case 6627:
+		{
+			FillNop(pCrySystem, 0x584D6, 0x7B);
+			FillMem(pCrySystem, 0x584D6, &code, sizeof code);
+			break;
+		}
+		case 6670:
+		{
+			FillNop(pCrySystem, 0x587E6, 0x7B);
+			FillMem(pCrySystem, 0x587E6, &code, sizeof code);
+			break;
+		}
+		case 6729:
+		{
+			FillNop(pCrySystem, 0x587F6, 0x7B);
+			FillMem(pCrySystem, 0x587F6, &code, sizeof code);
+			break;
+		}
+#endif
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CryRenderD3D10
 ////////////////////////////////////////////////////////////////////////////////
