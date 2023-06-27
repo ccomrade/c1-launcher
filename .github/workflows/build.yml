@@ -31,7 +31,7 @@ jobs:
       - name: Configure
         run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
         env:
-          CXXFLAGS: /W4 /WX
+          CXXFLAGS: /W4 /WX /wd4100
 
       - name: Build
         run: cmake --build Build
