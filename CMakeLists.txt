@@ -11,13 +11,10 @@ if(NOT MSVC)
 endif()
 
 if(NOT CMAKE_MSVC_RUNTIME_LIBRARY)
-	# detect VS2005 compiler
+	# detect VS2005 compiler and use dynamically linked MSVC runtime library, otherwise use statically linked one
 	if(MSVC_VERSION EQUAL 1400)
-		# all original Crysis DLLs are dynamically linked to MSVC runtime library from VS2005
-		# use dynamically linked MSVC runtime library to reduce size of the resulting executables
 		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 	else()
-		# use statically linked MSVC runtime library to avoid any unwanted DLL dependencies
 		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 	endif()
 endif()
@@ -60,19 +57,20 @@ add_library(LauncherBase STATIC
 	Code/Library/StringView.h
 )
 
+target_link_libraries(LauncherBase PUBLIC dbghelp)
+
 if(BUILD_BITS EQUAL 64)
 	target_compile_definitions(LauncherBase PUBLIC BUILD_64BIT)
 endif()
 
-target_compile_definitions(LauncherBase PUBLIC _CRT_SECURE_NO_WARNINGS)
-target_compile_options(LauncherBase PUBLIC /W3)
-
+# also include PROJECT_BINARY_DIR with configured Project.h
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
+
+# explicitly disable some stupid MSVC warnings
+target_compile_options(LauncherBase PUBLIC /D_CRT_SECURE_NO_WARNINGS /wd4351)
 
 # prevent modern MSVC from enabling ASLR, which breaks Crysis DLLs, and unlock memory above 2 GB
 target_link_options(LauncherBase PUBLIC /DYNAMICBASE:NO /LARGEADDRESSAWARE)
-
-target_link_libraries(LauncherBase PUBLIC dbghelp)
 
 ################################################################################
 

@@ -1,4 +1,4 @@
-# c1-launcher
+# C1-Launcher
 
 An open-source replacement of [Crysis (2007)](https://en.wikipedia.org/wiki/Crysis_(video_game)) executables.
 It provides a better game and dedicated server launcher with additional features.
@@ -86,7 +86,7 @@ Remember that you should always use a legal copy of Crysis!
 
 ### Is there any way to avoid replacing the original executables?
 
-Yes, you can rename c1-launcher executables to whatever you want and use them next to the original files.
+Yes, you can rename C1-Launcher executables to whatever you want and use them next to the original files.
 
 ### How can I play Crysis multiplayer?
 
@@ -107,11 +107,11 @@ Yes, launch the game with `-splash` command line parameter.
 
 Yes, it does. There is a scrollbar in the resolution list.
 
-### Does c1-launcher support Crysis Remastered?
+### Does C1-Launcher support Crysis Remastered?
 
 No, it does not.
 
-### Does c1-launcher support Crysis Warhead?
+### Does C1-Launcher support Crysis Warhead?
 
 No, it does not. The reason is that CryGame and CryAction DLLs are integrated into the EXE in Crysis Warhead.
 
@@ -123,7 +123,7 @@ directly results in a crash during game startup. This is because 64-bit CrySyste
 with additional SecuROM garbage. It checks whether the game was launched using the DRM launcher, and if not, the game
 crashes.
 
-All this nonsense is skipped by c1-launcher. That means you can safely delete all the mentioned files.
+All this nonsense is skipped by C1-Launcher. That means you can safely delete all the mentioned files.
 
 ## Build instructions
 
@@ -133,7 +133,7 @@ All this nonsense is skipped by c1-launcher. That means you can safely delete al
 - CMake >= 3.15
 
 The source code is still fully compatible with the legacy VS2005 compiler that was used to build Crysis.
-It is also used to build c1-launcher releases to minimize their size and maximize compatibility.
+It is also used to build C1-Launcher releases to minimize their size and maximize compatibility.
 
 MSVC is the only supported compiler due to required ABI compatibility with Crysis DLLs.
 

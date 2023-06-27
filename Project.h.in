@@ -8,8 +8,7 @@
 #pragma once
 
 #define PROJECT_VERSION @PROJECT_VERSION_MAJOR@
-#define PROJECT_VERSION_STRING "v@PROJECT_VERSION_MAJOR@"
-#define PROJECT_BUILD_BITS "@BUILD_BITS@-bit"
+#define PROJECT_VERSION_STRING "v@PROJECT_VERSION_MAJOR@ @BUILD_BITS@-bit"
 
 // contains launcher name and version
 // defined in Main.cpp of each launcher
