@@ -29,7 +29,7 @@ jobs:
           msbuild-architecture: ${{ inputs.arch }}
 
       - name: Configure
-        run: cmake -S . -B Build -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+        run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
 
       - name: Build
         run: cmake --build Build
