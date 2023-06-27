@@ -17,7 +17,7 @@ on:
         type: string
 
 jobs:
-  windows_msvc:
+  msvc_latest:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -30,6 +30,8 @@ jobs:
 
       - name: Configure
         run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+        env:
+          CXXFLAGS: /W4 /WX
 
       - name: Build
         run: cmake --build Build
