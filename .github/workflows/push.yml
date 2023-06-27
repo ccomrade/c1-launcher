@@ -1,0 +1,23 @@
+################################################################################
+# Push workflow running on a push to any branch
+################################################################################
+
+name: Push
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build_x86:
+    uses: ./.github/workflows/build.yml
+    with:
+      arch: x86
+      type: RelWithDebInfo
+
+  build_x64:
+    uses: ./.github/workflows/build.yml
+    with:
+      arch: x64
+      type: RelWithDebInfo
