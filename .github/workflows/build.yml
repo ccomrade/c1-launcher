@@ -29,15 +29,15 @@ jobs:
           msbuild-architecture: ${{ inputs.arch }}
 
       - name: Configure
-        run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+        run: cmake -S . -B Build
 
       - name: Build
-        run: cmake --build Build
+        run: cmake --build Build --config ${{ inputs.type }}
 
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
           name: c1-launcher-${{ inputs.arch }}
           path: |
-            ${{ github.workspace }}\Build\*.exe
-            ${{ github.workspace }}\Build\*.pdb
+            ${{ github.workspace }}\Build\${{ inputs.type }}\*.exe
+            ${{ github.workspace }}\Build\${{ inputs.type }}\*.pdb
