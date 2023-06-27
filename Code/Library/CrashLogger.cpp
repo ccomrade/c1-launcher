@@ -268,7 +268,7 @@ static void DumpLoadedModules(std::FILE* file)
 	LIST_ENTRY* headMod = static_cast<LIST_ENTRY*>(ByteOffset(ldr, modListOffset));
 
 	LIST_ENTRY* firstMod = NULL;
-	std::size_t firstModBase = -1;
+	std::size_t firstModBase = static_cast<std::size_t>(-1);
 	unsigned int modCount = 0;
 
 	for (LIST_ENTRY* mod = headMod->Flink; mod != headMod; mod = mod->Flink)
@@ -298,7 +298,7 @@ static void DumpLoadedModules(std::FILE* file)
 		std::fprintf(file, ADDR_FMT " - " ADDR_FMT " %s\n", base, base + size, name);
 
 		LIST_ENTRY* nextMod = NULL;
-		std::size_t nextModBase = -1;
+		std::size_t nextModBase = static_cast<std::size_t>(-1);
 
 		for (mod = headMod->Flink; mod != headMod; mod = mod->Flink)
 		{
