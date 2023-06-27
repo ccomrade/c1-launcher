@@ -14,10 +14,10 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       arch: x86
-      type: Release
+      type: RelWithDebInfo
 
   build_x64:
     uses: ./.github/workflows/build.yml
     with:
       arch: x64
-      type: Release
+      type: RelWithDebInfo

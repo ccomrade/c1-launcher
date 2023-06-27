@@ -29,7 +29,7 @@ jobs:
           msbuild-architecture: ${{ inputs.arch }}
 
       - name: Configure
-        run: cmake -S . -B Build
+        run: cmake -S . -B Build -A $(if ('${{ inputs.arch }}' -eq 'x86') { 'Win32' } else { '${{ inputs.arch }}' })
 
       - name: Build
         run: cmake --build Build --config ${{ inputs.type }}
