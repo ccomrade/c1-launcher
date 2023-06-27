@@ -105,7 +105,7 @@ void Logger::OpenFile(const char* logPath)
 
 	BackupLogFile(logPath);
 
-	if (m_file.Open(logPath, "w"))
+	if (!m_file.Open(logPath, "w"))
 	{
 		throw StringFormat_OSError("Failed to open log file!\n=> %s", logPath);
 	}
