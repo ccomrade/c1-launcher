@@ -98,6 +98,8 @@ struct CPUID
 			std::memcpy(this->brand_string + 16, &query, 16);
 			query = Query(0x80000004);
 			std::memcpy(this->brand_string + 32, &query, 16);
+
+			this->TrimSpaces(this->brand_string);
 		}
 	}
 
@@ -119,6 +121,30 @@ struct CPUID
 	bool Has3DNow() const
 	{
 		return this->vendor == VENDOR_AMD && this->leaf_80000001_edx[31];
+	}
+
+private:
+	void TrimSpaces(char* s)
+	{
+		char* begin = s;
+		char* end = s;
+
+		while (*s == ' ')
+		{
+			s++;
+		}
+
+		while (*s)
+		{
+			if (*s != ' ')
+			{
+				end = s + 1;
+			}
+
+			*begin++ = *s++;
+		}
+
+		*end = '\0';
 	}
 };
 
