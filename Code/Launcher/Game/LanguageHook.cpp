@@ -13,11 +13,6 @@
 struct ILocalizationManager
 {
 	virtual bool SetLanguage(const char* language) = 0;
-	virtual const char* GetLanguage() = 0;
-
-	virtual bool LoadExcelXmlSpreadsheet(const char* filename, bool reload) = 0;
-
-	virtual	void FreeData() = 0;
 
 	// ...
 };
@@ -72,16 +67,10 @@ static bool LanguagePakExists(const char* language)
 	return true;
 }
 
-static bool IsEmpty(const char* string)
-{
-	return string[0] == '\0';
-}
-
 static const char* ChooseLanguage(const char* defaultLanguage, ICVar* pLanguageCVar)
 {
 	const char* language = OS::CmdLine::GetArgValue("-language");
-
-	if (!IsEmpty(language))
+	if (*language)
 	{
 		return language;
 	}
@@ -89,16 +78,14 @@ static const char* ChooseLanguage(const char* defaultLanguage, ICVar* pLanguageC
 	if (pLanguageCVar)
 	{
 		const char* value = pLanguageCVar->GetString();
-
-		if (!IsEmpty(value))
+		if (*value)
 		{
 			return value;
 		}
 	}
 
 	language = defaultLanguage;
-
-	if (!language || IsEmpty(language))
+	if (!language || !*language)
 	{
 		CryLogErrorAlways("[Localization] Missing or invalid Game/Localized/Default.lng file!");
 		CryLogErrorAlways("[Localization] Trying to guess language from the system!");
@@ -162,8 +149,8 @@ static const char* ChooseLanguage(const char* defaultLanguage, ICVar* pLanguageC
 void LanguageHook::OnInit(const char* defaultLanguage, ILocalizationManager* pLocalizationManager)
 {
 	ICVar* pLanguageCVar = gEnv->pConsole->GetCVar("g_language");
-
 	const char* language = ChooseLanguage(defaultLanguage, pLanguageCVar);
+
 	CryLogAlways("[Localization] Using %s language", language);
 
 	if (pLanguageCVar)
