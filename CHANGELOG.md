@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [v4] - 2023-09-28
 ### Added
 - Workaround for missing localization files in Steam version. See `LanguageHook`.
 ### Fixed
