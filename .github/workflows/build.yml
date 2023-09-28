@@ -1,0 +1,45 @@
+################################################################################
+# Reusable build workflow
+################################################################################
+
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        description: Either x86 or x64
+        required: true
+        type: string
+      type:
+        description: CMake build type
+        required: true
+        type: string
+
+jobs:
+  msvc_latest:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ inputs.arch }}
+
+      - name: Configure
+        run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+        env:
+          CXXFLAGS: /W4 /WX /wd4100
+
+      - name: Build
+        run: cmake --build Build
+
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: c1-launcher-${{ inputs.arch }}
+          path: |
+            ${{ github.workspace }}\Build\*.exe
+            ${{ github.workspace }}\Build\*.pdb

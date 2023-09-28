@@ -7,12 +7,6 @@
 #include <intrin.h>
 #endif
 
-#ifdef _MSC_VER
-#define SUPPRESS_STUPID_MSVC_WARNING_C4351 __pragma(warning(suppress:4351))
-#else
-#define SUPPRESS_STUPID_MSVC_WARNING_C4351
-#endif
-
 struct CPUID
 {
 	struct Query
@@ -56,7 +50,6 @@ struct CPUID
 	char brand_string[48 + 1];
 	char vendor_string[12 + 1];
 
-	SUPPRESS_STUPID_MSVC_WARNING_C4351
 	CPUID() : vendor(VENDOR_UNKNOWN), leaf_1_edx(), leaf_80000001_edx(), brand_string(), vendor_string()
 	{
 		Query query(0x0);
@@ -105,6 +98,8 @@ struct CPUID
 			std::memcpy(this->brand_string + 16, &query, 16);
 			query = Query(0x80000004);
 			std::memcpy(this->brand_string + 32, &query, 16);
+
+			this->TrimSpaces(this->brand_string);
 		}
 	}
 
@@ -126,6 +121,30 @@ struct CPUID
 	bool Has3DNow() const
 	{
 		return this->vendor == VENDOR_AMD && this->leaf_80000001_edx[31];
+	}
+
+private:
+	void TrimSpaces(char* s)
+	{
+		char* begin = s;
+		char* end = s;
+
+		while (*s == ' ')
+		{
+			s++;
+		}
+
+		while (*s)
+		{
+			if (*s != ' ')
+			{
+				end = s + 1;
+			}
+
+			*begin++ = *s++;
+		}
+
+		*end = '\0';
 	}
 };
 

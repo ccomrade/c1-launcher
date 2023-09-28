@@ -1,7 +1,7 @@
-# c1-launcher
+# C1-Launcher
 
-An open-source replacement of the original [Crysis](https://en.wikipedia.org/wiki/Crysis_(video_game)) executables.
-It provides a better game launcher and dedicated server launcher with additional features.
+An open-source replacement of [Crysis (2007)](https://en.wikipedia.org/wiki/Crysis_(video_game)) executables.
+It provides a better game and dedicated server launcher with additional features.
 
 ## Features
 
@@ -10,16 +10,19 @@ It provides a better game launcher and dedicated server launcher with additional
 - Completely DRM-free launcher.
 - No compatibility mode is required to make the game work on modern systems.
 - Fixes all startup issues, including the well-known crash of 32-bit Crysis on modern AMD processors.
+- Fixes engine crash on systems with more than 32 logical processors.
+- Fixes low refresh rate in fullscreen DX10 mode. Thanks to Guzz and Vladislav.
 - Smaller files, especially game launcher.
 - Annoying startup video ads are automatically skipped.
-- Very High settings are available in DX9 mode.
+- Max settings (Very High) are available in DX9 mode as well.
 - Game running in DX9 mode can connect to DX10 servers. Everything works just like in DX10 mode.
 - Server does not kick players with the same CD key anymore.
 - It is possible to run multiple Crysis instances at once.
 - Advantages of pre-ordered version are available to everyone.
 - Details of any game or server crash are automatically written to the log file.
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
-- Fixes the low refresh rate bug in DX10 mode. Thanks to Guzz and Vladislav.
+- Language detection to workaround incomplete localization files in
+[Crysis from Steam](https://store.steampowered.com/app/17300/Crysis/).
 
 ## Supported game versions
 
@@ -77,16 +80,13 @@ It provides a better game launcher and dedicated server launcher with additional
 
 ### How to use it?
 
-Get the latest executables from the [release section](../../releases) and just replace the original files. That's it.
+Get the latest executables from [releases](../../releases) and just replace the original files.
 
-You can also compile the source code yourself. See below for [instructions](#build-instructions).
+Remember that you should always use a legal copy of Crysis!
 
-Remember that you should always use a legal copy of Crysis.
-If you still don't have one, see the [list](#where-to-get-the-game) above for where you can get it.
+### Is there any way to avoid replacing the original executables?
 
-### I don't want to replace the original executables. Is there any way?
-
-Yes, you can rename the executables of this launcher to whatever you want and use them next to the original files.
+Yes, you can rename C1-Launcher executables to whatever you want and use them next to the original files.
 
 ### How can I play Crysis multiplayer?
 
@@ -107,23 +107,23 @@ Yes, launch the game with `-splash` command line parameter.
 
 Yes, it does. There is a scrollbar in the resolution list.
 
-### Does this launcher support Crysis Remastered?
+### Does C1-Launcher support Crysis Remastered?
 
-No, it doesn't.
+No, it does not.
 
-### Does this launcher support Crysis Warhead?
+### Does C1-Launcher support Crysis Warhead?
 
-No, it doesn't. The reason is that CryGame and CryAction DLLs are integrated into the EXE in Crysis Warhead.
+No, it does not. The reason is that CryGame and CryAction DLLs are integrated into the EXE in Crysis Warhead.
 
 ### Why does the Bin64 folder contain 2 executables?
 
 The original `Bin64/Crysis.exe` file is actually only a 32-bit SecuROM DRM launcher. It reads the `Bin64/Crysis.ini`
 config file and runs `Bin64/crysis64.exe`, which is the 64-bit game launcher. However, running the game launcher
-directly results in a crash during game startup. This is because the 64-bit CrySystem loads the `Bin64/b64.dll`
-library with additional SecuROM garbage. It checks whether the game was launched using the DRM launcher or not,
-and if not, the game crashes in a sneaky way.
+directly results in a crash during game startup. This is because 64-bit CrySystem loads the `Bin64/b64.dll` library
+with additional SecuROM garbage. It checks whether the game was launched using the DRM launcher, and if not, the game
+crashes.
 
-All this nonsense is skipped by this launcher. That means you can safely delete all the mentioned files.
+All this nonsense is skipped by C1-Launcher. That means you can safely delete all the mentioned files.
 
 ## Build instructions
 
@@ -132,7 +132,8 @@ All this nonsense is skipped by this launcher. That means you can safely delete 
 - Microsoft Visual C++ compiler (MSVC) >= VS2005
 - CMake >= 3.15
 
-The source code is compatible with the legacy VS2005 compiler that was used to build Crysis.
+The source code is still fully compatible with the legacy VS2005 compiler that was used to build Crysis.
+It is also used to build C1-Launcher releases to minimize their size and maximize compatibility.
 
 MSVC is the only supported compiler due to required ABI compatibility with Crysis DLLs.
 
