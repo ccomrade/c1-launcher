@@ -99,7 +99,7 @@ struct CPUID
 			query = Query(0x80000004);
 			std::memcpy(this->brand_string + 32, &query, 16);
 
-			this->TrimSpaces(this->brand_string);
+			TrimSpaces(this->brand_string);
 		}
 	}
 
@@ -124,7 +124,7 @@ struct CPUID
 	}
 
 private:
-	void TrimSpaces(char* s)
+	static void TrimSpaces(char* s)
 	{
 		char* begin = s;
 		char* end = s;
