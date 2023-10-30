@@ -64,7 +64,22 @@ void* LauncherCommon::LoadDLL(const char* name)
 	void* mod = OS::DLL::Load(name);
 	if (!mod)
 	{
-		throw StringFormat_OSError("Failed to load %s", name);
+		const unsigned long errorCode = OS::GetCurrentErrorCode();
+
+		if (errorCode == 193)  // ERROR_BAD_EXE_FORMAT
+		{
+			throw StringFormat_OSError("Failed to load %s\n\n"
+#ifdef BUILD_64BIT
+				"It seems you have 32-bit DLLs in Bin64 directory! Fix it!",
+#else
+				"It seems you have 64-bit DLLs in Bin32 directory! Fix it!",
+#endif
+				name);
+		}
+		else
+		{
+			throw StringFormat_OSError("Failed to load %s", name);
+		}
 	}
 
 	return mod;
