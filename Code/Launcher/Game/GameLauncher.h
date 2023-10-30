@@ -14,6 +14,7 @@ class GameLauncher
 		void* pCryAction;
 		void* pCryNetwork;
 		void* pCrySystem;
+		void* pCryRenderD3D9;
 		void* pCryRenderD3D10;
 
 		int gameBuild;

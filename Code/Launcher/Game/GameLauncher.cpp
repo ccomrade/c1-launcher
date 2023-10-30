@@ -15,6 +15,38 @@ static std::FILE* OpenLogFile()
 	return LauncherCommon::OpenLogFile(DEFAULT_LOG_FILE_NAME);
 }
 
+static void LogBytes(const char* message, std::size_t bytes)
+{
+	const char* unit = "";
+	char units[6][2] = { "K", "M", "G", "T", "P", "E" };
+
+	for (int i = 0; i < 6 && bytes >= 1024; i++)
+	{
+		unit = units[i];
+		bytes /= 1024;
+	}
+
+	CryLogAlways("%s%u%s", message, static_cast<unsigned int>(bytes), unit);
+}
+
+static void OnD3D9Info(MemoryPatch::CryRenderD3D9::AdapterInfo* info)
+{
+	CryLogAlways("D3D9 Adapter: %s", info->description);
+	CryLogAlways("D3D9 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
+
+	// no memory info available
+}
+
+static void OnD3D10Info(MemoryPatch::CryRenderD3D10::AdapterInfo* info)
+{
+	CryLogAlways("D3D10 Adapter: %ls", info->description);
+	CryLogAlways("D3D10 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
+
+	LogBytes("D3D10 Adapter: Dedicated video memory = ", info->dedicated_video_memory);
+	LogBytes("D3D10 Adapter: Dedicated system memory = ", info->dedicated_system_memory);
+	LogBytes("D3D10 Adapter: Shared system memory = ", info->shared_system_memory);
+}
+
 GameLauncher::GameLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
 {
 }
@@ -56,11 +88,16 @@ void GameLauncher::LoadEngine()
 	m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
 	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 
-	const bool isDX10 = !OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater());
-
-	if (isDX10)
+	if (!m_params.isDedicatedServer && !OS::CmdLine::HasArg("-dedicated"))
 	{
-		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
+		if (!OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater()))
+		{
+			m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
+		}
+		else
+		{
+			m_dlls.pCryRenderD3D9 = LauncherCommon::LoadDLL("CryRenderD3D9.dll");
+		}
 	}
 }
 
@@ -101,8 +138,14 @@ void GameLauncher::PatchEngine()
 		MemoryPatch::CrySystem::HookLanguageInit(m_dlls.pCrySystem, m_dlls.gameBuild, &LanguageHook::OnInit);
 	}
 
+	if (m_dlls.pCryRenderD3D9)
+	{
+		MemoryPatch::CryRenderD3D9::HookAdapterInfo(m_dlls.pCryRenderD3D9, m_dlls.gameBuild, &OnD3D9Info);
+	}
+
 	if (m_dlls.pCryRenderD3D10)
 	{
 		MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(m_dlls.pCryRenderD3D10, m_dlls.gameBuild);
+		MemoryPatch::CryRenderD3D10::HookAdapterInfo(m_dlls.pCryRenderD3D10, m_dlls.gameBuild, &OnD3D10Info);
 	}
 }

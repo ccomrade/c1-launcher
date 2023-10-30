@@ -1958,6 +1958,139 @@ void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// CryRenderD3D9
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Hooks D3D9 adapter information logging.
+ */
+void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameBuild,
+	void (*handler)(MemoryPatch::CryRenderD3D9::AdapterInfo* info))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0x8B, 0xCE,                                            // mov rcx, rsi
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0xFF, 0xD0,                                                  // call rax
+		0x48, 0x8B, 0xAC, 0x24, 0x30, 0x05, 0x00, 0x00               // mov rbp, qword ptr ss:[rsp+0x530]
+	};
+
+	std::memcpy(&code[5], &handler, 8);
+#else
+	unsigned char code[] = {
+		0x55,                               // push ebp
+		0xB8, 0x00, 0x00, 0x00, 0x00,       // mov eax, 0x0
+		0xFF, 0xD0,                         // call eax
+		0x83, 0xC4, 0x04,                   // add esp, 0x4
+		0x8B, 0x85, 0x28, 0x04, 0x00, 0x00  // mov eax, dword ptr ss:[ebp+0x428]
+	};
+
+	std::memcpy(&code[2], &handler, 4);
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillNop(pCryRenderD3D9, 0xC6A7E, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC6A7E, &code, sizeof(code));
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCryRenderD3D9, 0xC79EE, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC79EE, &code, sizeof(code));
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCryRenderD3D9, 0xC91BE, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC91BE, &code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCryRenderD3D9, 0xC909E, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC909E, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCryRenderD3D9, 0xBB42E, 0x18B);
+			FillMem(pCryRenderD3D9, 0xBB42E, &code, sizeof(code));
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCryRenderD3D9, 0xC89EE, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC89EE, &code, sizeof(code));
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			FillNop(pCryRenderD3D9, 0xC8B2E, 0x18B);
+			FillMem(pCryRenderD3D9, 0xC8B2E, &code, sizeof(code));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNop(pCryRenderD3D9, 0x93E8D, 0x137);
+			FillMem(pCryRenderD3D9, 0x93E8D, &code, sizeof(code));
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCryRenderD3D9, 0x9590D, 0x137);
+			FillMem(pCryRenderD3D9, 0x9590D, &code, sizeof(code));
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCryRenderD3D9, 0x9602D, 0x137);
+			FillMem(pCryRenderD3D9, 0x9602D, &code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCryRenderD3D9, 0x95F76, 0x137);
+			FillMem(pCryRenderD3D9, 0x95F76, &code, sizeof(code));
+			break;
+		}
+		case 6527:
+		{
+			FillNop(pCryRenderD3D9, 0x95C06, 0x137);
+			FillMem(pCryRenderD3D9, 0x95C06, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCryRenderD3D9, 0x99856, 0x137);
+			FillMem(pCryRenderD3D9, 0x99856, &code, sizeof(code));
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCryRenderD3D9, 0x95906, 0x137);
+			FillMem(pCryRenderD3D9, 0x95906, &code, sizeof(code));
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			FillNop(pCryRenderD3D9, 0x95A96, 0x137);
+			FillMem(pCryRenderD3D9, 0x95A96, &code, sizeof(code));
+			break;
+		}
+#endif
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // CryRenderD3D10
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -2053,6 +2186,174 @@ void MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(void* pCryRenderD3D10, in
 		case 6729:
 		{
 			FillNop(pCryRenderD3D10, 0x16F170, 0x6);
+			break;
+		}
+#endif
+	}
+}
+
+/**
+ * Hooks D3D10 adapter information logging.
+ *
+ * It also fixes crash of 64-bit DX10 renderer on nVidia driver version 545.92 and possibly others.
+ */
+void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gameBuild,
+	void (*handler)(MemoryPatch::CryRenderD3D10::AdapterInfo* info))
+{
+#ifdef BUILD_64BIT
+	unsigned char codeA[] = {
+		0x48, 0x8B, 0xF0,                                            // mov rsi, rax
+		0x48, 0x8B, 0xC8,                                            // mov rcx, rax
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0xFF, 0xD0,                                                  // call rax
+		0x4C, 0x8B, 0x9E, 0x18, 0x01, 0x00, 0x00,                    // mov r11, qword ptr ds:[rsi+0x118]
+		0x4C, 0x89, 0x9F, 0x78, 0x8A, 0x02, 0x00                     // mov qword ptr ds:[rdi+0x28A78], r11
+	};
+
+	// avoid using RSI register with value corrupted by nVidia driver
+	unsigned char codeB[] = {
+		0x4C, 0x8B, 0x9F, 0x78, 0x8A, 0x02, 0x00,  // mov r11, qword ptr ds:[rdi+0x28A78]
+		0x90,                                      // nop
+		0x90,                                      // nop
+		0x90,                                      // nop
+		0x90,                                      // nop
+		0x90,                                      // nop
+		0x90,                                      // nop
+		0x90                                       // nop
+	};
+
+	std::memcpy(&codeA[8], &handler, 8);
+#else
+	unsigned char code[] = {
+		0x50,                          // push eax
+		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
+		0xFF, 0xD0,                    // call eax
+		// normally, we would do "add esp, 0x4" here, but after this comes "add esp, 0xC"
+		0x83, 0xEC, 0x08               // sub esp, 0x8
+	};
+
+	std::memcpy(&code[2], &handler, 4);
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillNop(pCryRenderD3D10, 0xC48E7, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC48E7, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC4B1F, &codeB, sizeof(codeB));
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCryRenderD3D10, 0xC49D7, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC49D7, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC4C22, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCryRenderD3D10, 0xC7147, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC7147, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC7392, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCryRenderD3D10, 0xC71F7, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC71F7, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC7442, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCryRenderD3D10, 0xB7567, 0xFF);
+			FillMem(pCryRenderD3D10, 0xB7567, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xB77B2, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCryRenderD3D10, 0xC7417, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC7417, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC7662, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6627:
+		case 6670:
+		{
+			FillNop(pCryRenderD3D10, 0xC7127, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC7127, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC7372, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6729:
+		{
+			FillNop(pCryRenderD3D10, 0xC7247, 0xFF);
+			FillMem(pCryRenderD3D10, 0xC7247, &codeA, sizeof(codeA));
+			FillMem(pCryRenderD3D10, 0xC7492, &codeB, sizeof(codeB));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNop(pCryRenderD3D10, 0x95F28, 0xC8);
+			FillMem(pCryRenderD3D10, 0x95F28, &code, sizeof(code));
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCryRenderD3D10, 0x976B8, 0xC8);
+			FillMem(pCryRenderD3D10, 0x976B8, &code, sizeof(code));
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCryRenderD3D10, 0x982C8, 0xC8);
+			FillMem(pCryRenderD3D10, 0x982C8, &code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCryRenderD3D10, 0x98268, 0xC8);
+			FillMem(pCryRenderD3D10, 0x98268, &code, sizeof(code));
+			break;
+		}
+		case 6527:
+		{
+			FillNop(pCryRenderD3D10, 0x98288, 0xC8);
+			FillMem(pCryRenderD3D10, 0x98288, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCryRenderD3D10, 0x9B878, 0xC8);
+			FillMem(pCryRenderD3D10, 0x9B878, &code, sizeof(code));
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCryRenderD3D10, 0x97F78, 0xC8);
+			FillMem(pCryRenderD3D10, 0x97F78, &code, sizeof(code));
+			break;
+		}
+		case 6627:
+		{
+			FillNop(pCryRenderD3D10, 0x98018, 0xC8);
+			FillMem(pCryRenderD3D10, 0x98018, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillNop(pCryRenderD3D10, 0x98008, 0xC8);
+			FillMem(pCryRenderD3D10, 0x98008, &code, sizeof(code));
+			break;
+		}
+		case 6729:
+		{
+			FillNop(pCryRenderD3D10, 0x98018, 0xC8);
+			FillMem(pCryRenderD3D10, 0x98018, &code, sizeof(code));
 			break;
 		}
 #endif

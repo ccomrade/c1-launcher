@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdarg>
+#include <cstddef>
 
 struct CPUInfo;
 struct ISystem;
@@ -44,9 +45,47 @@ namespace MemoryPatch
 			void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager));
 	}
 
+	namespace CryRenderD3D9
+	{
+		struct AdapterInfo
+		{
+			// D3DADAPTER_IDENTIFIER9
+			char driver[512];
+			char description[512];
+			char device_name[32];
+			unsigned long driver_version_lo;
+			unsigned long driver_version_hi;
+			unsigned long vendor_id;
+			unsigned long device_id;
+			unsigned long sub_sys_id;
+			unsigned long revision;
+			// ...
+		};
+
+		void HookAdapterInfo(void* pCryRenderD3D9, int gameBuild,
+			void (*handler)(AdapterInfo* info));
+	}
+
 	namespace CryRenderD3D10
 	{
+		struct AdapterInfo
+		{
+			void* reserved;
+			// DXGI_ADAPTER_DESC
+			wchar_t description[128];
+			unsigned int vendor_id;
+			unsigned int device_id;
+			unsigned int sub_sys_id;
+			unsigned int revision;
+			std::size_t dedicated_video_memory;
+			std::size_t dedicated_system_memory;
+			std::size_t shared_system_memory;
+			// ...
+		};
+
 		void FixLowRefreshRateBug(void* pCryRenderD3D10, int gameBuild);
+		void HookAdapterInfo(void* pCryRenderD3D10, int gameBuild,
+			void (*handler)(AdapterInfo* info));
 	}
 
 	namespace CryRenderNULL
