@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [v5] - 2023-11-03
+### Added
+- GPU information in the log:
+```
+Renderer initialization
+D3D10 Adapter: AMD Radeon RX 480 Graphics (RADV POLARIS10)
+D3D10 Adapter: PCI 1002:67df (rev 00)
+D3D10 Adapter: Dedicated video memory = 8G
+D3D10 Adapter: Dedicated system memory = 0
+D3D10 Adapter: Shared system memory = 31G
+```
+### Fixed
+- Crash of 64-bit DX10 renderer during startup with recent nVidia GPU drivers.
+
 ## [v4] - 2023-09-28
 ### Added
 - Workaround for missing localization files in Steam version. See `LanguageHook`.
