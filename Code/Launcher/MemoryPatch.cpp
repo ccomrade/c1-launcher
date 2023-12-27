@@ -1503,6 +1503,110 @@ void MemoryPatch::CrySystem::DisableCrashHandler(void* pCrySystem, int gameBuild
 }
 
 /**
+ * Prevents out-of-bounds access of the CPUInfo::cores array.
+ */
+void MemoryPatch::CrySystem::FixCPUInfoOverflow(void* pCrySystem, int gameBuild)
+{
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillNop(pCrySystem, 0x3809D, 0x1A);
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCrySystem, 0x3893D, 0x1A);
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCrySystem, 0x37F8D, 0x1A);
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCrySystem, 0x3801D, 0x1A);
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCrySystem, 0x3F24D, 0x1A);
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCrySystem, 0x3976D, 0x1A);
+			break;
+		}
+		case 6627:
+		{
+			FillNop(pCrySystem, 0x3C4DD, 0x1A);
+			break;
+		}
+		case 6670:
+		case 6729:
+		{
+			FillNop(pCrySystem, 0x3C6AD, 0x1A);
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillNop(pCrySystem, 0x4B970, 0x9);
+			break;
+		}
+		case 5879:
+		{
+			FillNop(pCrySystem, 0x4BA50, 0x9);
+			break;
+		}
+		case 6115:
+		{
+			FillNop(pCrySystem, 0x4B8A0, 0x9);
+			break;
+		}
+		case 6156:
+		{
+			FillNop(pCrySystem, 0x4B4A0, 0x9);
+			break;
+		}
+		case 6527:
+		{
+			FillNop(pCrySystem, 0x4BEF0, 0x9);
+			break;
+		}
+		case 6566:
+		{
+			FillNop(pCrySystem, 0x4E950, 0x9);
+			break;
+		}
+		case 6586:
+		{
+			FillNop(pCrySystem, 0x4C060, 0x9);
+			break;
+		}
+		case 6627:
+		{
+			FillNop(pCrySystem, 0x4CFD0, 0x9);
+			break;
+		}
+		case 6670:
+		{
+			FillNop(pCrySystem, 0x4D380, 0x9);
+			break;
+		}
+		case 6729:
+		{
+			FillNop(pCrySystem, 0x4D390, 0x9);
+			break;
+		}
+#endif
+	}
+}
+
+/**
  * Hooks CryEngine CPU detection.
  */
 void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,

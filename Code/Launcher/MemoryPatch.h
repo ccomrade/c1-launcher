@@ -37,6 +37,7 @@ namespace MemoryPatch
 		void AllowDX9VeryHighSpec(void* pCrySystem, int gameBuild);
 		void AllowMultipleInstances(void* pCrySystem, int gameBuild);
 		void DisableCrashHandler(void* pCrySystem, int gameBuild);
+		void FixCPUInfoOverflow(void* pCrySystem, int gameBuild);
 		void HookCPUDetect(void* pCrySystem, int gameBuild,
 			void (*handler)(CPUInfo* info, ISystem* pSystem));
 		void HookError(void* pCrySystem, int gameBuild,
