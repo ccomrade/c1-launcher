@@ -138,7 +138,7 @@ private:
 		{
 			if (*s != ' ')
 			{
-				end = s + 1;
+				end = begin + 1;
 			}
 
 			*begin++ = *s++;
