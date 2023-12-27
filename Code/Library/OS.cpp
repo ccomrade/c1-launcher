@@ -1,5 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #define WIN32_LEAN_AND_MEAN
 #include <shlobj.h>
@@ -27,7 +27,7 @@ static int FindArgIndex(const char* arg)
 const char* OS::CmdLine::GetOnlyArgs()
 {
 	char separator = ' ';
-	const char* args = ::GetCommandLineA();
+	const char* args = GetCommandLineA();
 
 	if (*args == '"')
 	{
@@ -86,17 +86,15 @@ const char* OS::CmdLine::GetArgValue(const char* arg, const char* defaultValue)
 // Modules //
 /////////////
 
-static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
+static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* dll)
 {
-	HMODULE hMod = static_cast<HMODULE>(mod);
-
-	HRSRC resInfo = FindResourceA(hMod, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
+	HRSRC resInfo = FindResourceA(static_cast<HMODULE>(dll), MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
 	if (!resInfo)
 	{
 		return NULL;
 	}
 
-	HGLOBAL resData = LoadResource(hMod, resInfo);
+	HGLOBAL resData = LoadResource(static_cast<HMODULE>(dll), resInfo);
 	if (!resData)
 	{
 		return NULL;
@@ -109,7 +107,7 @@ static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
 	}
 
 	const void* versionResKey = static_cast<const unsigned char*>(versionRes) + 0x6;
-	if (memcmp(versionResKey, L"VS_VERSION_INFO", 0x20) != 0)
+	if (std::memcmp(versionResKey, L"VS_VERSION_INFO", 0x20) != 0)
 	{
 		SetLastError(ERROR_INVALID_DATA);
 		return NULL;
@@ -127,30 +125,42 @@ static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* mod)
 	return fileInfo;
 }
 
-int OS::DLL::Version::GetMajor(void* mod)
+std::size_t OS::DLL::GetPath(void* dll, char* buffer, std::size_t bufferSize)
 {
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
+	std::size_t length = GetModuleFileNameA(static_cast<HMODULE>(dll), buffer, static_cast<DWORD>(bufferSize));
+
+	if (length >= bufferSize)
+	{
+		length = 0;
+	}
+
+	return length;
+}
+
+int OS::DLL::Version::GetMajor(void* dll)
+{
+	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
 
 	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionMS) : -1;
 }
 
-int OS::DLL::Version::GetMinor(void* mod)
+int OS::DLL::Version::GetMinor(void* dll)
 {
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
+	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
 
 	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionMS) : -1;
 }
 
-int OS::DLL::Version::GetTweak(void* mod)
+int OS::DLL::Version::GetTweak(void* dll)
 {
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
+	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
 
 	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionLS) : -1;
 }
 
-int OS::DLL::Version::GetPatch(void* mod)
+int OS::DLL::Version::GetPatch(void* dll)
 {
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(mod);
+	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
 
 	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionLS) : -1;
 }
@@ -168,7 +178,7 @@ bool OS::Hack::FillNop(void* address, std::size_t size)
 	}
 
 	// 0x90 is the opcode of NOP instruction on both x86 and x86-64
-	memset(address, '\x90', size);
+	std::memset(address, '\x90', size);
 
 	if (!VirtualProtect(address, size, oldProtection, &oldProtection))
 	{
@@ -186,7 +196,7 @@ bool OS::Hack::FillMem(void* address, const void* data, std::size_t dataSize)
 		return false;
 	}
 
-	memcpy(address, data, dataSize);
+	std::memcpy(address, data, dataSize);
 
 	if (!VirtualProtect(address, dataSize, oldProtection, &oldProtection))
 	{
@@ -200,29 +210,15 @@ bool OS::Hack::FillMem(void* address, const void* data, std::size_t dataSize)
 // Files //
 ///////////
 
-std::size_t OS::GetDocumentsPath(char* buffer, std::size_t bufferSize)
+std::size_t OS::GetDocumentsPath(char (& buffer)[OS_MAX_PATH])
 {
-	const int id = CSIDL_PERSONAL | CSIDL_FLAG_CREATE;
-	const DWORD flags = SHGFP_TYPE_CURRENT;
-
-	char safeBuffer[MAX_PATH + 1];
-	if (SHGetFolderPathA(NULL, id, NULL, flags, safeBuffer) != S_OK)
+	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, buffer) != S_OK)
 	{
 		SetLastError(ERROR_PATH_NOT_FOUND);
 		return 0;
 	}
 
-	const std::size_t length = strlen(safeBuffer);
-
-	if (length >= bufferSize)
-	{
-		SetLastError(ERROR_BUFFER_OVERFLOW);
-		return 0;
-	}
-
-	memcpy(buffer, safeBuffer, length + 1);
-
-	return length;
+	return std::strlen(buffer);
 }
 
 //////////

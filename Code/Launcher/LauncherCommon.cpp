@@ -13,10 +13,9 @@
 
 std::string LauncherCommon::GetMainFolderPath()
 {
-	char buffer[512];
-	const StringView exePath(buffer, OS::EXE::GetPath(buffer, sizeof(buffer)));
-
-	if (exePath.empty() || exePath.length() >= sizeof(buffer))
+	char exePathBuffer[512];
+	const StringView exePath(exePathBuffer, OS::EXE::GetPath(exePathBuffer, sizeof(exePathBuffer)));
+	if (exePath.empty())
 	{
 		return std::string();
 	}
@@ -45,10 +44,9 @@ std::string LauncherCommon::GetRootFolderPath()
 
 std::string LauncherCommon::GetUserFolderPath()
 {
-	char buffer[512];
-	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof(buffer)));
-
-	if (documentsPath.empty() || documentsPath.length() >= sizeof(buffer))
+	char documentsPathBuffer[OS_MAX_PATH];
+	const StringView documentsPath(documentsPathBuffer, OS::GetDocumentsPath(documentsPathBuffer));
+	if (documentsPath.empty())
 	{
 		return std::string();
 	}
@@ -61,8 +59,8 @@ std::string LauncherCommon::GetUserFolderPath()
 
 void* LauncherCommon::LoadDLL(const char* name)
 {
-	void* mod = OS::DLL::Load(name);
-	if (!mod)
+	void* dll = OS::DLL::Load(name);
+	if (!dll)
 	{
 		const unsigned long errorCode = OS::GetCurrentErrorCode();
 
@@ -82,7 +80,7 @@ void* LauncherCommon::LoadDLL(const char* name)
 		}
 	}
 
-	return mod;
+	return dll;
 }
 
 int LauncherCommon::GetGameBuild(void* pCrySystem)

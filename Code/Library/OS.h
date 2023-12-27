@@ -81,6 +81,8 @@ extern "C"
 
 #define OS_PATH_SLASH "\\"
 
+#define OS_MAX_PATH 260
+
 namespace OS
 {
 	//////////////////
@@ -91,7 +93,7 @@ namespace OS
 	{
 		inline const char* Get()
 		{
-			return ::GetCommandLineA();
+			return GetCommandLineA();
 		}
 
 		const char* GetOnlyArgs();
@@ -107,14 +109,14 @@ namespace OS
 
 	inline unsigned long GetCurrentErrorCode()
 	{
-		return ::GetLastError();
+		return GetLastError();
 	}
 
 	inline std::size_t GetErrorDescription(char* buffer, std::size_t bufferSize, unsigned long code)
 	{
-		const DWORD flags = 0x200 | 0x1000;  // FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS
+		const DWORD flags = 0x200 | 0x1000;  // FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM
 
-		return ::FormatMessageA(flags, NULL, code, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
+		return FormatMessageA(flags, NULL, code, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
 	}
 
 	/////////////
@@ -125,35 +127,32 @@ namespace OS
 	{
 		inline void* Get(const char* name)
 		{
-			return ::GetModuleHandleA(name);
+			return GetModuleHandleA(name);
 		}
 
 		inline void* Load(const char* name)
 		{
-			return ::LoadLibraryA(name);
+			return LoadLibraryA(name);
 		}
 
-		inline void Unload(void* mod)
+		inline void Unload(void* dll)
 		{
-			::FreeLibrary(static_cast<HMODULE>(mod));
+			FreeLibrary(static_cast<HMODULE>(dll));
 		}
 
-		inline void* FindSymbol(void* mod, const char* symbolName)
+		inline void* FindSymbol(void* dll, const char* symbolName)
 		{
-			return ::GetProcAddress(static_cast<HMODULE>(mod), symbolName);
+			return GetProcAddress(static_cast<HMODULE>(dll), symbolName);
 		}
 
-		inline std::size_t GetPath(char* buffer, std::size_t bufferSize, void* mod)
-		{
-			return ::GetModuleFileNameA(static_cast<HMODULE>(mod), buffer, static_cast<DWORD>(bufferSize));
-		}
+		std::size_t GetPath(void* dll, char* buffer, std::size_t bufferSize);
 
 		namespace Version
 		{
-			int GetMajor(void* mod);
-			int GetMinor(void* mod);
-			int GetTweak(void* mod);
-			int GetPatch(void* mod);
+			int GetMajor(void* dll);
+			int GetMinor(void* dll);
+			int GetTweak(void* dll);
+			int GetPatch(void* dll);
 		}
 	}
 
@@ -166,7 +165,7 @@ namespace OS
 
 		inline std::size_t GetPath(char* buffer, std::size_t bufferSize)
 		{
-			return ::GetModuleFileNameA(NULL, buffer, static_cast<DWORD>(bufferSize));
+			return DLL::GetPath(NULL, buffer, bufferSize);
 		}
 
 		namespace Version
@@ -181,7 +180,7 @@ namespace OS
 
 	inline void ErrorBox(const char* message, const char* title = "Error")
 	{
-		::MessageBoxA(NULL, message, title, 0x0 | 0x10);  // MB_OK | MB_ICONERROR
+		MessageBoxA(NULL, message, title, 0x0 | 0x10);  // MB_OK | MB_ICONERROR
 	}
 
 	///////////
@@ -200,7 +199,7 @@ namespace OS
 
 	inline unsigned long GetCurrentThreadID()
 	{
-		return ::GetCurrentThreadId();
+		return GetCurrentThreadId();
 	}
 
 	class Mutex
@@ -214,22 +213,22 @@ namespace OS
 	public:
 		Mutex()
 		{
-			::InitializeCriticalSection(&m_cs);
+			InitializeCriticalSection(&m_cs);
 		}
 
 		~Mutex()
 		{
-			::DeleteCriticalSection(&m_cs);
+			DeleteCriticalSection(&m_cs);
 		}
 
 		void Lock()
 		{
-			::EnterCriticalSection(&m_cs);
+			EnterCriticalSection(&m_cs);
 		}
 
 		void Unlock()
 		{
-			::LeaveCriticalSection(&m_cs);
+			LeaveCriticalSection(&m_cs);
 		}
 	};
 
@@ -260,16 +259,16 @@ namespace OS
 		{
 			const int failIfExists = 0;
 
-			return ::CopyFileA(source, destination, failIfExists) != 0;
+			return ::CopyFileA(source, destination, failIfExists);
 		}
 
 		inline bool CreateDirectory(const char* path)
 		{
-			return ::CreateDirectoryA(path, NULL) != 0 || ::GetLastError() == 183;  // ERROR_ALREADY_EXISTS
+			return ::CreateDirectoryA(path, NULL) || GetLastError() == 183;  // ERROR_ALREADY_EXISTS
 		}
 	}
 
-	std::size_t GetDocumentsPath(char* buffer, std::size_t bufferSize);
+	std::size_t GetDocumentsPath(char (& buffer)[OS_MAX_PATH]);
 
 	//////////
 	// Time //
@@ -307,10 +306,11 @@ namespace OS
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	inline std::size_t GetSystemLanguageCode(char* buffer, std::size_t bufferSize)
 	{
-		return static_cast<std::size_t>(::GetLocaleInfoA(
+		return static_cast<std::size_t>(GetLocaleInfoA(
 			0x800,  // LOCALE_SYSTEM_DEFAULT
 			0x59,   // LOCALE_SISO639LANGNAME
-			buffer, static_cast<int>(bufferSize)
+			buffer,
+			static_cast<int>(bufferSize)
 		));
 	}
 }
