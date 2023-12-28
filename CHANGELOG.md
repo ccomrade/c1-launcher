@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Fixed
+- Incorrectly trimmed spaces from CPU model name in specific cases.
+- Rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.
+
 ## [v5] - 2023-11-03
 ### Added
 - GPU information in the log:
