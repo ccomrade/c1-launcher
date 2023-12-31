@@ -55,7 +55,7 @@ struct SSystemInitParams
 	IValidator* pValidator;              // Optional custom validator
 
 	char cmdLine[2048];                  // Application command line obtained with GetCommandLineA
-	char userPath[256];                  // Optional custom user folder in "%USERPROFILE%/Documents"
+	char userPath[256];                  // Has no effect
 
 	bool isEditor;                       // Editor mode
 	bool isMinimal;                      // Minimal mode

@@ -211,6 +211,19 @@ bool OS::Hack::FillMem(void* address, const void* data, std::size_t dataSize)
 // Files //
 ///////////
 
+std::size_t OS::GetWorkingDirectory(char* buffer, std::size_t bufferSize)
+{
+	std::size_t length = GetCurrentDirectoryA(static_cast<DWORD>(bufferSize), buffer);
+
+	if (length >= bufferSize)
+	{
+		SetLastError(ERROR_INSUFFICIENT_BUFFER);
+		length = 0;
+	}
+
+	return length;
+}
+
 std::size_t OS::GetDocumentsPath(char* buffer, std::size_t bufferSize)
 {
 	char safeBuffer[MAX_PATH];

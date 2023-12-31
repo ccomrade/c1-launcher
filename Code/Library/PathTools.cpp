@@ -6,6 +6,28 @@ static bool is_slash(char ch)
 	return ch == '/' || ch == '\\';
 }
 
+bool PathTools::IsAbsolute(StringView path)
+{
+	if (path.length() >= 1 && is_slash(path[0]))
+	{
+		// also handles UNC paths
+		return true;
+	}
+
+	if (path.length() >= 2 && path[1] == ':')
+	{
+		const char driveLetter = path[0];
+
+		if ((driveLetter >= 'A' && driveLetter <= 'Z')
+		 || (driveLetter >= 'a' && driveLetter <= 'z'))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 StringView PathTools::BaseName(StringView path)
 {
 	std::size_t length = path.length();
@@ -73,6 +95,32 @@ StringView PathTools::RemoveFileExtension(StringView path)
 	}
 
 	return path;
+}
+
+std::string PathTools::GetWorkingDirectory()
+{
+	char cwd[512];
+	return std::string(cwd, OS::GetWorkingDirectory(cwd, sizeof(cwd)));
+}
+
+std::string PathTools::GetDocumentsPath()
+{
+	char path[512];
+	return std::string(path, OS::GetDocumentsPath(path, sizeof(path)));
+}
+
+std::string PathTools::MakeAbsolute(StringView path)
+{
+	if (IsAbsolute(path))
+	{
+		return std::string(path.data(), path.length());
+	}
+
+	std::string result = GetWorkingDirectory();
+	result += OS_PATH_SLASH;
+	result += path;
+
+	return result;
 }
 
 std::string PathTools::Join(StringView pathA, StringView pathB)

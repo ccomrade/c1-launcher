@@ -258,6 +258,7 @@ namespace OS
 		}
 	}
 
+	std::size_t GetWorkingDirectory(char* buffer, std::size_t bufferSize);
 	std::size_t GetDocumentsPath(char* buffer, std::size_t bufferSize);
 
 	//////////

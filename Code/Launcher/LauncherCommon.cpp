@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "CryCommon/CryGame/IGameStartup.h"
+#include "CryCommon/CrySystem/ICryPak.h"
 #include "CryCommon/CrySystem/ISystem.h"
 
 #include "Library/OS.h"
@@ -168,11 +169,53 @@ IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& par
 	return pGameStartup;
 }
 
+static void SetUserDir(const char* path)
+{
+	ICryPak* pCryPak = gEnv->pCryPak;
+
+	pCryPak->MakeDir(path);
+	pCryPak->SetAlias("%USER%", path, true);
+}
+
+static bool HandleUserPathArg()
+{
+	const char* userPath = OS::CmdLine::GetArgValue("-userpath", NULL);
+	if (!userPath)
+	{
+		return false;
+	}
+
+	SetUserDir(PathTools::MakeAbsolute(userPath).c_str());
+
+	return true;
+}
+
+static bool HandleUserDirNameArg()
+{
+	const char* userDirName = OS::CmdLine::GetArgValue("-userdirname", NULL);
+	if (!userDirName)
+	{
+		return false;
+	}
+
+	std::string path = PathTools::GetDocumentsPath();
+	path += OS_PATH_SLASH;
+	path += "My Games";
+	path += OS_PATH_SLASH;
+	path += userDirName;
+
+	SetUserDir(path.c_str());
+
+	return true;
+}
+
 void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
 {
 	gEnv = pSystem->GetGlobalEnvironment();
 
 	CryLogAlways("%s", PROJECT_BANNER);
+
+	HandleUserPathArg() || HandleUserDirNameArg();
 }
 
 std::FILE* LauncherCommon::OpenLogFile(const char* defaultFileName)
