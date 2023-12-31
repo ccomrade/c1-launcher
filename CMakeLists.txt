@@ -33,6 +33,7 @@ add_library(LauncherBase STATIC
 	Code/CryCommon/CryGame/IGameRef.h
 	Code/CryCommon/CryGame/IGameStartup.h
 	Code/CryCommon/CrySystem/IConsole.h
+	Code/CryCommon/CrySystem/ICryPak.h
 	Code/CryCommon/CrySystem/ILog.h
 	Code/CryCommon/CrySystem/ISystem.cpp
 	Code/CryCommon/CrySystem/ISystem.h
