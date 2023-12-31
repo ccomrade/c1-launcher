@@ -44,8 +44,8 @@ std::string LauncherCommon::GetRootFolderPath()
 
 std::string LauncherCommon::GetUserFolderPath()
 {
-	char documentsPathBuffer[OS_MAX_PATH];
-	const StringView documentsPath(documentsPathBuffer, OS::GetDocumentsPath(documentsPathBuffer));
+	char buffer[512];
+	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof(buffer)));
 	if (documentsPath.empty())
 	{
 		return std::string();

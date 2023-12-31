@@ -131,6 +131,7 @@ std::size_t OS::DLL::GetPath(void* dll, char* buffer, std::size_t bufferSize)
 
 	if (length >= bufferSize)
 	{
+		SetLastError(ERROR_INSUFFICIENT_BUFFER);
 		length = 0;
 	}
 
@@ -210,15 +211,26 @@ bool OS::Hack::FillMem(void* address, const void* data, std::size_t dataSize)
 // Files //
 ///////////
 
-std::size_t OS::GetDocumentsPath(char (& buffer)[OS_MAX_PATH])
+std::size_t OS::GetDocumentsPath(char* buffer, std::size_t bufferSize)
 {
-	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, buffer) != S_OK)
+	char safeBuffer[MAX_PATH];
+	if (SHGetFolderPathA(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, safeBuffer) != S_OK)
 	{
 		SetLastError(ERROR_PATH_NOT_FOUND);
 		return 0;
 	}
 
-	return std::strlen(buffer);
+	const std::size_t length = std::strlen(safeBuffer);
+
+	if (length >= bufferSize)
+	{
+		SetLastError(ERROR_INSUFFICIENT_BUFFER);
+		return 0;
+	}
+
+	std::memcpy(buffer, safeBuffer, length + 1);
+
+	return length;
 }
 
 //////////

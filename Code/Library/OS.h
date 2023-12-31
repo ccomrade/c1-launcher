@@ -40,27 +40,16 @@ extern "C"
 
 	__declspec(dllimport) DWORD __stdcall GetLastError();
 	__declspec(dllimport) DWORD __stdcall FormatMessageA(
-		DWORD flags,
-		const void* source,
-		DWORD message,
-		DWORD language,
-		char* buffer,
-		DWORD bufferSize,
-		va_list* args
-	);
+		DWORD flags, const void* source, DWORD message, DWORD language,
+		char* buffer, DWORD bufferSize, va_list* args);
 
 	__declspec(dllimport) HMODULE __stdcall GetModuleHandleA(const char* name);
 	__declspec(dllimport) HMODULE __stdcall LoadLibraryA(const char* name);
 	__declspec(dllimport) int __stdcall FreeLibrary(HMODULE handle);
 	__declspec(dllimport) FARPROC __stdcall GetProcAddress(HMODULE handle, const char* name);
-	__declspec(dllimport) DWORD __stdcall GetModuleFileNameA(HMODULE handle, char* buffer, DWORD bufferSize);
 
 	__declspec(dllimport) int __stdcall MessageBoxA(
-		HWND parentWindow,
-		const char* text,
-		const char* title,
-		unsigned int type
-	);
+		HWND parentWindow, const char* text, const char* title, unsigned int type);
 
 	__declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
 	__declspec(dllimport) void __stdcall InitializeCriticalSection(CRITICAL_SECTION* cs);
@@ -80,8 +69,6 @@ extern "C"
 #define OS_NEWLINE_LENGTH 2
 
 #define OS_PATH_SLASH "\\"
-
-#define OS_MAX_PATH 260
 
 namespace OS
 {
@@ -160,7 +147,7 @@ namespace OS
 	{
 		inline void* Get()
 		{
-			return ::GetModuleHandleA(NULL);
+			return DLL::Get(NULL);
 		}
 
 		inline std::size_t GetPath(char* buffer, std::size_t bufferSize)
@@ -170,7 +157,10 @@ namespace OS
 
 		namespace Version
 		{
-			using namespace DLL::Version;
+			inline int GetMajor() { return DLL::Version::GetMajor(NULL); }
+			inline int GetMinor() { return DLL::Version::GetMinor(NULL); }
+			inline int GetTweak() { return DLL::Version::GetTweak(NULL); }
+			inline int GetPatch() { return DLL::Version::GetPatch(NULL); }
 		}
 	}
 
@@ -268,7 +258,7 @@ namespace OS
 		}
 	}
 
-	std::size_t GetDocumentsPath(char (& buffer)[OS_MAX_PATH]);
+	std::size_t GetDocumentsPath(char* buffer, std::size_t bufferSize);
 
 	//////////
 	// Time //
@@ -306,11 +296,9 @@ namespace OS
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	inline std::size_t GetSystemLanguageCode(char* buffer, std::size_t bufferSize)
 	{
-		return static_cast<std::size_t>(GetLocaleInfoA(
-			0x800,  // LOCALE_SYSTEM_DEFAULT
-			0x59,   // LOCALE_SISO639LANGNAME
-			buffer,
-			static_cast<int>(bufferSize)
-		));
+		const DWORD locale = 0x800;  // LOCALE_SYSTEM_DEFAULT
+		const DWORD type = 0x59;     // LOCALE_SISO639LANGNAME
+
+		return static_cast<std::size_t>(GetLocaleInfoA(locale, type, buffer, static_cast<int>(bufferSize)));
 	}
 }
