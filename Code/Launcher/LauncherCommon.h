@@ -11,7 +11,6 @@ namespace LauncherCommon
 {
 	std::string GetMainFolderPath();
 	std::string GetRootFolderPath();
-	std::string GetUserFolderPath();
 
 	void* LoadDLL(const char* name);
 

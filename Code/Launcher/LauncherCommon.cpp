@@ -43,21 +43,6 @@ std::string LauncherCommon::GetRootFolderPath()
 	return rootArg ? std::string(rootArg) : GetMainFolderPath();
 }
 
-std::string LauncherCommon::GetUserFolderPath()
-{
-	char buffer[512];
-	const StringView documentsPath(buffer, OS::GetDocumentsPath(buffer, sizeof(buffer)));
-	if (documentsPath.empty())
-	{
-		return std::string();
-	}
-
-	// TODO: parse Game/Config/Folders.ini
-	const StringView userFolder("My Games" OS_PATH_SLASH "Crysis");
-
-	return PathTools::Join(documentsPath, userFolder);
-}
-
 void* LauncherCommon::LoadDLL(const char* name)
 {
 	void* dll = OS::DLL::Load(name);
@@ -233,10 +218,10 @@ std::FILE* LauncherCommon::OpenLogFile(const char* defaultFileName)
 	// try root folder first
 	std::FILE* file = std::fopen(PathTools::Join(GetRootFolderPath(), fileName).c_str(), "a");
 
-	if (!file)
+	if (!file && gEnv)
 	{
 		// try user folder instead if root folder is not writable
-		file = std::fopen(PathTools::Join(GetUserFolderPath(), fileName).c_str(), "a");
+		file = std::fopen(PathTools::Join(gEnv->pCryPak->GetAlias("%USER%"), fileName).c_str(), "a");
 	}
 
 	return file;
