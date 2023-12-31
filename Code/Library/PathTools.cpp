@@ -109,6 +109,21 @@ std::string PathTools::GetDocumentsPath()
 	return std::string(path, OS::GetDocumentsPath(path, sizeof(path)));
 }
 
+std::string PathTools::Prettify(StringView path)
+{
+	// make sure it's null-terminated
+	std::string prettyPath(path.data(), path.length());
+
+	char buffer[512];
+	std::size_t length = OS::PretiffyPath(prettyPath.c_str(), buffer, sizeof(buffer));
+	if (length > 0)
+	{
+		prettyPath.assign(buffer, length);
+	}
+
+	return prettyPath;
+}
+
 std::string PathTools::MakeAbsolute(StringView path)
 {
 	if (IsAbsolute(path))

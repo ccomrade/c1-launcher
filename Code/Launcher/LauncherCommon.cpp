@@ -216,6 +216,14 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
 	CryLogAlways("%s", PROJECT_BANNER);
 
 	HandleUserPathArg() || HandleUserDirNameArg();
+
+	const std::string mainDir = PathTools::GetWorkingDirectory();
+	const std::string rootDir = PathTools::Prettify(pSystem->GetRootFolder());
+	const std::string userDir = PathTools::Prettify(gEnv->pCryPak->GetAlias("%USER%"));
+
+	CryLogAlways("Main directory: %s", mainDir.c_str());
+	CryLogAlways("Root directory: %s", rootDir.empty() ? mainDir.c_str() : rootDir.c_str());
+	CryLogAlways("User directory: %s", userDir.c_str());
 }
 
 std::FILE* LauncherCommon::OpenLogFile(const char* defaultFileName)

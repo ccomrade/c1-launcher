@@ -15,6 +15,7 @@ namespace PathTools
 	std::string GetWorkingDirectory();
 	std::string GetDocumentsPath();
 
+	std::string Prettify(StringView path);
 	std::string MakeAbsolute(StringView path);
 
 	std::string Join(StringView pathA, StringView pathB);

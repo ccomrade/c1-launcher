@@ -246,6 +246,61 @@ std::size_t OS::GetDocumentsPath(char* buffer, std::size_t bufferSize)
 	return length;
 }
 
+std::size_t OS::PretiffyPath(const char* path, char* buffer, std::size_t bufferSize)
+{
+	HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
+	if (!kernel32)
+	{
+		return 0;
+	}
+
+	typedef DWORD (*TGetFinalPathNameByHandleA)(HANDLE, LPSTR, DWORD, DWORD);
+
+	// WinVista+
+	TGetFinalPathNameByHandleA pGetFinalPathNameByHandleA =
+		reinterpret_cast<TGetFinalPathNameByHandleA>(GetProcAddress(kernel32, "GetFinalPathNameByHandleA"));
+	if (!pGetFinalPathNameByHandleA)
+	{
+		return 0;
+	}
+
+	const DWORD fileAccess = FILE_READ_ATTRIBUTES;
+	const DWORD fileShare = FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE;
+	const DWORD fileFlags = FILE_FLAG_BACKUP_SEMANTICS;  // required to open directories
+
+	HANDLE file = CreateFileA(path, fileAccess, fileShare, NULL, OPEN_EXISTING, fileFlags, NULL);
+	if (!file)
+	{
+		return 0;
+	}
+
+	std::size_t length = pGetFinalPathNameByHandleA(file, buffer, static_cast<DWORD>(bufferSize), 0);
+
+	CloseHandle(file);
+
+	if (length >= bufferSize)
+	{
+		SetLastError(ERROR_INSUFFICIENT_BUFFER);
+		length = 0;
+	}
+
+	if (length >= 4 && buffer[0] == '\\' && buffer[1] == '\\' && buffer[2] == '?' && buffer[3] == '\\')
+	{
+		if (length >= 6 && buffer[5] == ':')
+		{
+			// "\\?\C:\..." -> "C:\..."
+			std::memmove(buffer, buffer + 4, (length - 4) + 1);
+		}
+		else if (length >= 8 && buffer[4] == 'U' && buffer[5] == 'N' && buffer[6] == 'C' && buffer[7] == '\\')
+		{
+			// "\\?\UNC\..." -> "\\..."
+			std::memmove(buffer + 1, buffer + 7, (length - 6) + 1);
+		}
+	}
+
+	return length;
+}
+
 //////////
 // Time //
 //////////
