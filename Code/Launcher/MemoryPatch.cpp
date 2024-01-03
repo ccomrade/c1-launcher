@@ -2061,6 +2061,135 @@ void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
 	}
 }
 
+/**
+ * Hooks ISystem::ChangeUserPath for changing user directory location.
+ *
+ * The handler is called early during engine initialization right after Game/Config/Folders.ini is parsed.
+ *
+ * @param userPath Relative to the current user's Documents directory. For example, "My Games/Crysis".
+ */
+void MemoryPatch::CrySystem::HookChangeUserPath(void* pCrySystem, int gameBuild,
+	void (*handler)(ISystem* pSystem, const char* userPath))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0xFF, 0xE0,                                                  // jmp rax
+	};
+
+	std::memcpy(&code[2], &handler, 8);
+#else
+	unsigned char code[] = {
+		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
+		0xFF, 0x74, 0x24, 0x04,        // push dword ptr ss:[esp+0x4]
+		0x51,                          // push ecx
+		0xFF, 0xD0,                    // call eax
+		0x83, 0xC4, 0x08,              // add esp, 0x8
+		0xC2, 0x04, 0x00,              // ret 0x4
+	};
+
+	std::memcpy(&code[1], &handler, 4);
+#endif
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pCrySystem, 0x54080, &code, sizeof(code));
+			break;
+		}
+		case 5879:
+		{
+			FillMem(pCrySystem, 0x55750, &code, sizeof(code));
+			break;
+		}
+		case 6115:
+		{
+			FillMem(pCrySystem, 0x54C50, &code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCrySystem, 0x54BF0, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		{
+			FillMem(pCrySystem, 0x5BA60, &code, sizeof(code));
+			break;
+		}
+		case 6586:
+		{
+			FillMem(pCrySystem, 0x563B0, &code, sizeof(code));
+			break;
+		}
+		case 6627:
+		{
+			FillMem(pCrySystem, 0x590A0, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		case 6729:
+		{
+			FillMem(pCrySystem, 0x59160, &code, sizeof(code));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillMem(pCrySystem, 0x63E30, &code, sizeof(code));
+			break;
+		}
+		case 5879:
+		{
+			FillMem(pCrySystem, 0x644C0, &code, sizeof(code));
+			break;
+		}
+		case 6115:
+		{
+			FillMem(pCrySystem, 0x64190, &code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCrySystem, 0x61B00, &code, sizeof(code));
+			break;
+		}
+		case 6527:
+		{
+			FillMem(pCrySystem, 0x62800, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		{
+			FillMem(pCrySystem, 0x651A0, &code, sizeof(code));
+			break;
+		}
+		case 6586:
+		{
+			FillMem(pCrySystem, 0x62550, &code, sizeof(code));
+			break;
+		}
+		case 6627:
+		{
+			FillMem(pCrySystem, 0x634E0, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pCrySystem, 0x635F0, &code, sizeof(code));
+			break;
+		}
+		case 6729:
+		{
+			FillMem(pCrySystem, 0x63600, &code, sizeof(code));
+			break;
+		}
+#endif
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CryRenderD3D9
 ////////////////////////////////////////////////////////////////////////////////

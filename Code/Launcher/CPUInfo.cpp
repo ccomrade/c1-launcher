@@ -49,7 +49,6 @@ static unsigned int GetFeatures()
 
 void CPUInfo::Detect(CPUInfo* self, ISystem* pSystem)
 {
-	// CPU detection is the earliest intercepted stage of CryEngine initialization
 	LauncherCommon::OnEarlyEngineInit(pSystem);
 
 	const unsigned int coreCount = GetCoreCount();

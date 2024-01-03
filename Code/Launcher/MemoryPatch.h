@@ -44,6 +44,8 @@ namespace MemoryPatch
 			void (*handler)(const char* format, va_list args));
 		void HookLanguageInit(void* pCrySystem, int gameBuild,
 			void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager));
+		void HookChangeUserPath(void* pCrySystem, int gameBuild,
+			void (*handler)(ISystem* pSystem, const char* userPath));
 	}
 
 	namespace CryRenderD3D9

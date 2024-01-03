@@ -21,6 +21,7 @@ namespace LauncherCommon
 
 	IGameStartup* StartEngine(void* pCryGame, SSystemInitParams& params);
 
+	void OnChangeUserPath(ISystem* pSystem, const char* userPath);
 	void OnEarlyEngineInit(ISystem* pSystem);
 
 	std::FILE* OpenLogFile(const char* defaultFileName);

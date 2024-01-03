@@ -26,10 +26,9 @@ std::string LauncherCommon::GetMainFolderPath()
 	const StringView exeFolderName = PathTools::BaseName(mainFolderPath);
 	const bool insideBin = exeFolderName.compare_no_case("Bin32") == 0
 	                    || exeFolderName.compare_no_case("Bin64") == 0;
-
 	if (insideBin)
 	{
-		// remove Bin32 or Bin64
+		// remove Bin32 or Bin64 from the path
 		mainFolderPath = PathTools::DirName(mainFolderPath);
 	}
 
@@ -194,13 +193,23 @@ static bool HandleUserDirNameArg()
 	return true;
 }
 
+void LauncherCommon::OnChangeUserPath(ISystem* pSystem, const char* userPath)
+{
+	gEnv = pSystem->GetGlobalEnvironment();
+
+	if (HandleUserPathArg() || HandleUserDirNameArg())
+	{
+		return;
+	}
+
+	SetUserDir(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
+}
+
 void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
 {
 	gEnv = pSystem->GetGlobalEnvironment();
 
 	CryLogAlways("%s", PROJECT_BANNER);
-
-	HandleUserPathArg() || HandleUserDirNameArg();
 
 	const std::string mainDir = PathTools::GetWorkingDirectory();
 	const std::string rootDir = PathTools::Prettify(pSystem->GetRootFolder());
