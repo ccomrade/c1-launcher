@@ -254,7 +254,7 @@ std::size_t OS::PretiffyPath(const char* path, char* buffer, std::size_t bufferS
 		return 0;
 	}
 
-	typedef DWORD (*TGetFinalPathNameByHandleA)(HANDLE, LPSTR, DWORD, DWORD);
+	typedef DWORD (__stdcall *TGetFinalPathNameByHandleA)(HANDLE, LPSTR, DWORD, DWORD);
 
 	// WinVista+
 	TGetFinalPathNameByHandleA pGetFinalPathNameByHandleA =
