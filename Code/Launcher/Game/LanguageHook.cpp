@@ -69,7 +69,7 @@ static bool LanguagePakExists(const char* language)
 
 static const char* ChooseLanguage(const char* defaultLanguage, ICVar* pLanguageCVar)
 {
-	const char* language = OS::CmdLine::GetArgValue("-language");
+	const char* language = OS::CmdLine::GetArgValue("-language", "");
 	if (*language)
 	{
 		return language;
