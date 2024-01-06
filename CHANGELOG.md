@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `-userpath .` => Crysis main directory
     - `-userpath Something\MyFolder` => Crysis main directory + `Something\MyFolder` (relative path)
     - `-userpath C:\Something\MyFolder` => `C:\Something\MyFolder` (absolute path)
+- Mods can now request their own user directory in `Documents/My Games/` by exporting `GetUserDirName` function:
+```cpp
+extern "C" __declspec(dllexport) const char* GetUserDirName()
+{
+    return "My Mod";  // -> "Documents/My Games/My Mod"
+}
+```
 ### Fixed
 - Incorrectly trimmed spaces from CPU model name in specific cases.
 - Rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.

@@ -153,12 +153,23 @@ IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& par
 	return pGameStartup;
 }
 
-static void SetUserDir(const char* path)
+static void SetUserDirPath(const char* path)
 {
 	ICryPak* pCryPak = gEnv->pCryPak;
 
 	pCryPak->MakeDir(path);
 	pCryPak->SetAlias("%USER%", path, true);
+}
+
+static void SetUserDirName(const char* name)
+{
+	std::string path = PathTools::GetDocumentsPath();
+	path += OS_PATH_SLASH;
+	path += "My Games";
+	path += OS_PATH_SLASH;
+	path += name;
+
+	SetUserDirPath(path.c_str());
 }
 
 static bool HandleUserPathArg()
@@ -169,7 +180,7 @@ static bool HandleUserPathArg()
 		return false;
 	}
 
-	SetUserDir(PathTools::MakeAbsolute(userPath).c_str());
+	SetUserDirPath(PathTools::MakeAbsolute(userPath).c_str());
 
 	return true;
 }
@@ -182,14 +193,59 @@ static bool HandleUserDirNameArg()
 		return false;
 	}
 
-	std::string path = PathTools::GetDocumentsPath();
-	path += OS_PATH_SLASH;
-	path += "My Games";
-	path += OS_PATH_SLASH;
-	path += userDirName;
+	SetUserDirName(userDirName);
 
-	SetUserDir(path.c_str());
+	return true;
+}
 
+static bool HandleModUserDirName()
+{
+	const char* mod = OS::CmdLine::GetArgValue("-mod", NULL);
+	if (!mod)
+	{
+		return false;
+	}
+
+	std::string modDLLPath = "Mods";
+	modDLLPath += OS_PATH_SLASH;
+	modDLLPath += mod;
+	modDLLPath += OS_PATH_SLASH;
+#ifdef BUILD_64BIT
+	modDLLPath += "Bin64";
+#else
+	modDLLPath += "Bin32";
+#endif
+	modDLLPath += OS_PATH_SLASH;
+	modDLLPath += mod;
+	modDLLPath += ".dll";
+
+	void* modDLL = OS::DLL::Load(modDLLPath.c_str());
+	if (!modDLL)
+	{
+		// the mod has no DLL or it failed to load
+		// continue engine startup and let CryGame's mod loader to deal with it
+		return false;
+	}
+
+	typedef const char* (*TGetUserDirName)();
+
+	TGetUserDirName pGetUserDirName = static_cast<TGetUserDirName>(OS::DLL::FindSymbol(modDLL, "GetUserDirName"));
+	if (!pGetUserDirName)
+	{
+		// the mod is not requesting a custom user directory
+		return false;
+	}
+
+	const char* modUserDirName = pGetUserDirName();
+	if (!modUserDirName || !*modUserDirName)
+	{
+		// do nothing with empty string
+		return false;
+	}
+
+	SetUserDirName(modUserDirName);
+
+	// keep the mod DLL loaded to avoid wasting time by loading it again in CryGame's mod loader
 	return true;
 }
 
@@ -197,12 +253,12 @@ void LauncherCommon::OnChangeUserPath(ISystem* pSystem, const char* userPath)
 {
 	gEnv = pSystem->GetGlobalEnvironment();
 
-	if (HandleUserPathArg() || HandleUserDirNameArg())
+	if (HandleUserPathArg() || HandleUserDirNameArg() || HandleModUserDirName())
 	{
 		return;
 	}
 
-	SetUserDir(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
+	SetUserDirPath(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
 }
 
 void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
