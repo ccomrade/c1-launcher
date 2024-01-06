@@ -153,7 +153,7 @@ IGameStartup* LauncherCommon::StartEngine(void* pCryGame, SSystemInitParams& par
 	return pGameStartup;
 }
 
-static void SetUserDirPath(const char* path)
+static void SetUserDir(const char* path)
 {
 	ICryPak* pCryPak = gEnv->pCryPak;
 
@@ -161,7 +161,7 @@ static void SetUserDirPath(const char* path)
 	pCryPak->SetAlias("%USER%", path, true);
 }
 
-static void SetUserDirName(const char* name)
+static void SetUserDirInMyGames(const char* name)
 {
 	std::string path = PathTools::GetDocumentsPath();
 	path += OS_PATH_SLASH;
@@ -169,7 +169,7 @@ static void SetUserDirName(const char* name)
 	path += OS_PATH_SLASH;
 	path += name;
 
-	SetUserDirPath(path.c_str());
+	SetUserDir(path.c_str());
 }
 
 static bool HandleUserPathArg()
@@ -180,7 +180,7 @@ static bool HandleUserPathArg()
 		return false;
 	}
 
-	SetUserDirPath(PathTools::MakeAbsolute(userPath).c_str());
+	SetUserDir(PathTools::MakeAbsolute(userPath).c_str());
 
 	return true;
 }
@@ -193,7 +193,7 @@ static bool HandleUserDirNameArg()
 		return false;
 	}
 
-	SetUserDirName(userDirName);
+	SetUserDirInMyGames(userDirName);
 
 	return true;
 }
@@ -206,6 +206,7 @@ static bool HandleModUserDirName()
 		return false;
 	}
 
+	// absolute path is not needed because main directory is set as working directory at this point
 	std::string modDLLPath = "Mods";
 	modDLLPath += OS_PATH_SLASH;
 	modDLLPath += mod;
@@ -243,7 +244,7 @@ static bool HandleModUserDirName()
 		return false;
 	}
 
-	SetUserDirName(modUserDirName);
+	SetUserDirInMyGames(modUserDirName);
 
 	// keep the mod DLL loaded to avoid wasting time by loading it again in CryGame's mod loader
 	return true;
@@ -258,7 +259,7 @@ void LauncherCommon::OnChangeUserPath(ISystem* pSystem, const char* userPath)
 		return;
 	}
 
-	SetUserDirPath(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
+	SetUserDir(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
 }
 
 void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
