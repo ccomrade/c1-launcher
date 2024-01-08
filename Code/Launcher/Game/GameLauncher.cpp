@@ -47,6 +47,29 @@ static void OnD3D10Info(MemoryPatch::CryRenderD3D10::AdapterInfo* info)
 	LogBytes("D3D10 Adapter: Shared system memory = ", info->shared_system_memory);
 }
 
+static bool InitD3D10(MemoryPatch::CryRenderD3D10::API* api)
+{
+	void* d3d10 = OS::DLL::Load("d3d10.dll");
+	if (!d3d10)
+	{
+		return false;
+	}
+
+	api->pD3D10 = d3d10;
+	api->pD3D10CreateDevice = OS::DLL::FindSymbol(d3d10, "D3D10CreateDevice");
+
+	void* dxgi = OS::DLL::Load("dxgi.dll");
+	if (!dxgi)
+	{
+		return false;
+	}
+
+	api->pDXGI = dxgi;
+	api->pCreateDXGIFactory = OS::DLL::FindSymbol(dxgi, "CreateDXGIFactory");
+
+	return true;
+}
+
 GameLauncher::GameLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
 {
 }
@@ -150,5 +173,6 @@ void GameLauncher::PatchEngine()
 	{
 		MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(m_dlls.pCryRenderD3D10, m_dlls.gameBuild);
 		MemoryPatch::CryRenderD3D10::HookAdapterInfo(m_dlls.pCryRenderD3D10, m_dlls.gameBuild, &OnD3D10Info);
+		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild, &InitD3D10);
 	}
 }
