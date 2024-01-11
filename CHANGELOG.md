@@ -19,6 +19,8 @@ extern "C" __declspec(dllexport) const char* GetUserDirName()
     return "My Mod";  // -> "Documents/My Games/My Mod"
 }
 ```
+- DX10 renderer now supports [overriding d3d10.dll and dxgi.dll](https://github.com/ccomrade/c1-launcher/issues/34)
+by placing them into the same directory.
 ### Fixed
 - Incorrectly trimmed spaces from CPU model name in specific cases.
 - Rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.
