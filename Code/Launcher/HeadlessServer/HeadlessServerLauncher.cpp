@@ -77,7 +77,7 @@ int HeadlessServerLauncher::Run()
 	m_logger.SetPrefix(logPrefix);
 
 	Print("Starting CryEngine...");
-	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.isWarhead ? m_dlls.pEXE : m_dlls.pCryGame, m_params);
 
 	Print("Ready");
 
@@ -89,18 +89,32 @@ void HeadlessServerLauncher::LoadEngine()
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	m_dlls.isWarhead = LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild);
 	Print("Game build: %d", m_dlls.gameBuild);
 
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
-	m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	if (m_dlls.isWarhead)
+	{
+		m_dlls.pEXE = LauncherCommon::LoadCrysisWarheadEXE();
+	}
+	else
+	{
+		m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+		m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	}
+
 	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 	m_dlls.pCryRenderNULL = LauncherCommon::LoadDLL("CryRenderNULL.dll");
 }
 
 void HeadlessServerLauncher::PatchEngine()
 {
+	if (m_dlls.isWarhead && m_dlls.pEXE)
+	{
+		MemoryPatch::CryAction::DisableGameplayStats(m_dlls.pEXE, m_dlls.gameBuild);
+	}
+
 	if (m_dlls.pCryAction)
 	{
 		MemoryPatch::CryAction::DisableGameplayStats(m_dlls.pCryAction, m_dlls.gameBuild);

@@ -4,6 +4,7 @@
 #include "CryCommon/CrySystem/ICryPak.h"
 #include "CryCommon/CrySystem/ISystem.h"
 
+#include "Library/EXELoader.h"
 #include "Library/OS.h"
 #include "Library/PathTools.h"
 #include "Library/StringFormat.h"
@@ -68,6 +69,30 @@ void* LauncherCommon::LoadDLL(const char* name)
 	return dll;
 }
 
+void* LauncherCommon::LoadEXE(const char* name)
+{
+	EXELoader::Result result = EXELoader::Load(name);
+	if (!result.exe)
+	{
+		throw StringFormat_SysError(result.sysError, "Failed to load %s\n\n%s", name,
+			EXELoader::errorNames[result.error]);
+	}
+
+	return result.exe;
+}
+
+void* LauncherCommon::LoadCrysisWarheadEXE()
+{
+	// CryGame and CryAction are integrated into the EXE in Crysis Warhead
+#ifdef BUILD_64BIT
+	return LoadEXE("Crysis64.exe");
+#else
+	// TODO: SecuROM unpacker
+	//return LoadEXE("Crysis.exe");
+	throw StringFormat_Error("32-bit Crysis Warhead is not supported!");
+#endif
+}
+
 int LauncherCommon::GetGameBuild(void* pCrySystem)
 {
 	int gameBuild = OS::DLL::Version::GetPatch(pCrySystem);
@@ -105,18 +130,38 @@ void LauncherCommon::VerifyGameBuild(int gameBuild)
 			// Crysis Wars
 			break;
 		}
+#ifdef BUILD_64BIT
+		// 64-bit binaries are missing in the first build of Crysis Warhead
+#else
 		case 687:
+#endif
 		case 710:
 		case 711:
 		{
 			// Crysis Warhead
-			throw StringFormat_Error("Crysis Warhead is not supported!");
+			break;
 		}
 		default:
 		{
 			throw StringFormat_Error("Unknown game build %d", gameBuild);
 		}
 	}
+}
+
+bool LauncherCommon::IsCrysisWarhead(int gameBuild)
+{
+	switch (gameBuild)
+	{
+		case 687:
+		case 710:
+		case 711:
+		{
+			// Crysis Warhead
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void LauncherCommon::SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine)

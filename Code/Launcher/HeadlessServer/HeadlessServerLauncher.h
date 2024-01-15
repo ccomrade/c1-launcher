@@ -15,6 +15,7 @@ class HeadlessServerLauncher : private ISystemUserCallback
 
 	struct DLLs
 	{
+		void* pEXE;
 		void* pCryGame;
 		void* pCryAction;
 		void* pCryNetwork;
@@ -22,6 +23,7 @@ class HeadlessServerLauncher : private ISystemUserCallback
 		void* pCryRenderNULL;
 
 		int gameBuild;
+		bool isWarhead;
 	};
 
 	DLLs m_dlls;

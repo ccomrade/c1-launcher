@@ -94,7 +94,7 @@ int GameLauncher::Run()
 	this->LoadEngine();
 	this->PatchEngine();
 
-	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.isWarhead ? m_dlls.pEXE : m_dlls.pCryGame, m_params);
 
 	return m_pGameStartup->Run(NULL);
 }
@@ -104,11 +104,20 @@ void GameLauncher::LoadEngine()
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	m_dlls.isWarhead = LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild);
 
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
-	m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	if (m_dlls.isWarhead)
+	{
+		m_dlls.pEXE = LauncherCommon::LoadCrysisWarheadEXE();
+	}
+	else
+	{
+		m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+		m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	}
+
 	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 
 	if (!m_params.isDedicatedServer && !OS::CmdLine::HasArg("-dedicated"))
@@ -126,12 +135,24 @@ void GameLauncher::LoadEngine()
 
 void GameLauncher::PatchEngine()
 {
+	const bool patchIntros = !OS::CmdLine::HasArg("-splash");
+
+	if (m_dlls.isWarhead && m_dlls.pEXE)
+	{
+		if (patchIntros)
+		{
+			MemoryPatch::CryGame::DisableIntros(m_dlls.pEXE, m_dlls.gameBuild);
+		}
+
+		MemoryPatch::CryAction::AllowDX9ImmersiveMultiplayer(m_dlls.pEXE, m_dlls.gameBuild);
+	}
+
 	if (m_dlls.pCryGame)
 	{
 		MemoryPatch::CryGame::CanJoinDX10Servers(m_dlls.pCryGame, m_dlls.gameBuild);
 		MemoryPatch::CryGame::EnableDX10Menu(m_dlls.pCryGame, m_dlls.gameBuild);
 
-		if (!OS::CmdLine::HasArg("-splash"))
+		if (patchIntros)
 		{
 			MemoryPatch::CryGame::DisableIntros(m_dlls.pCryGame, m_dlls.gameBuild);
 		}

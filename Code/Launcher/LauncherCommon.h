@@ -13,9 +13,12 @@ namespace LauncherCommon
 	std::string GetRootFolderPath();
 
 	void* LoadDLL(const char* name);
+	void* LoadEXE(const char* name);
+	void* LoadCrysisWarheadEXE();
 
 	int GetGameBuild(void* pCrySystem);
 	void VerifyGameBuild(int gameBuild);
+	bool IsCrysisWarhead(int gameBuild);
 
 	void SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine);
 
