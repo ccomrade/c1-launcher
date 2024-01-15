@@ -48,6 +48,8 @@ add_library(LauncherBase STATIC
 	Code/Library/CPUID.h
 	Code/Library/CrashLogger.cpp
 	Code/Library/CrashLogger.h
+	Code/Library/EXELoader.cpp
+	Code/Library/EXELoader.h
 	Code/Library/OS.cpp
 	Code/Library/OS.h
 	Code/Library/PathTools.cpp
