@@ -241,57 +241,6 @@ static void initterm(PVFV* begin, PVFV* end)
 	}
 }
 
-/*
-static bool CallGlobalConstructors(HMODULE exe)
-{
-	const IMAGE_DATA_DIRECTORY* iat_data = GetDirectoryData(exe, IMAGE_DIRECTORY_ENTRY_IAT);
-	if (!pIATData)
-	{
-		throw Error("Failed to locate IAT");
-	}
-
-	void** cpp_begin = static_cast<void**>(RVA(exe, pIATData->VirtualAddress + pIATData->Size));
-	void** cpp_end = cpp_begin;
-
-	void* pIAT = RVA(exe, pIATData->VirtualAddress);
-
-	while (*cpp_end < pIAT)
-	{
-		cpp_end++;
-	}
-
-	void** c_end = cpp_end;
-
-	if (cpp_end > cpp_begin)
-	{
-		cpp_end--;
-	}
-
-	while (*cpp_end == NULL && cpp_end > cpp_begin)
-	{
-		cpp_end--;
-	}
-
-	while (*cpp_end != NULL && cpp_end > cpp_begin)
-	{
-		cpp_end--;
-	}
-
-	void** c_begin = cpp_end;
-
-	GlobalInitializerList result;
-	result.c = reinterpret_cast<TGlobalInitializerC*>(c_begin);
-	result.c_count = c_end - c_begin;
-	result.cpp = reinterpret_cast<TGlobalInitializerCPP*>(cpp_begin);
-	result.cpp_count = cpp_end - cpp_begin;
-
-	return result;
-	// TODO
-
-	return true;
-}
-*/
-
 EXELoader::Result EXELoader::Load(const char* name)
 {
 	HMODULE exe = LoadLibraryA(name);
