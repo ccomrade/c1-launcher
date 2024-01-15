@@ -47,11 +47,11 @@ void* LauncherCommon::LoadDLL(const char* name)
 	void* dll = OS::DLL::Load(name);
 	if (!dll)
 	{
-		const unsigned long errorCode = OS::GetCurrentErrorCode();
+		const unsigned long sysError = OS::GetSysError();
 
-		if (errorCode == 193)  // ERROR_BAD_EXE_FORMAT
+		if (sysError == 193)  // ERROR_BAD_EXE_FORMAT
 		{
-			throw StringFormat_OSError("Failed to load %s\n\n"
+			throw StringFormat_SysError("Failed to load %s\n\n"
 #ifdef BUILD_64BIT
 				"It seems you have 32-bit DLLs in Bin64 directory! Fix it!",
 #else
@@ -61,7 +61,7 @@ void* LauncherCommon::LoadDLL(const char* name)
 		}
 		else
 		{
-			throw StringFormat_OSError("Failed to load %s", name);
+			throw StringFormat_SysError("Failed to load %s", name);
 		}
 	}
 
@@ -73,7 +73,7 @@ int LauncherCommon::GetGameBuild(void* pCrySystem)
 	int gameBuild = OS::DLL::Version::GetPatch(pCrySystem);
 	if (gameBuild < 0)
 	{
-		throw StringFormat_OSError("Failed to get the game version!");
+		throw StringFormat_SysError("Failed to get the game version!");
 	}
 
 	return gameBuild;

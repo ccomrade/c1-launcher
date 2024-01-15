@@ -85,7 +85,7 @@ static void BackupLogFile(const char* logPath)
 
 	if (!OS::FileSystem::CreateDirectory(backupPath.c_str()))
 	{
-		throw StringFormat_OSError("Failed to create log backup directory!\n=> %s", backupPath.c_str());
+		throw StringFormat_SysError("Failed to create log backup directory!\n=> %s", backupPath.c_str());
 	}
 
 	backupPath += OS_PATH_SLASH;
@@ -95,7 +95,7 @@ static void BackupLogFile(const char* logPath)
 
 	if (!OS::FileSystem::CopyFile(logPath, backupPath.c_str()))
 	{
-		throw StringFormat_OSError("Failed to copy the log file!\n<= %s\n=> %s", logPath, backupPath.c_str());
+		throw StringFormat_SysError("Failed to copy the log file!\n<= %s\n=> %s", logPath, backupPath.c_str());
 	}
 }
 
@@ -107,7 +107,7 @@ void Logger::OpenFile(const char* logPath)
 
 	if (!m_file.Open(logPath, "w"))
 	{
-		throw StringFormat_OSError("Failed to open log file!\n=> %s", logPath);
+		throw StringFormat_SysError("Failed to open log file!\n=> %s", logPath);
 	}
 
 	m_filePath = logPath;

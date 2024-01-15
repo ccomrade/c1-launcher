@@ -23,7 +23,7 @@ static NOINLINE void FillNop(void* base, std::size_t offset, std::size_t size)
 
 	if (!OS::Hack::FillNop(address, size))
 	{
-		throw StringFormat_OSError("Failed to apply patch at %p", address);
+		throw StringFormat_SysError("Failed to apply patch at %p", address);
 	}
 }
 
@@ -33,7 +33,7 @@ static NOINLINE void FillMem(void* base, std::size_t offset, const void* data, s
 
 	if (!OS::Hack::FillMem(address, data, dataSize))
 	{
-		throw StringFormat_OSError("Failed to apply patch at %p", address);
+		throw StringFormat_SysError("Failed to apply patch at %p", address);
 	}
 }
 

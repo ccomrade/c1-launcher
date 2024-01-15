@@ -102,25 +102,42 @@ std::runtime_error StringFormat_Error(const char* format, ...)
 	return std::runtime_error(message);
 }
 
-std::runtime_error StringFormat_OSError(const char* format, ...)
+std::runtime_error StringFormat_SysError(const char* format, ...)
 {
-	const unsigned long code = OS::GetCurrentErrorCode();
+	const unsigned long sysError = OS::GetSysError();
 
 	va_list args;
 	va_start(args, format);
-	std::string message = StringFormatV(format, args);
+	std::runtime_error error = StringFormatV_SysError(sysError, format, args);
 	va_end(args);
 
-	if (code != 0)
+	return error;
+}
+
+std::runtime_error StringFormat_SysError(unsigned long sysError, const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	std::runtime_error error = StringFormatV_SysError(sysError, format, args);
+	va_end(args);
+
+	return error;
+}
+
+std::runtime_error StringFormatV_SysError(unsigned long sysError, const char* format, va_list args)
+{
+	std::string message = StringFormatV(format, args);
+
+	if (sysError != 0)
 	{
 		char description[512];
-		if (OS::GetErrorDescription(description, sizeof(description), code))
+		if (OS::GetSysErrorDescription(description, sizeof(description), sysError))
 		{
-			StringFormatTo(message, "\n\nError %u: %s", code, description);
+			StringFormatTo(message, "\n\nError %lu: %s", sysError, description);
 		}
 		else
 		{
-			StringFormatTo(message, "\n\nError %u", code);
+			StringFormatTo(message, "\n\nError %lu", sysError);
 		}
 	}
 

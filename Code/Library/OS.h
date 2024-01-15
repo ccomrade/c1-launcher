@@ -94,16 +94,16 @@ namespace OS
 	// Errors //
 	////////////
 
-	inline unsigned long GetCurrentErrorCode()
+	inline unsigned long GetSysError()
 	{
 		return GetLastError();
 	}
 
-	inline std::size_t GetErrorDescription(char* buffer, std::size_t bufferSize, unsigned long code)
+	inline std::size_t GetSysErrorDescription(char* buffer, std::size_t bufferSize, unsigned long sysError)
 	{
 		const DWORD flags = 0x200 | 0x1000;  // FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM
 
-		return FormatMessageA(flags, NULL, code, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
+		return FormatMessageA(flags, NULL, sysError, 0, buffer, static_cast<DWORD>(bufferSize), NULL);
 	}
 
 	/////////////
