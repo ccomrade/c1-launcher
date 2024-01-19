@@ -192,6 +192,11 @@ static HMODULE FindLoadedDLL(const char* name)
 	return FindLoadedDLL(wideName);
 }
 
+static void* __stdcall FakeSetUnhandledExceptionFilter(void*)
+{
+	return NULL;
+}
+
 static void* FindThunkFunction(HMODULE exe, HMODULE dll, const IMAGE_THUNK_DATA* thunk)
 {
 	const char* name = NULL;
@@ -205,6 +210,12 @@ static void* FindThunkFunction(HMODULE exe, HMODULE dll, const IMAGE_THUNK_DATA*
 		IMAGE_IMPORT_BY_NAME* data = static_cast<IMAGE_IMPORT_BY_NAME*>(RVA(exe, thunk->u1.AddressOfData));
 
 		name = reinterpret_cast<const char*>(data->Name);
+
+		if (std::strcmp(name, "SetUnhandledExceptionFilter") == 0)
+		{
+			// prevent the EXE from disabling our crash logger
+			return &FakeSetUnhandledExceptionFilter;
+		}
 	}
 
 	return GetProcAddress(dll, name);
