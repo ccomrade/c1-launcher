@@ -10,11 +10,13 @@ class DedicatedServerLauncher
 
 	struct DLLs
 	{
+		void* pEXE;
 		void* pCryGame;
 		void* pCryNetwork;
 		void* pCrySystem;
 
 		int gameBuild;
+		bool isWarhead;
 	};
 
 	DLLs m_dlls;

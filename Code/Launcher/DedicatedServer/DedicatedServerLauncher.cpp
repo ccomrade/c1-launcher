@@ -39,7 +39,7 @@ int DedicatedServerLauncher::Run()
 	this->LoadEngine();
 	this->PatchEngine();
 
-	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.pCryGame, m_params);
+	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.isWarhead ? m_dlls.pEXE : m_dlls.pCryGame, m_params);
 
 	return m_pGameStartup->Run(NULL);
 }
@@ -49,10 +49,19 @@ void DedicatedServerLauncher::LoadEngine()
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	m_dlls.isWarhead = LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild);
 
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+	if (m_dlls.isWarhead)
+	{
+		m_dlls.pEXE = LauncherCommon::LoadCrysisWarheadEXE();
+	}
+	else
+	{
+		m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+	}
+
 	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
 }
 
