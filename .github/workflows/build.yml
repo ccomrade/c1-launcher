@@ -39,7 +39,9 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: c1-launcher-${{ inputs.arch }}
+          name: c1-launcher-${{ inputs.arch }}-${{ github.sha }}
           path: |
             ${{ github.workspace }}\Build\*.exe
             ${{ github.workspace }}\Build\*.pdb
+            ${{ github.workspace }}\Build\Wars\*.exe
+            ${{ github.workspace }}\Build\Wars\*.pdb
