@@ -77,25 +77,71 @@ target_link_options(LauncherBase PUBLIC /DYNAMICBASE:NO /LARGEADDRESSAWARE)
 
 ################################################################################
 
-add_executable(Crysis WIN32
+add_library(GameLauncher STATIC
 	Code/Launcher/Game/GameLauncher.cpp
 	Code/Launcher/Game/GameLauncher.h
 	Code/Launcher/Game/LanguageHook.cpp
 	Code/Launcher/Game/LanguageHook.h
-	Code/Launcher/Game/Main.cpp
 	Code/Launcher/Game/Resources.h
-	Resources/Launcher.manifest
-	Resources/GameLauncher.rc
 )
+
+target_link_libraries(GameLauncher LauncherBase)
+
+################################################################################
+
+add_executable(Crysis WIN32
+	Code/Launcher/Game/Main.cpp
+	Resources/Crysis.rc
+	Resources/Launcher.manifest
+)
+
+target_link_libraries(Crysis GameLauncher)
+
+################################################################################
+
+# 32-bit Warhead is not supported yet
+if(BUILD_BITS EQUAL 64)
+
+add_executable(CrysisWarheadLauncher WIN32
+	Code/Launcher/Game/Main.cpp
+	Resources/CrysisWarhead.rc
+	Resources/Launcher.manifest
+)
+
+target_link_libraries(CrysisWarheadLauncher GameLauncher)
+
+endif()
+
+################################################################################
+
+add_executable(CrysisWars WIN32
+	Code/Launcher/Game/Main.cpp
+	Resources/CrysisWars.rc
+	Resources/Launcher.manifest
+)
+
+target_link_libraries(CrysisWars GameLauncher)
+
+set_target_properties(CrysisWars
+	PROPERTIES
+		RUNTIME_OUTPUT_NAME Crysis
+		RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Wars
+)
+
+################################################################################
 
 add_executable(CrysisDedicatedServer WIN32
 	Code/Launcher/DedicatedServer/DedicatedServerLauncher.cpp
 	Code/Launcher/DedicatedServer/DedicatedServerLauncher.h
 	Code/Launcher/DedicatedServer/Main.cpp
 	Code/Launcher/DedicatedServer/Resources.h
+	Resources/DedicatedServer.rc
 	Resources/Launcher.manifest
-	Resources/DedicatedServerLauncher.rc
 )
+
+target_link_libraries(CrysisDedicatedServer LauncherBase)
+
+################################################################################
 
 add_executable(CrysisHeadlessServer
 	Code/Launcher/HeadlessServer/HeadlessServerLauncher.cpp
@@ -104,34 +150,29 @@ add_executable(CrysisHeadlessServer
 	Code/Launcher/HeadlessServer/Logger.h
 	Code/Launcher/HeadlessServer/Main.cpp
 	Code/Launcher/HeadlessServer/NullValidator.h
-	Resources/HeadlessServerLauncher.rc
+	Resources/HeadlessServer.rc
 )
 
-target_link_libraries(Crysis LauncherBase)
-target_link_libraries(CrysisDedicatedServer LauncherBase)
 target_link_libraries(CrysisHeadlessServer LauncherBase)
 
 ################################################################################
 
-set(GAME_LAUNCHER_RESOURCES
+set(CURSORS
 	${PROJECT_SOURCE_DIR}/Resources/CursorAmber.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorBlue.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorGreen.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorRed.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorWhite.cur
-	${PROJECT_SOURCE_DIR}/Resources/GameIcon.ico
 )
 
-set(DEDICATED_SERVER_LAUNCHER_RESOURCES
-	${PROJECT_SOURCE_DIR}/Resources/DedicatedServerIcon.ico
-)
+set(CRYSIS_RESOURCES           ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/Crysis.ico)
+set(CRYSIS_WARHEAD_RESOURCES   ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWarhead.ico)
+set(CRYSIS_WARS_RESOURCES      ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWars.ico)
+set(DEDICATED_SERVER_RESOURCES            ${PROJECT_SOURCE_DIR}/Resources/DedicatedServer.ico)
 
-set_source_files_properties(Resources/GameLauncher.rc
-	PROPERTIES OBJECT_DEPENDS "${GAME_LAUNCHER_RESOURCES}"
-)
-
-set_source_files_properties(Resources/DedicatedServerLauncher.rc
-	PROPERTIES OBJECT_DEPENDS "${DEDICATED_SERVER_LAUNCHER_RESOURCES}"
-)
+set_source_files_properties(Resources/Crysis.rc          PROPERTIES OBJECT_DEPENDS "${CRYSIS_RESOURCES}")
+set_source_files_properties(Resources/CrysisWarhead.rc   PROPERTIES OBJECT_DEPENDS "${CRYSIS_WARHEAD_RESOURCES}")
+set_source_files_properties(Resources/CrysisWars.rc      PROPERTIES OBJECT_DEPENDS "${CRYSIS_WARS_RESOURCES}")
+set_source_files_properties(Resources/DedicatedServer.rc PROPERTIES OBJECT_DEPENDS "${DEDICATED_SERVER_RESOURCES}")
 
 ################################################################################

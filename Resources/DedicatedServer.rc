@@ -1,0 +1,35 @@
+// Dedicated server launcher resources
+
+#include <winver.h>
+
+#include "Launcher/DedicatedServer/Resources.h"
+#include "Project.h"
+
+RESOURCE_ICON ICON "DedicatedServer.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     PROJECT_VERSION, 0, 0, 0
+PRODUCTVERSION  PROJECT_VERSION, 0, 0, 0
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904E4"
+		BEGIN
+			VALUE "CompanyName",      "Crytek GmbH"
+			VALUE "LegalCopyright",   "(C) 2007 Crytek GmbH"
+			VALUE "ProductName",      "C1-Launcher"
+			VALUE "ProductVersion",   PROJECT_VERSION_STRING
+			VALUE "FileVersion",      PROJECT_VERSION_STRING
+			VALUE "FileDescription",  "Crysis Dedicated Server"
+			VALUE "InternalName",     "CrysisDedicatedServer"
+			VALUE "OriginalFilename", "CrysisDedicatedServer.exe"
+		END
+	END
+
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1252
+	END
+END

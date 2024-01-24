@@ -1,11 +1,11 @@
-// Game launcher resources
+// Crysis launcher resources
 
 #include <winver.h>
 
 #include "Launcher/Game/Resources.h"
 #include "Project.h"
 
-RESOURCE_ICON ICON "GameIcon.ico"
+RESOURCE_ICON ICON "Crysis.ico"
 
 RESOURCE_CURSOR_AMBER CURSOR "CursorAmber.cur"
 RESOURCE_CURSOR_BLUE  CURSOR "CursorBlue.cur"
