@@ -39,28 +39,25 @@ extern "C"
 	__declspec(dllimport) char* __stdcall GetCommandLineA();
 
 	__declspec(dllimport) DWORD __stdcall GetLastError();
-	__declspec(dllimport) DWORD __stdcall FormatMessageA(
-		DWORD flags, const void* source, DWORD message, DWORD language,
-		char* buffer, DWORD bufferSize, va_list* args);
+	__declspec(dllimport) DWORD __stdcall FormatMessageA(DWORD, const void*, DWORD, DWORD, char*, DWORD, va_list*);
 
-	__declspec(dllimport) HMODULE __stdcall GetModuleHandleA(const char* name);
-	__declspec(dllimport) HMODULE __stdcall LoadLibraryA(const char* name);
-	__declspec(dllimport) int __stdcall FreeLibrary(HMODULE handle);
-	__declspec(dllimport) FARPROC __stdcall GetProcAddress(HMODULE handle, const char* name);
+	__declspec(dllimport) HMODULE __stdcall GetModuleHandleA(const char*);
+	__declspec(dllimport) HMODULE __stdcall LoadLibraryA(const char*);
+	__declspec(dllimport) int __stdcall FreeLibrary(HMODULE);
+	__declspec(dllimport) FARPROC __stdcall GetProcAddress(HMODULE, const char*);
 
-	__declspec(dllimport) int __stdcall MessageBoxA(
-		HWND parentWindow, const char* text, const char* title, unsigned int type);
+	__declspec(dllimport) int __stdcall MessageBoxA(HWND, const char*, const char*, unsigned int);
 
 	__declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
-	__declspec(dllimport) void __stdcall InitializeCriticalSection(CRITICAL_SECTION* cs);
-	__declspec(dllimport) void __stdcall DeleteCriticalSection(CRITICAL_SECTION* cs);
-	__declspec(dllimport) void __stdcall EnterCriticalSection(CRITICAL_SECTION* cs);
-	__declspec(dllimport) void __stdcall LeaveCriticalSection(CRITICAL_SECTION* cs);
+	__declspec(dllimport) void __stdcall InitializeCriticalSection(CRITICAL_SECTION*);
+	__declspec(dllimport) void __stdcall DeleteCriticalSection(CRITICAL_SECTION*);
+	__declspec(dllimport) void __stdcall EnterCriticalSection(CRITICAL_SECTION*);
+	__declspec(dllimport) void __stdcall LeaveCriticalSection(CRITICAL_SECTION*);
 
-	__declspec(dllimport) int __stdcall CopyFileA(const char* source, const char* destination, int failIfExists);
-	__declspec(dllimport) int __stdcall CreateDirectoryA(const char* path, SECURITY_ATTRIBUTES*);
+	__declspec(dllimport) int __stdcall CopyFileA(const char*, const char*, int);
+	__declspec(dllimport) int __stdcall CreateDirectoryA(const char*, SECURITY_ATTRIBUTES*);
 
-	__declspec(dllimport) int __stdcall GetLocaleInfoA(DWORD locale, DWORD type, char* buffer, int bufferSize);
+	__declspec(dllimport) int __stdcall GetLocaleInfoA(DWORD, DWORD, char*, int);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
