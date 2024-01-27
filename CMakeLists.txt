@@ -87,12 +87,19 @@ add_library(GameLauncher STATIC
 
 target_link_libraries(GameLauncher LauncherBase)
 
+set(GAME_LAUNCHER_MANIFESTS
+	${PROJECT_SOURCE_DIR}/Resources/Manifests/DpiAwareness.manifest
+	${PROJECT_SOURCE_DIR}/Resources/Manifests/EnableVisualStyles.manifest
+	${PROJECT_SOURCE_DIR}/Resources/Manifests/TrustInfo.manifest
+	${PROJECT_SOURCE_DIR}/Resources/Manifests/VC80_CRT.manifest
+)
+
 ################################################################################
 
 add_executable(Crysis WIN32
 	Code/Launcher/Game/Main.cpp
 	Resources/Crysis.rc
-	Resources/Launcher.manifest
+	${GAME_LAUNCHER_MANIFESTS}
 )
 
 target_link_libraries(Crysis GameLauncher)
@@ -105,7 +112,7 @@ if(BUILD_BITS EQUAL 64)
 add_executable(CrysisWarheadLauncher WIN32
 	Code/Launcher/Game/Main.cpp
 	Resources/CrysisWarhead.rc
-	Resources/Launcher.manifest
+	${GAME_LAUNCHER_MANIFESTS}
 )
 
 target_link_libraries(CrysisWarheadLauncher GameLauncher)
@@ -117,7 +124,7 @@ endif()
 add_executable(CrysisWars WIN32
 	Code/Launcher/Game/Main.cpp
 	Resources/CrysisWars.rc
-	Resources/Launcher.manifest
+	${GAME_LAUNCHER_MANIFESTS}
 )
 
 target_link_libraries(CrysisWars GameLauncher)
@@ -136,7 +143,10 @@ add_executable(CrysisDedicatedServer WIN32
 	Code/Launcher/DedicatedServer/Main.cpp
 	Code/Launcher/DedicatedServer/Resources.h
 	Resources/DedicatedServer.rc
-	Resources/Launcher.manifest
+	Resources/Manifests/DpiAwareness.manifest
+	Resources/Manifests/EnableVisualStyles.manifest
+	Resources/Manifests/TrustInfo.manifest
+	Resources/Manifests/VC80_CRT.manifest
 )
 
 target_link_libraries(CrysisDedicatedServer LauncherBase)
@@ -151,6 +161,8 @@ add_executable(CrysisHeadlessServer
 	Code/Launcher/HeadlessServer/Main.cpp
 	Code/Launcher/HeadlessServer/NullValidator.h
 	Resources/HeadlessServer.rc
+	Resources/Manifests/TrustInfo.manifest
+	Resources/Manifests/VC80_CRT.manifest
 )
 
 target_link_libraries(CrysisHeadlessServer LauncherBase)
