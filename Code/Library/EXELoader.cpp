@@ -98,100 +98,6 @@ static const IMAGE_DATA_DIRECTORY* GetDirectoryData(const IMAGE_OPTIONAL_HEADER*
 	return directoryData;
 }
 
-namespace EX
-{
-	struct LDR_DATA_TABLE_ENTRY
-	{
-		PVOID Reserved1[2];
-		LIST_ENTRY InMemoryOrderLinks;
-		PVOID Reserved2[2];
-		PVOID DllBase;
-		PVOID EntryPoint;
-		PVOID Reserved3;
-		UNICODE_STRING FullDllName;
-		UNICODE_STRING BaseDllName;
-		// ...
-	};
-
-	struct PEB_LDR_DATA
-	{
-		BYTE Reserved1[8];
-		PVOID Reserved2[3];
-		LIST_ENTRY InMemoryOrderModuleList;
-	};
-
-	// Process Environment Block
-	struct PEB
-	{
-		BYTE Reserved1[2];
-		BYTE BeingDebugged;
-		BYTE Reserved2[1];
-		PVOID Reserved3[2];
-		PEB_LDR_DATA* Ldr;
-		// ...
-	};
-
-	// Thread Environment Block
-	struct TEB
-	{
-		PVOID Reserved1[12];
-		PEB* ProcessEnvironmentBlock;
-		// ...
-	};
-}
-
-static EX::TEB* GetTEB()
-{
-	return reinterpret_cast<EX::TEB*>(NtCurrentTeb());
-}
-
-static LIST_ENTRY* GetLoadedModuleList()
-{
-	// InMemoryOrderModuleList -> InMemoryOrderLinks in GetModuleData
-	return &GetTEB()->ProcessEnvironmentBlock->Ldr->InMemoryOrderModuleList;
-}
-
-static EX::LDR_DATA_TABLE_ENTRY* GetModuleData(LIST_ENTRY* entry)
-{
-	// InMemoryOrderLinks -> InMemoryOrderModuleList in GetLoadedModuleList
-	return CONTAINING_RECORD(entry, EX::LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-}
-
-static bool IsEqualNoCase(const UNICODE_STRING& a, const wchar_t* b)
-{
-	return _wcsnicmp(a.Buffer, b, a.Length / sizeof(wchar_t)) == 0;
-}
-
-static HMODULE FindLoadedDLL(const wchar_t* name)
-{
-	LIST_ENTRY* list = GetLoadedModuleList();
-
-	for (LIST_ENTRY* entry = list->Flink; entry != list; entry = entry->Flink)
-	{
-		EX::LDR_DATA_TABLE_ENTRY* data = GetModuleData(entry);
-
-		if (IsEqualNoCase(data->BaseDllName, name))
-		{
-			return static_cast<HMODULE>(data->DllBase);
-		}
-	}
-
-	return NULL;
-}
-
-static HMODULE FindLoadedDLL(const char* name)
-{
-	enum { MAX_NAME_LENGTH = 256 };
-
-	wchar_t wideName[MAX_NAME_LENGTH];
-	if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wideName, MAX_NAME_LENGTH) <= 0)
-	{
-		return NULL;
-	}
-
-	return FindLoadedDLL(wideName);
-}
-
 static void* __stdcall FakeSetUnhandledExceptionFilter(void*)
 {
 	return NULL;
@@ -300,8 +206,7 @@ EXELoader::Result EXELoader::Load(const char* name)
 	{
 		const char* dllName = static_cast<const char*>(RVA(exe, importDescriptor->Name));
 
-		// GetModuleHandleA cannot find certain DLLs
-		HMODULE dll = FindLoadedDLL(dllName);
+		HMODULE dll = GetModuleHandleA(dllName);
 		if (!dll)
 		{
 			// TODO: unload previously loaded DLLs in case of error
