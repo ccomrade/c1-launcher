@@ -131,17 +131,23 @@ namespace OS
 
 		std::size_t GetPath(void* dll, char* buffer, std::size_t bufferSize);
 
-		namespace Version
+		struct Version
 		{
-			int GetMajor(void* dll);
-			int GetMinor(void* dll);
-			int GetTweak(void* dll);
-			int GetPatch(void* dll);
-		}
+			unsigned short major;
+			unsigned short minor;
+			unsigned short tweak;
+			unsigned short patch;
+
+			Version() : major(), minor(), tweak(), patch() {}
+		};
+
+		bool GetVersion(void* dll, Version& result);
 	}
 
 	namespace EXE
 	{
+		using DLL::Version;
+
 		inline void* Get()
 		{
 			return DLL::Get(NULL);
@@ -152,12 +158,9 @@ namespace OS
 			return DLL::GetPath(NULL, buffer, bufferSize);
 		}
 
-		namespace Version
+		inline bool GetVersion(Version& result)
 		{
-			inline int GetMajor() { return DLL::Version::GetMajor(NULL); }
-			inline int GetMinor() { return DLL::Version::GetMinor(NULL); }
-			inline int GetTweak() { return DLL::Version::GetTweak(NULL); }
-			inline int GetPatch() { return DLL::Version::GetPatch(NULL); }
+			return DLL::GetVersion(NULL, result);
 		}
 	}
 
@@ -275,9 +278,7 @@ namespace OS
 		unsigned short second;
 		unsigned short millisecond;
 
-		DateTime() : year(0), month(0), dayOfWeek(0), day(0), hour(0), minute(0), second(0), millisecond(0)
-		{
-		}
+		DateTime() : year(), month(), dayOfWeek(), day(), hour(), minute(), second(), millisecond() {}
 	};
 
 	DateTime GetCurrentDateTimeUTC();

@@ -86,45 +86,6 @@ const char* OS::CmdLine::GetArgValue(const char* arg, const char* defaultValue)
 // Modules //
 /////////////
 
-static __declspec(noinline) const VS_FIXEDFILEINFO* GetFileInfo(void* dll)
-{
-	HRSRC resInfo = FindResourceA(static_cast<HMODULE>(dll), MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
-	if (!resInfo)
-	{
-		return NULL;
-	}
-
-	HGLOBAL resData = LoadResource(static_cast<HMODULE>(dll), resInfo);
-	if (!resData)
-	{
-		return NULL;
-	}
-
-	const void* versionRes = LockResource(resData);
-	if (!versionRes)
-	{
-		return NULL;
-	}
-
-	const void* versionResKey = static_cast<const unsigned char*>(versionRes) + 0x6;
-	if (std::memcmp(versionResKey, L"VS_VERSION_INFO", 0x20) != 0)
-	{
-		SetLastError(ERROR_INVALID_DATA);
-		return NULL;
-	}
-
-	const void* versionResValue = static_cast<const unsigned char*>(versionResKey) + 0x20 + 0x2;
-
-	const VS_FIXEDFILEINFO* fileInfo = static_cast<const VS_FIXEDFILEINFO*>(versionResValue);
-	if (fileInfo->dwSignature != 0xFEEF04BD)
-	{
-		SetLastError(ERROR_INVALID_DATA);
-		return NULL;
-	}
-
-	return fileInfo;
-}
-
 std::size_t OS::DLL::GetPath(void* dll, char* buffer, std::size_t bufferSize)
 {
 	std::size_t length = GetModuleFileNameA(static_cast<HMODULE>(dll), buffer, static_cast<DWORD>(bufferSize));
@@ -138,32 +99,48 @@ std::size_t OS::DLL::GetPath(void* dll, char* buffer, std::size_t bufferSize)
 	return length;
 }
 
-int OS::DLL::Version::GetMajor(void* dll)
+bool OS::DLL::GetVersion(void* dll, Version& result)
 {
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
+	HRSRC resInfo = FindResourceA(static_cast<HMODULE>(dll), MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
+	if (!resInfo)
+	{
+		return false;
+	}
 
-	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionMS) : -1;
-}
+	HGLOBAL resData = LoadResource(static_cast<HMODULE>(dll), resInfo);
+	if (!resData)
+	{
+		return false;
+	}
 
-int OS::DLL::Version::GetMinor(void* dll)
-{
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
+	const void* versionRes = LockResource(resData);
+	if (!versionRes)
+	{
+		return false;
+	}
 
-	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionMS) : -1;
-}
+	const void* versionResKey = static_cast<const unsigned char*>(versionRes) + 0x6;
+	if (std::memcmp(versionResKey, L"VS_VERSION_INFO", 0x20) != 0)
+	{
+		SetLastError(ERROR_INVALID_DATA);
+		return false;
+	}
 
-int OS::DLL::Version::GetTweak(void* dll)
-{
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
+	const void* versionResValue = static_cast<const unsigned char*>(versionResKey) + 0x20 + 0x2;
 
-	return (fileInfo) ? HIWORD(fileInfo->dwProductVersionLS) : -1;
-}
+	const VS_FIXEDFILEINFO* fileInfo = static_cast<const VS_FIXEDFILEINFO*>(versionResValue);
+	if (fileInfo->dwSignature != 0xFEEF04BD)
+	{
+		SetLastError(ERROR_INVALID_DATA);
+		return false;
+	}
 
-int OS::DLL::Version::GetPatch(void* dll)
-{
-	const VS_FIXEDFILEINFO* fileInfo = GetFileInfo(dll);
+	result.major = HIWORD(fileInfo->dwProductVersionMS);
+	result.minor = LOWORD(fileInfo->dwProductVersionMS);
+	result.tweak = HIWORD(fileInfo->dwProductVersionLS);
+	result.patch = LOWORD(fileInfo->dwProductVersionLS);
 
-	return (fileInfo) ? LOWORD(fileInfo->dwProductVersionLS) : -1;
+	return true;
 }
 
 ///////////

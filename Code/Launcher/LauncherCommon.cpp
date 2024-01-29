@@ -95,13 +95,13 @@ void* LauncherCommon::LoadCrysisWarheadEXE()
 
 int LauncherCommon::GetGameBuild(void* pCrySystem)
 {
-	int gameBuild = OS::DLL::Version::GetPatch(pCrySystem);
-	if (gameBuild < 0)
+	OS::DLL::Version version;
+	if (!OS::DLL::GetVersion(pCrySystem, version))
 	{
 		throw StringFormat_SysError("Failed to get the game version!");
 	}
 
-	return gameBuild;
+	return version.patch;
 }
 
 void LauncherCommon::VerifyGameBuild(int gameBuild)
