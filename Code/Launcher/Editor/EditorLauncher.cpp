@@ -54,7 +54,13 @@ int EditorLauncher::Run()
 
 	typedef int (__stdcall *TAfxWinMain)(void*, void*, char*, int);
 
-	TAfxWinMain pAfxWinMain = static_cast<TAfxWinMain>(OS::DLL::FindSymbol(mfc80, reinterpret_cast<char*>(1225)));
+#ifdef BUILD_64BIT
+	const char* afxWinMain = reinterpret_cast<const char*>(1225);
+#else
+	const char* afxWinMain = reinterpret_cast<const char*>(1207);
+#endif
+
+	TAfxWinMain pAfxWinMain = static_cast<TAfxWinMain>(OS::DLL::FindSymbol(mfc80, afxWinMain));
 	if (!pAfxWinMain)
 	{
 		OS::ErrorBox("Failed to get AfxWinMain");

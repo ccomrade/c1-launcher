@@ -3261,7 +3261,8 @@ void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 		0x81, 0xC1, 0xE4, 0x00, 0x00, 0x00,  // add ecx, 0xE4
 		0x51,                                // push ecx
 		0xFF, 0xD0,                          // call eax
-		0xC2, 0x04, 0x00,                    // ret 0x4
+		0x83, 0xC4, 0x04,                    // add esp, 0x4
+		0xC3,                                // ret
 	};
 
 	std::memcpy(&code[1], &handler, 4);
