@@ -3239,3 +3239,58 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof(newVTable));
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Editor
+////////////////////////////////////////////////////////////////////////////////
+
+void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
+	void (*handler)(MemoryPatch::Editor::Version* version))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0x48, 0x81, 0xC1, 0x10, 0x01, 0x00, 0x00,                    // add rcx, 0x110
+		0xFF, 0xE0,                                                  // jmp rax
+	};
+
+	std::memcpy(&code[2], &handler, 8);
+#else
+	unsigned char code[] = {
+		0xB8, 0x00, 0x00, 0x00, 0x00,        // mov eax, 0x0
+		0x81, 0xC1, 0xE4, 0x00, 0x00, 0x00,  // add ecx, 0xE4
+		0x51,                                // push ecx
+		0xFF, 0xD0,                          // call eax
+		0xC2, 0x04, 0x00,                    // ret 0x4
+	};
+
+	std::memcpy(&code[1], &handler, 4);
+#endif
+
+	switch (editorBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pEditor, 0x28720, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x27BB0, &code, sizeof(code));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillMem(pEditor, 0x2CBA4, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x2C1BC, &code, sizeof(code));
+			break;
+		}
+#endif
+	}
+}

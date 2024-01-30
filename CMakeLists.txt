@@ -169,6 +169,23 @@ target_link_libraries(CrysisHeadlessServer LauncherBase)
 
 ################################################################################
 
+add_executable(EditorLauncher WIN32
+	Code/Launcher/Editor/EditorLauncher.cpp
+	Code/Launcher/Editor/EditorLauncher.h
+	Code/Launcher/Editor/Main.cpp
+	Code/Launcher/Editor/Resources.h
+	Resources/Editor.rc
+	Resources/Manifests/DpiAwareness.manifest
+	Resources/Manifests/EnableVisualStyles.manifest
+	Resources/Manifests/TrustInfo.manifest
+	Resources/Manifests/VC80_CRT.manifest
+	Resources/Manifests/VC80_MFC.manifest
+)
+
+target_link_libraries(EditorLauncher LauncherBase)
+
+################################################################################
+
 set(CURSORS
 	${PROJECT_SOURCE_DIR}/Resources/CursorAmber.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorBlue.cur
@@ -181,10 +198,12 @@ set(CRYSIS_RESOURCES           ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/Crysis
 set(CRYSIS_WARHEAD_RESOURCES   ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWarhead.ico)
 set(CRYSIS_WARS_RESOURCES      ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWars.ico)
 set(DEDICATED_SERVER_RESOURCES            ${PROJECT_SOURCE_DIR}/Resources/DedicatedServer.ico)
+set(EDITOR_RESOURCES                      ${PROJECT_SOURCE_DIR}/Resources/Editor.ico)
 
 set_source_files_properties(Resources/Crysis.rc          PROPERTIES OBJECT_DEPENDS "${CRYSIS_RESOURCES}")
 set_source_files_properties(Resources/CrysisWarhead.rc   PROPERTIES OBJECT_DEPENDS "${CRYSIS_WARHEAD_RESOURCES}")
 set_source_files_properties(Resources/CrysisWars.rc      PROPERTIES OBJECT_DEPENDS "${CRYSIS_WARS_RESOURCES}")
 set_source_files_properties(Resources/DedicatedServer.rc PROPERTIES OBJECT_DEPENDS "${DEDICATED_SERVER_RESOURCES}")
+set_source_files_properties(Resources/Editor.rc          PROPERTIES OBJECT_DEPENDS "${EDITOR_RESOURCES}")
 
 ################################################################################
