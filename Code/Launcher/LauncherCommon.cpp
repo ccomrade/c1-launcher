@@ -71,14 +71,16 @@ void* LauncherCommon::LoadDLL(const char* name)
 
 void* LauncherCommon::LoadEXE(const char* name)
 {
-	EXELoader::Result result = EXELoader::Load(name);
-	if (!result.exe)
+	EXELoader loader;
+	void* exe = loader.Load(name);
+	if (!exe)
 	{
-		throw StringFormat_SysError(result.sysError, "Failed to load %s\n\n%s", name,
-			EXELoader::errorNames[result.error]);
+		const char* error = loader.GetErrorName();
+		const char* value = loader.errorValue ? loader.errorValue : "";
+		throw StringFormat_SysError(loader.sysError, "Failed to load %s\n\n%s %s", name, error, value);
 	}
 
-	return result.exe;
+	return exe;
 }
 
 void* LauncherCommon::LoadCrysisWarheadEXE()
