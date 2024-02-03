@@ -108,7 +108,14 @@ void EditorLauncher::LoadEngine()
 		}
 	}
 
-	// TODO: renderer
+	if (LauncherCommon::IsDX10())
+	{
+		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
+	}
+	else
+	{
+		m_dlls.pCryRenderD3D9 = LauncherCommon::LoadDLL("CryRenderD3D9.dll");
+	}
 }
 
 void EditorLauncher::PatchEngine()
@@ -132,5 +139,18 @@ void EditorLauncher::PatchEngine()
 		MemoryPatch::Editor::HookVersionInit(m_dlls.pEditor, m_dlls.editorBuild, &OnVersionInit);
 	}
 
-	// TODO: renderer
+	if (m_dlls.pCryRenderD3D9)
+	{
+		MemoryPatch::CryRenderD3D9::HookAdapterInfo(m_dlls.pCryRenderD3D9, m_dlls.gameBuild,
+			&LauncherCommon::OnD3D9Info);
+	}
+
+	if (m_dlls.pCryRenderD3D10)
+	{
+		MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(m_dlls.pCryRenderD3D10, m_dlls.gameBuild);
+		MemoryPatch::CryRenderD3D10::HookAdapterInfo(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
+			&LauncherCommon::OnD3D10Info);
+		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
+			&LauncherCommon::OnD3D10Init);
+	}
 }
