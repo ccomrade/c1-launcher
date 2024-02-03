@@ -66,9 +66,9 @@ static int CallAfxWinMain(void* instance, char* cmdLine)
 	typedef int (__stdcall *TAfxWinMain)(void*, void*, char*, int);
 
 #ifdef BUILD_64BIT
-	const unsigned int ordinal = 1225;
+	const std::size_t ordinal = 1225;
 #else
-	const unsigned int ordinal = 1207;
+	const std::size_t ordinal = 1207;
 #endif
 
 	void* mfc80 = OS::DLL::Get("mfc80.dll");
