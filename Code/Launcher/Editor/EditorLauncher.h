@@ -19,7 +19,7 @@ public:
 	EditorLauncher();
 	~EditorLauncher();
 
-	int Run();
+	int Run(char* cmdLine);
 
 private:
 	void LoadEngine();

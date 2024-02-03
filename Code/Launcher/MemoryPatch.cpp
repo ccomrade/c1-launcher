@@ -3244,6 +3244,12 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 // Editor
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Hooks Editor version initialization.
+ *
+ * This hook is needed because the original code reads version resource of the main EXE.
+ * We load Editor EXE as a DLL, so it tries to read our version resource instead of its own.
+ */
 void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 	void (*handler)(MemoryPatch::Editor::Version* version))
 {

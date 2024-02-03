@@ -31,7 +31,7 @@ int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmd
 {
 	try
 	{
-		return EditorLauncher().Run();
+		return EditorLauncher().Run(cmdLine);
 	}
 	catch (const std::runtime_error& ex)
 	{

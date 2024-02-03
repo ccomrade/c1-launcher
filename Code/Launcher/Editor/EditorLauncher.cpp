@@ -30,67 +30,19 @@ static void OnVersionInit(MemoryPatch::Editor::Version* version)
 	version->product_patch = g_version.patch;
 }
 
-EditorLauncher::EditorLauncher() : m_dlls()
+static int GetEditorBuild(void* pEditor)
 {
-}
-
-EditorLauncher::~EditorLauncher()
-{
-}
-
-int EditorLauncher::Run()
-{
-	CrashLogger::Enable(&OpenLogFile);
-
-	this->LoadEngine();
-	this->PatchEngine();
-
-	void* mfc80 = OS::DLL::Get("mfc80.dll");
-	if (!mfc80)
-	{
-		OS::ErrorBox("Failed to get mfc80.dll");
-		return 1;
-	}
-
-	typedef int (__stdcall *TAfxWinMain)(void*, void*, char*, int);
-
-#ifdef BUILD_64BIT
-	const char* afxWinMain = reinterpret_cast<const char*>(1225);
-#else
-	const char* afxWinMain = reinterpret_cast<const char*>(1207);
-#endif
-
-	TAfxWinMain pAfxWinMain = static_cast<TAfxWinMain>(OS::DLL::FindSymbol(mfc80, afxWinMain));
-	if (!pAfxWinMain)
-	{
-		OS::ErrorBox("Failed to get AfxWinMain");
-		return 1;
-	}
-
-	char* cmdLine = const_cast<char*>(OS::CmdLine::GetOnlyArgs());
-	const int cmdShow = 0xA;  // SW_SHOWDEFAULT
-
-	return pAfxWinMain(m_dlls.pEditor, NULL, cmdLine, cmdShow);
-}
-
-void EditorLauncher::LoadEngine()
-{
-	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
-
-	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
-
-	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
-
-	m_dlls.pEditor = LauncherCommon::LoadEXE("Editor.exe");
-
-	if (!OS::DLL::GetVersion(m_dlls.pEditor, g_version))
+	if (!OS::DLL::GetVersion(pEditor, g_version))
 	{
 		throw StringFormat_SysError("Failed to get the editor version!");
 	}
 
-	m_dlls.editorBuild = g_version.patch;
+	return g_version.patch;
+}
 
-	switch (m_dlls.editorBuild)
+static void VerifyEditorBuild(int editorBuild)
+{
+	switch (editorBuild)
 	{
 		case 5767:
 		{
@@ -104,9 +56,65 @@ void EditorLauncher::LoadEngine()
 		}
 		default:
 		{
-			throw StringFormat_Error("Unknown editor build %d", m_dlls.editorBuild);
+			throw StringFormat_Error("Unknown editor build %d", editorBuild);
 		}
 	}
+}
+
+static int CallAfxWinMain(void* instance, char* cmdLine)
+{
+	typedef int (__stdcall *TAfxWinMain)(void*, void*, char*, int);
+
+#ifdef BUILD_64BIT
+	const unsigned int ordinal = 1225;
+#else
+	const unsigned int ordinal = 1207;
+#endif
+
+	void* mfc80 = OS::DLL::Get("mfc80.dll");
+	if (!mfc80)
+	{
+		throw StringFormat_SysError("Failed to get MFC80 DLL");
+	}
+
+	void* pAfxWinMain = OS::DLL::FindSymbol(mfc80, reinterpret_cast<const char*>(ordinal));
+	if (!pAfxWinMain)
+	{
+		throw StringFormat_Error("Failed to get AfxWinMain from MFC80 DLL");
+	}
+
+	const int cmdShow = 10;  // SW_SHOWDEFAULT
+
+	return static_cast<TAfxWinMain>(pAfxWinMain)(instance, NULL, cmdLine, cmdShow);
+}
+
+EditorLauncher::EditorLauncher() : m_dlls()
+{
+}
+
+EditorLauncher::~EditorLauncher()
+{
+}
+
+int EditorLauncher::Run(char* cmdLine)
+{
+	CrashLogger::Enable(&OpenLogFile);
+
+	this->LoadEngine();
+	this->PatchEngine();
+
+	return CallAfxWinMain(m_dlls.pEditor, cmdLine);
+}
+
+void EditorLauncher::LoadEngine()
+{
+	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
+	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	m_dlls.pEditor = LauncherCommon::LoadEXE("Editor.exe");
+	m_dlls.editorBuild = GetEditorBuild(m_dlls.pEditor);
+	VerifyEditorBuild(m_dlls.editorBuild);
 
 	if (LauncherCommon::IsDX10())
 	{
@@ -120,23 +128,20 @@ void EditorLauncher::LoadEngine()
 
 void EditorLauncher::PatchEngine()
 {
+	if (m_dlls.pEditor)
+	{
+		MemoryPatch::Editor::HookVersionInit(m_dlls.pEditor, m_dlls.editorBuild, &OnVersionInit);
+	}
+
 	if (m_dlls.pCrySystem)
 	{
-		//MemoryPatch::CrySystem::RemoveSecuROM(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::AllowDX9VeryHighSpec(m_dlls.pCrySystem, m_dlls.gameBuild);
-		//MemoryPatch::CrySystem::AllowMultipleInstances(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::FixCPUInfoOverflow(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
-		//MemoryPatch::CrySystem::HookLanguageInit(m_dlls.pCrySystem, m_dlls.gameBuild, &LanguageHook::OnInit);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);
-	}
-
-	if (m_dlls.pEditor)
-	{
-		MemoryPatch::Editor::HookVersionInit(m_dlls.pEditor, m_dlls.editorBuild, &OnVersionInit);
 	}
 
 	if (m_dlls.pCryRenderD3D9)
