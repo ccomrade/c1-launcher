@@ -2407,7 +2407,7 @@ void MemoryPatch::CrySystem::HookChangeUserPath(void* pCrySystem, int gameBuild,
  * Hooks D3D9 adapter information logging.
  */
 void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameBuild,
-	void (*handler)(MemoryPatch::CryRenderD3D9::AdapterInfo* info))
+	void (*handler)(CryRender_D3D9_AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
 	unsigned char code[] = {
@@ -2697,7 +2697,7 @@ void MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(void* pCryRenderD3D10, in
  * It also fixes crash of 64-bit DX10 renderer on nVidia driver version 545.92 and possibly others.
  */
 void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gameBuild,
-	void (*handler)(MemoryPatch::CryRenderD3D10::AdapterInfo* info))
+	void (*handler)(CryRender_D3D10_AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
 	unsigned char codeA[] = {
@@ -2893,7 +2893,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
  * This patch is used to load these DLLs normally, so placing them next to CryRenderD3D10.dll works as expected.
  */
 void MemoryPatch::CryRenderD3D10::HookInitAPI(void* pCryRenderD3D10, int gameBuild,
-	bool (*handler)(MemoryPatch::CryRenderD3D10::API* api))
+	bool (*handler)(CryRender_D3D10_SystemAPI* api))
 {
 #ifdef BUILD_64BIT
 	unsigned char code[] = {
@@ -3237,5 +3237,67 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 
 		// install the new vtable
 		FillMem(pCryRenderNULL, renderAuxGeomVTableOffset, newVTable, sizeof(newVTable));
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Editor
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Hooks Editor version initialization.
+ *
+ * This hook is needed because the original code reads version resource of the main EXE.
+ * We load Editor EXE as a DLL, so it tries to read our version resource instead of its own.
+ */
+void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
+	void (*handler)(MemoryPatch::Editor::Version* version))
+{
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0x48, 0x81, 0xC1, 0x10, 0x01, 0x00, 0x00,                    // add rcx, 0x110
+		0xFF, 0xE0,                                                  // jmp rax
+	};
+
+	std::memcpy(&code[2], &handler, 8);
+#else
+	unsigned char code[] = {
+		0xB8, 0x00, 0x00, 0x00, 0x00,        // mov eax, 0x0
+		0x81, 0xC1, 0xE4, 0x00, 0x00, 0x00,  // add ecx, 0xE4
+		0x51,                                // push ecx
+		0xFF, 0xD0,                          // call eax
+		0x83, 0xC4, 0x04,                    // add esp, 0x4
+		0xC3,                                // ret
+	};
+
+	std::memcpy(&code[1], &handler, 4);
+#endif
+
+	switch (editorBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pEditor, 0x28720, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x27BB0, &code, sizeof(code));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillMem(pEditor, 0x2CBA4, &code, sizeof(code));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x2C1BC, &code, sizeof(code));
+			break;
+		}
+#endif
 	}
 }

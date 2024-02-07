@@ -11,6 +11,7 @@
 #include "Library/StringView.h"
 #include "Project.h"
 
+#include "CryRender.h"
 #include "LauncherCommon.h"
 
 std::string LauncherCommon::GetMainFolderPath()
@@ -71,14 +72,16 @@ void* LauncherCommon::LoadDLL(const char* name)
 
 void* LauncherCommon::LoadEXE(const char* name)
 {
-	EXELoader::Result result = EXELoader::Load(name);
-	if (!result.exe)
+	EXELoader loader;
+	void* exe = loader.Load(name);
+	if (!exe)
 	{
-		throw StringFormat_SysError(result.sysError, "Failed to load %s\n\n%s", name,
-			EXELoader::errorNames[result.error]);
+		const char* error = loader.GetErrorName();
+		const char* value = loader.errorValue ? loader.errorValue : "";
+		throw StringFormat_SysError(loader.sysError, "Failed to load %s\n\n%s %s", name, error, value);
 	}
 
-	return result.exe;
+	return exe;
 }
 
 void* LauncherCommon::LoadCrysisWarheadEXE()
@@ -162,6 +165,11 @@ bool LauncherCommon::IsCrysisWarhead(int gameBuild)
 	}
 
 	return false;
+}
+
+bool LauncherCommon::IsDX10()
+{
+	return !OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater());
 }
 
 void LauncherCommon::SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine)
@@ -320,6 +328,59 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
 	CryLogAlways("Main directory: %s", mainDir.c_str());
 	CryLogAlways("Root directory: %s", rootDir.empty() ? mainDir.c_str() : rootDir.c_str());
 	CryLogAlways("User directory: %s", userDir.c_str());
+}
+
+void LauncherCommon::OnD3D9Info(CryRender_D3D9_AdapterInfo* info)
+{
+	CryLogAlways("D3D9 Adapter: %s", info->description);
+	CryLogAlways("D3D9 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
+}
+
+void LauncherCommon::OnD3D10Info(CryRender_D3D10_AdapterInfo* info)
+{
+	CryLogAlways("D3D10 Adapter: %ls", info->description);
+	CryLogAlways("D3D10 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
+
+	LogBytes("D3D10 Adapter: Dedicated video memory = ", info->dedicated_video_memory);
+	LogBytes("D3D10 Adapter: Dedicated system memory = ", info->dedicated_system_memory);
+	LogBytes("D3D10 Adapter: Shared system memory = ", info->shared_system_memory);
+}
+
+bool LauncherCommon::OnD3D10Init(CryRender_D3D10_SystemAPI* api)
+{
+	void* d3d10 = OS::DLL::Load("d3d10.dll");
+	if (!d3d10)
+	{
+		return false;
+	}
+
+	api->pD3D10 = d3d10;
+	api->pD3D10CreateDevice = OS::DLL::FindSymbol(d3d10, "D3D10CreateDevice");
+
+	void* dxgi = OS::DLL::Load("dxgi.dll");
+	if (!dxgi)
+	{
+		return false;
+	}
+
+	api->pDXGI = dxgi;
+	api->pCreateDXGIFactory = OS::DLL::FindSymbol(dxgi, "CreateDXGIFactory");
+
+	return true;
+}
+
+void LauncherCommon::LogBytes(const char* message, std::size_t bytes)
+{
+	const char* unit = "";
+	char units[6][2] = { "K", "M", "G", "T", "P", "E" };
+
+	for (int i = 0; i < 6 && bytes >= 1024; i++)
+	{
+		unit = units[i];
+		bytes /= 1024;
+	}
+
+	CryLogAlways("%s%u%s", message, static_cast<unsigned int>(bytes), unit);
 }
 
 std::FILE* LauncherCommon::OpenLogFile(const char* defaultFileName)

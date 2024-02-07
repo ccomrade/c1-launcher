@@ -3,7 +3,7 @@
 /**
  * Multiple EXEs loaded within a single process is normally impossible, and yet here we are.
  */
-namespace EXELoader
+struct EXELoader
 {
 #define EXE_LOADER_ERRORS \
 	X(NO_ERROR) \
@@ -26,17 +26,13 @@ namespace EXELoader
 #undef X
 	};
 
-	struct Result
-	{
-		void* exe;
-		Error error;
-		unsigned long sysError;  // GetLastError
+	Error error;
+	unsigned long sysError;
+	const char* errorValue;
 
-		explicit Result(void* exe) : exe(exe), error(NO_ERROR), sysError(0) {}
-		explicit Result(Error error, unsigned long sysError = 0) : exe(0), error(error), sysError(sysError) {}
-	};
+	EXELoader() : error(), sysError(), errorValue() {}
 
-	Result Load(const char* name);
+	void* Load(const char* name);
 
-	extern const char* const errorNames[];
-}
+	const char* GetErrorName() const;
+};

@@ -103,25 +103,31 @@ static void* __stdcall FakeSetUnhandledExceptionFilter(void*)
 	return NULL;
 }
 
-static void* FindThunkFunction(HMODULE exe, HMODULE dll, const IMAGE_THUNK_DATA* thunk)
+static const char* GetThunkFunctionName(HMODULE exe, const IMAGE_THUNK_DATA* thunk)
 {
-	const char* name = NULL;
-
 	if (IMAGE_SNAP_BY_ORDINAL(thunk->u1.Ordinal))
 	{
-		name = reinterpret_cast<const char*>(IMAGE_ORDINAL(thunk->u1.Ordinal));
+		return NULL;
 	}
-	else
+
+	IMAGE_IMPORT_BY_NAME* data = static_cast<IMAGE_IMPORT_BY_NAME*>(RVA(exe, thunk->u1.AddressOfData));
+
+	return reinterpret_cast<const char*>(data->Name);
+}
+
+static void* FindThunkFunction(HMODULE exe, HMODULE dll, const IMAGE_THUNK_DATA* thunk)
+{
+	const char* name = GetThunkFunctionName(exe, thunk);
+
+	if (!name)
 	{
-		IMAGE_IMPORT_BY_NAME* data = static_cast<IMAGE_IMPORT_BY_NAME*>(RVA(exe, thunk->u1.AddressOfData));
+		return GetProcAddress(dll, reinterpret_cast<const char*>(IMAGE_ORDINAL(thunk->u1.Ordinal)));
+	}
 
-		name = reinterpret_cast<const char*>(data->Name);
-
-		if (std::strcmp(name, "SetUnhandledExceptionFilter") == 0)
-		{
-			// prevent the EXE from disabling our crash logger
-			return &FakeSetUnhandledExceptionFilter;
-		}
+	if (std::strcmp(name, "SetUnhandledExceptionFilter") == 0)
+	{
+		// prevent the EXE from disabling our crash logger
+		return &FakeSetUnhandledExceptionFilter;
 	}
 
 	return GetProcAddress(dll, name);
@@ -158,33 +164,39 @@ static void initterm(PVFV* begin, PVFV* end)
 	}
 }
 
-EXELoader::Result EXELoader::Load(const char* name)
+void* EXELoader::Load(const char* name)
 {
+	this->error = NO_ERROR;
+	this->sysError = 0;
+	this->errorValue = NULL;
+
 	HMODULE exe = LoadLibraryA(name);
 	if (!exe)
 	{
-		return Result(ERROR_OPEN, GetLastError());
+		this->error = ERROR_OPEN;
+		this->sysError = GetLastError();
+		return NULL;
 	}
 
 	const IMAGE_OPTIONAL_HEADER* optionalHeader = GetOptionalHeader(exe);
 	if (!optionalHeader)
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_OPTIONAL_HEADER);
+		this->error = ERROR_OPTIONAL_HEADER;
+		return NULL;
 	}
 
 	const IMAGE_DATA_DIRECTORY* importData = GetDirectoryData(optionalHeader, IMAGE_DIRECTORY_ENTRY_IMPORT);
 	if (!importData)
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_IMPORT_TABLE_MISSING);
+		this->error = ERROR_IMPORT_TABLE_MISSING;
+		return NULL;
 	}
 
 	const IMAGE_DATA_DIRECTORY* iatData = GetDirectoryData(optionalHeader, IMAGE_DIRECTORY_ENTRY_IAT);
 	if (!iatData)
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_IAT_MISSING);
+		this->error = ERROR_IAT_MISSING;
+		return NULL;
 	}
 
 	void* iat = RVA(exe, iatData->VirtualAddress);
@@ -193,9 +205,9 @@ EXELoader::Result EXELoader::Load(const char* name)
 	DWORD iatProtection;
 	if (!VirtualProtect(iat, iatData->Size, PAGE_READWRITE, &iatProtection))
 	{
-		const DWORD sysError = GetLastError();
-		FreeLibrary(exe);
-		return Result(ERROR_IAT_VIRTUAL_PROTECT, sysError);
+		this->error = ERROR_IAT_VIRTUAL_PROTECT;
+		this->sysError = GetLastError();
+		return NULL;
 	}
 
 	const IMAGE_IMPORT_DESCRIPTOR* importDescriptor =
@@ -206,17 +218,13 @@ EXELoader::Result EXELoader::Load(const char* name)
 	{
 		const char* dllName = static_cast<const char*>(RVA(exe, importDescriptor->Name));
 
-		HMODULE dll = GetModuleHandleA(dllName);
+		HMODULE dll = LoadLibraryA(dllName);
 		if (!dll)
 		{
-			// TODO: unload previously loaded DLLs in case of error
-			dll = LoadLibraryA(dllName);
-			if (!dll)
-			{
-				const DWORD sysError = GetLastError();
-				FreeLibrary(exe);
-				return Result(ERROR_IMPORT_LOAD_LIBRARY, sysError);
-			}
+			this->error = ERROR_IMPORT_LOAD_LIBRARY;
+			this->sysError = GetLastError();
+			this->errorValue = dllName;
+			return NULL;
 		}
 
 		IMAGE_THUNK_DATA* thunk = static_cast<IMAGE_THUNK_DATA*>(RVA(exe, importDescriptor->FirstThunk));
@@ -226,9 +234,10 @@ EXELoader::Result EXELoader::Load(const char* name)
 			void* func = FindThunkFunction(exe, dll, thunk);
 			if (!func)
 			{
-				const DWORD sysError = GetLastError();
-				FreeLibrary(exe);
-				return Result(ERROR_IAT_GET_PROC_ADDRESS, sysError);
+				this->error = ERROR_IAT_GET_PROC_ADDRESS;
+				this->sysError = GetLastError();
+				this->errorValue = GetThunkFunctionName(exe, thunk);
+				return NULL;
 			}
 
 			thunk->u1.Function = reinterpret_cast<DWORD_PTR>(func);
@@ -238,16 +247,16 @@ EXELoader::Result EXELoader::Load(const char* name)
 	// restore IAT protection
 	if (!VirtualProtect(iat, iatData->Size, iatProtection, &iatProtection))
 	{
-		const DWORD sysError = GetLastError();
-		FreeLibrary(exe);
-		return Result(ERROR_IAT_VIRTUAL_PROTECT_RESTORE, sysError);
+		this->error = ERROR_IAT_VIRTUAL_PROTECT_RESTORE;
+		this->sysError = GetLastError();
+		return NULL;
 	}
 
 	const IMAGE_SECTION_HEADER* textSection = GetSectionHeader(exe, ".text");
 	if (!textSection)
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_TEXT_SECTION_MISSING);
+		this->error = ERROR_TEXT_SECTION_MISSING;
+		return NULL;
 	}
 
 	void* textBegin = RVA(exe, textSection->VirtualAddress);
@@ -258,8 +267,8 @@ EXELoader::Result EXELoader::Load(const char* name)
 	// make sure .rdata section exists, see below
 	if (!GetSectionHeader(exe, ".rdata"))
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_RDATA_SECTION_MISSING);
+		this->error = ERROR_RDATA_SECTION_MISSING;
+		return NULL;
 	}
 
 	// there is no way to obtain location of the two global constructor arrays
@@ -292,18 +301,23 @@ EXELoader::Result EXELoader::Load(const char* name)
 	// call C global constructors
 	if (initterm_e(xi_a, xi_z) != 0)
 	{
-		FreeLibrary(exe);
-		return Result(ERROR_GLOBAL_CONSTRUCTOR);
+		this->error = ERROR_GLOBAL_CONSTRUCTOR;
+		return NULL;
 	}
 
 	// call C++ global constructors
 	initterm(xc_a, xc_z);
 
-	return Result(exe);
+	return exe;
 }
 
-const char* const EXELoader::errorNames[] = {
+const char* EXELoader::GetErrorName() const
+{
+	static const char* const NAMES[] = {
 #define X(name) #name,
-	EXE_LOADER_ERRORS
+		EXE_LOADER_ERRORS
 #undef X
-};
+	};
+
+	return NAMES[this->error];
+}
