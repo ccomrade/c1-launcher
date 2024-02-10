@@ -5,13 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- `-userdirname` to change name of user directory in `Documents/My Games/`. Overrides `Game/Config/Folders.ini`.
-    - `-userdirname Test` => `Documents/My Games/Test`
-    - `-userdirname "My New Mod"` => `Documents/My Games/My New Mod`
-- `-userpath` to completely change user directory path. Both `\` and `/` are supported. Overrides `-userdirname`.
-    - `-userpath .` => Crysis main directory
-    - `-userpath Something\MyFolder` => Crysis main directory + `Something\MyFolder` (relative path)
-    - `-userpath C:\Something\MyFolder` => `C:\Something\MyFolder` (absolute path)
+- Crysis Editor (Sandbox 2) support.
+- Crysis Warhead support (64-bit only).
+- Crysis Wars executable with correct icon. No other differences. All executables support all game variants.
+- DX10 renderer now supports [overriding d3d10.dll and dxgi.dll](https://github.com/ccomrade/c1-launcher/issues/34)
+by placing them into the same directory.
+- `-userpath` to change user directory path.
+- `-userdirname` to change name of user directory in `Documents/My Games/`.
 - Mods can now request their own user directory in `Documents/My Games/` by exporting `GetUserDirName` function:
 ```cpp
 extern "C" __declspec(dllexport) const char* GetUserDirName()
@@ -19,8 +19,6 @@ extern "C" __declspec(dllexport) const char* GetUserDirName()
     return "My Mod";  // -> "Documents/My Games/My Mod"
 }
 ```
-- DX10 renderer now supports [overriding d3d10.dll and dxgi.dll](https://github.com/ccomrade/c1-launcher/issues/34)
-by placing them into the same directory.
 ### Fixed
 - Incorrectly trimmed spaces from CPU model name in specific cases.
 - Rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.

@@ -26,7 +26,7 @@ It provides a better game and dedicated server launcher with additional features
 
 ## Supported game versions
 
-### Crysis
+### Crysis (2007)
 
 | Version | Build | 32-bit | 64-bit |
 | :-----: | :---: | :----: | :----: |
@@ -35,7 +35,15 @@ It provides a better game and dedicated server launcher with additional features
 | 1.2     | 6115  | Y      | Y      |
 | 1.2.1   | 6156  | Y      | Y      |
 
-### Crysis Wars
+### Crysis Warhead (2008)
+
+| Version | Build | 32-bit | 64-bit |
+| :-----: | :---: | :----: | :----: |
+| 1.0     | 687   | N      | -      |
+| 1.1     | 710   | N      | Y      |
+| 1.1.1   | 711   | N      | Y      |
+
+### Crysis Wars (2008)
 
 | Version | Build | 32-bit | 64-bit |
 | :-----: | :---: | :----: | :----: |
@@ -46,35 +54,56 @@ It provides a better game and dedicated server launcher with additional features
 | 1.4     | 6670  | Y      | Y      |
 | 1.5     | 6729  | Y      | Y      |
 
+### Crysis Editor (Sandbox 2)
+
+| Version     | Build | 32-bit | 64-bit |
+| :---------- | :---: | :----: | :----: |
+| Crysis      | 5767  | Y      | Y      |
+| Crysis Wars | 6670  | Y      | Y      |
+
 ## Where to get the game
 
-### Crysis
+### Crysis (2007)
 
 | Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 5767  | Y      | Y      | Y         |
 | [GOG](https://www.gog.com/game/crysis)                            | 1.2.1   | 6156  | Y      | Y      | Y         |
 | [Steam](https://store.steampowered.com/app/17300/Crysis/)         | 1.2.1   | 6156  | Y      | Y      | Y         |
-| Origin                                                            | 1.2.1   | 6156  | Y      | Y      | Y         |
+| [EA](https://www.ea.com/games/crysis/crysis)                      | 1.2.1   | 6156  | Y      | Y      | Y         |
 
 - The latest official version is 1.2.1 (6156).
-- If you have DVD version, install the
-[1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
+- If you have DVD version, install the [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
 [1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version.
 
-### Crysis Wars
+### Crysis Warhead (2008)
+
+| Platform                                                          | Version | Build | 32-bit | 64-bit | Supported  |
+| :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :--------: |
+| DVD                                                               | 1.0     | 687   | Y      | -      | see below  |
+| [GOG](https://www.gog.com/game/crysiswarhead)                     | 1.1.1   | 711   | -      | Y      | Y          |
+| [Steam](https://store.steampowered.com/app/17330/Crysis_Warhead/) | 1.1.1   | 711   | Y      | Y      | Y (64-bit) |
+| [EA](https://www.ea.com/games/crysis-warhead)                     | 1.1.1   | 711   | Y      | Y      | Y (64-bit) |
+
+- The latest official version is 1.1.1 (711).
+- If you have DVD version, install the [1.1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe) official patch
+to get the latest version and 64-bit files. C1-Launcher supports only 64-bit version of Crysis Warhead, so this step
+is necessary.
+
+### Crysis Wars (2008)
 
 | Platform                                                          | Version | Build | 32-bit | 64-bit | Supported |
 | :---------------------------------------------------------------: | :-----: | :---: | :----: | :----: | :-------: |
 | DVD                                                               | 1.0     | 6527  | Y      | -      | Y         |
 | Trial                                                             | 1.0     | 6527  | Y      | -      | Y         |
-| [GOG (Warhead bundle)](https://www.gog.com/game/crysiswarhead)    | 1.5     | 6729  | -      | Y      | Y         |
-| Steam (Warhead bundle)                                            | 1.5     | 6729  | Y      | Y      | Y         |
-| Origin (Warhead bundle)                                           | 1.5     | 6729  | Y      | -      | Y         |
+| [GOG](https://www.gog.com/game/crysiswarhead)                     | 1.5     | 6729  | -      | Y      | Y         |
+| [Steam](https://store.steampowered.com/app/17330/Crysis_Warhead/) | 1.5     | 6729  | Y      | Y      | Y         |
+| [EA](https://www.ea.com/games/crysis-warhead)                     | 1.0     | 6527  | Y      | -      | Y         |
 
+- Bundled together with Crysis Warhead.
 - The latest official version is 1.5 (6729).
-- If you have DVD or Trial version, install the
-[1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe) official patch to get the latest version and 64-bit files.
+- If you have DVD, Trial or EA version, install the [1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe)
+official patch to get the latest version and 64-bit files.
 
 ## FAQ
 
@@ -142,15 +171,16 @@ MSVC is the only supported compiler due to required ABI compatibility with Crysi
 #### Using Native Tools Command Prompt
 
 1. Download the source code.
-2. Create two empty build directories named `Build32` and `Build64` inside the source code directory.
-3. Open the x86 Native Tools Command Prompt in the newly created `Build32` directory and run the following commands:
+2. Create `Build` directory inside the source code directory.
+3. Create two empty directories named `Bin32` and `Bin64` inside the `Build` directory.
+4. Open the x86 Native Tools Command Prompt in the `Build/Bin32` directory and run the following commands:
 
 ```
-cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release ..
+cmake -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=Release ../..
 cmake --build .
 ```
 
-4. Repeat the previous step with the x64 Native Tools Command Prompt and the `Build64` directory.
+5. Repeat the previous step with the x64 Native Tools Command Prompt and the `Build/Bin64` directory.
 
 #### Using Visual Studio
 
@@ -161,7 +191,7 @@ Older versions of Visual Studio require manually generated solution files.
 Use the same steps as above with the following command:
 
 ```
-cmake -G "Visual Studio 10 2010" -A Win32 ..
+cmake -G "Visual Studio 10 2010" -A Win32 ../..
 ```
 
 Choose the appropriate version of Visual Studio. For 64-bit build replace `Win32` with `x64`.
