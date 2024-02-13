@@ -3244,6 +3244,66 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 // Editor
 ////////////////////////////////////////////////////////////////////////////////
 
+void MemoryPatch::Editor::FixBrokenPanels(void* pEditor, int editorBuild)
+{
+#ifdef BUILD_64BIT
+	const unsigned char codeA[] = {
+		0x48, 0xC7, 0x44, 0x24, 0x58, 0x00, 0x00, 0x00, 0x00,  // mov qword ptr ss:[rsp+0x58], 0x0
+	};
+
+	const unsigned char codeB[] = {
+		0x83, 0xC9, 0xFF,              // or ecx, 0xFFFFFFFF
+		0x48, 0x83, 0xC1, 0x02,        // add rcx, 0x2
+		0x48, 0x89, 0x4C, 0x24, 0x60,  // mov qword ptr ss:[rsp+0x60], rcx
+		0x90,                          // nop
+	};
+#else
+	const unsigned char codeA[] = {
+		0x33, 0xFF,        // xor edi, edi
+		0x33, 0xC0,        // xor eax, eax
+		0xB0, 0x01,        // mov al, 0x1
+		0x89, 0x45, 0xE8,  // mov dword ptr ss:[ebp-0x18], eax
+		0x89, 0x45, 0xEC,  // mov dword ptr ss:[ebp-0x14], eax
+	};
+
+	const unsigned char codeB[] = {
+		0x83, 0x65, 0xE0, 0x00,  // and dword ptr ss:[ebp-0x20], 0x0
+		0x83, 0x65, 0xE4, 0x00,  // and dword ptr ss:[ebp-0x1C], 0x0
+	};
+#endif
+
+	switch (editorBuild)
+	{
+#ifdef BUILD_64BIT
+		case 5767:
+		{
+			FillMem(pEditor, 0x36DB6, &codeA, sizeof(codeA));
+			FillMem(pEditor, 0x36DCC, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x36336, &codeA, sizeof(codeA));
+			FillMem(pEditor, 0x3634C, &codeB, sizeof(codeB));
+			break;
+		}
+#else
+		case 5767:
+		{
+			FillMem(pEditor, 0x336CF, &codeA, sizeof(codeA));
+			FillMem(pEditor, 0x336E0, &codeB, sizeof(codeB));
+			break;
+		}
+		case 6670:
+		{
+			FillMem(pEditor, 0x32CC1, &codeA, sizeof(codeA));
+			FillMem(pEditor, 0x32CD2, &codeB, sizeof(codeB));
+			break;
+		}
+#endif
+	}
+}
+
 /**
  * Hooks Editor version initialization.
  *

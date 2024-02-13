@@ -130,6 +130,7 @@ void EditorLauncher::PatchEngine()
 {
 	if (m_dlls.pEditor)
 	{
+		MemoryPatch::Editor::FixBrokenPanels(m_dlls.pEditor, m_dlls.editorBuild);
 		MemoryPatch::Editor::HookVersionInit(m_dlls.pEditor, m_dlls.editorBuild, &OnVersionInit);
 	}
 

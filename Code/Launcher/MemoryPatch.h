@@ -85,6 +85,7 @@ namespace MemoryPatch
 			int product_major;
 		};
 
+		void FixBrokenPanels(void* pEditor, int editorBuild);
 		void HookVersionInit(void* pEditor, int editorBuild,
 			void (*handler)(Version* version));
 	}
