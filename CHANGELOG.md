@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Crysis Editor (Sandbox 2) support.
 - Crysis Warhead support (64-bit only).
-- Crysis Wars executable with correct icon. No other differences. All executables support all game variants.
+- Crysis Wars executable with correct icon. No other differences. All executables always support all game variants.
 - DX10 renderer now supports [overriding d3d10.dll and dxgi.dll](https://github.com/ccomrade/c1-launcher/issues/34)
 by placing them into the same directory.
 - `-userpath` to change user directory path.
@@ -20,8 +20,9 @@ extern "C" __declspec(dllexport) const char* GetUserDirName()
 }
 ```
 ### Fixed
-- Incorrectly trimmed spaces from CPU model name in specific cases.
-- Rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.
+- Fixed [the two broken panels in Editor](https://github.com/ccomrade/c1-launcher/pull/38).
+- Fixed incorrectly trimmed spaces from CPU model name in specific cases.
+- Fixed rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.
 
 ## [v5] - 2023-11-03
 ### Added
