@@ -3244,6 +3244,11 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 // Editor
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Fixes the top right and bottom left panels of the main viewport.
+ *
+ * In modern windows, these two panels have all their buttons stacked on top of each other.
+ */
 void MemoryPatch::Editor::FixBrokenPanels(void* pEditor, int editorBuild)
 {
 #ifdef BUILD_64BIT
