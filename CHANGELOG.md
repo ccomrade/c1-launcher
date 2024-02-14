@@ -35,8 +35,8 @@ User directory: C:\Users\User\Documents\My Games\Crysis
     - `c1-launcher-v6-build.zip` => Crysis => game + dedicated server + headless server + editor
     - `c1-launcher-v6-build-wars.zip` => Crysis Wars => game + dedicated server + headless server + editor
     - `c1-launcher-v6-build-warhead.zip` => Crysis Warhead => game (64-bit)
-    - Both dedicated and headless server launchers also support Crysis Warhead, which is singleplayer-only and has no
-server launcher by default. However, it ships without CryRenderNULL DLL, so both server launchers fail to start the
+        - Both dedicated and headless server launchers also support Crysis Warhead, which is singleplayer-only and has
+no server launcher by default. However, it ships without CryRenderNULL DLL, so both server launchers fail to start the
 engine there.
 
 ## [v5] - 2023-11-03
