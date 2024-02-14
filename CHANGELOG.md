@@ -19,10 +19,25 @@ extern "C" __declspec(dllexport) const char* GetUserDirName()
     return "My Mod";  // -> "Documents/My Games/My Mod"
 }
 ```
+- Path information in the log:
+```
+Main directory: C:\Crysis
+Root directory: C:\Crysis
+User directory: C:\Users\User\Documents\My Games\Crysis
+```
 ### Fixed
 - Fixed [the two broken panels in Editor](https://github.com/ccomrade/c1-launcher/pull/38).
 - Fixed incorrectly trimmed spaces from CPU model name in specific cases.
 - Fixed rare crash in the engine due to out-of-bounds access of the `CPUInfo::cores` array.
+
+### Changed
+- Each game variant now has its own release ZIP with all available executables:
+    - `c1-launcher-v6-build.zip` => Crysis => game + dedicated server + headless server + editor
+    - `c1-launcher-v6-build-wars.zip` => Crysis Wars => game + dedicated server + headless server + editor
+    - `c1-launcher-v6-build-warhead.zip` => Crysis Warhead => game (64-bit)
+    - Both dedicated and headless server launchers also support Crysis Warhead, which is singleplayer-only and has no
+server launcher by default. However, it ships without CryRenderNULL DLL, so both server launchers fail to start the
+engine there.
 
 ## [v5] - 2023-11-03
 ### Added
