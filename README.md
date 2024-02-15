@@ -23,6 +23,7 @@ It provides a better game and dedicated server launcher with additional features
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Language detection to workaround incomplete localization files in
 [Crysis from Steam](https://store.steampowered.com/app/17300/Crysis/).
+- Fixes [the two broken panels in Editor](https://github.com/ccomrade/c1-launcher/pull/38).
 
 ## Supported game versions
 
@@ -109,13 +110,15 @@ official patch to get the latest version and 64-bit files.
 
 ### How to use it?
 
-Get the latest executables from [releases](../../releases) and just replace the original files.
+Get the latest [release](https://github.com/ccomrade/c1-launcher/releases) and just replace the original executables.
+
+Note that Warhead and Editor launchers need the original executables, which is why the new ones have different names.
 
 Remember that you should always use a legal copy of Crysis!
 
 ### Is there any way to avoid replacing the original executables?
 
-Yes, you can rename C1-Launcher executables to whatever you want and use them next to the original files.
+Yes, you can rename C1-Launcher executables to whatever you want and use them next to the original ones.
 
 ### How can I play Crysis multiplayer?
 
@@ -142,7 +145,9 @@ No, it does not.
 
 ### Does C1-Launcher support Crysis Warhead?
 
-No, it does not. The reason is that CryGame and CryAction DLLs are integrated into the EXE in Crysis Warhead.
+Yes, it does, but only 64-bit version. The reason is that CryGame and CryAction DLLs are integrated into the EXE in
+Crysis Warhead. This means the original EXEs are still needed. 32-bit one is encrypted by SecuROM, which makes it
+basically unusable. Luckily, 64-bit one is clean. See below why.
 
 ### Why does the Bin64 folder contain 2 executables?
 
