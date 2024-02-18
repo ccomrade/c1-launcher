@@ -3245,7 +3245,7 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Initializes a global hInstance pointer in the Warhead EXE.
+ * Initializes the global hInstance pointer in the Warhead EXE.
  *
  * Normally, WinMain initializes it, but we load Warhead EXE as a DLL without executing its WinMain function.
  * Only the Logitech G15 display interface uses it to obtain its bitmap resources from the EXE.
