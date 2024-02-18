@@ -3241,6 +3241,41 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// WarheadEXE
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Initializes a global hInstance pointer in the Warhead EXE.
+ *
+ * Normally, WinMain initializes it, but we load Warhead EXE as a DLL without executing its WinMain function.
+ * Only the Logitech G15 display interface uses it to obtain its bitmap resources from the EXE.
+ *
+ * Only game launcher needs this.
+ */
+void MemoryPatch::WarheadEXE::FixHInstance(void* pEXE, int gameBuild)
+{
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		case 710:
+		case 711:
+		{
+			*static_cast<void**>(ByteOffset(pEXE, 0x80BBE8)) = pEXE;
+			break;
+		}
+#else
+		case 687:
+		case 710:
+		case 711:
+		{
+			// TODO: 32-bit Crysis Warhead
+			break;
+		}
+#endif
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Editor
 ////////////////////////////////////////////////////////////////////////////////
 
