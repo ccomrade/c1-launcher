@@ -70,6 +70,11 @@ namespace MemoryPatch
 		void DisableDebugRenderer(void* pCryRenderNULL, int gameBuild);
 	}
 
+	namespace WarheadEXE
+	{
+		void FixHInstance(void* pEXE, int gameBuild);
+	}
+
 	namespace Editor
 	{
 		struct Version

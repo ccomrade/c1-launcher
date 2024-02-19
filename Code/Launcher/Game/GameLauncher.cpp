@@ -90,6 +90,8 @@ void GameLauncher::PatchEngine()
 		}
 
 		MemoryPatch::CryAction::AllowDX9ImmersiveMultiplayer(m_dlls.pEXE, m_dlls.gameBuild);
+
+		MemoryPatch::WarheadEXE::FixHInstance(m_dlls.pEXE, m_dlls.gameBuild);
 	}
 
 	if (m_dlls.pCryGame)
