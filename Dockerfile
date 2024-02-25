@@ -9,10 +9,7 @@ RUN dpkg --add-architecture i386 \
 && apt-get install -y --no-install-recommends wine wine64 wine32:i386 winbind \
 && apt-get clean
 
-RUN adduser --disabled-password --gecos "" builder
-USER builder
-
 RUN wineboot --init && wineserver --wait
 
-ADD --chown=builder:builder https://comrade.one/$TOOLCHAIN_TARBALL /tmp/
-RUN tar -xaf /tmp/$TOOLCHAIN_TARBALL -C /home/builder/.wine/drive_c/ && rm /tmp/$TOOLCHAIN_TARBALL
+ADD https://comrade.one/$TOOLCHAIN_TARBALL /
+RUN tar -xaf /$TOOLCHAIN_TARBALL -C /root/.wine/drive_c/ && rm /$TOOLCHAIN_TARBALL

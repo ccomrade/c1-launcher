@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/${{ github.repository }}/wine-msvc-vs2005
     env:
-      WINEPREFIX: /home/builder/.wine
+      WINEPREFIX: /root/.wine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
