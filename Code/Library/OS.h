@@ -249,12 +249,12 @@ namespace OS
 		{
 			const int failIfExists = 0;
 
-			return ::CopyFileA(source, destination, failIfExists);
+			return ::CopyFileA(source, destination, failIfExists) != 0;
 		}
 
 		inline bool CreateDirectory(const char* path)
 		{
-			return ::CreateDirectoryA(path, NULL) || GetLastError() == 183;  // ERROR_ALREADY_EXISTS
+			return ::CreateDirectoryA(path, NULL) != 0 || GetLastError() == 183;  // ERROR_ALREADY_EXISTS
 		}
 	}
 

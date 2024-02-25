@@ -12,4 +12,4 @@ RUN dpkg --add-architecture i386 \
 RUN wineboot --init && wineserver --wait
 
 ADD https://comrade.one/$TOOLCHAIN_TARBALL /
-RUN tar -xaf /$TOOLCHAIN_TARBALL -C /root/.wine/drive_c/ && rm $TOOLCHAIN_TARBALL
+RUN tar -xaf /$TOOLCHAIN_TARBALL -C /root/.wine/drive_c/ && rm /$TOOLCHAIN_TARBALL

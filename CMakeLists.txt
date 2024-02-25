@@ -71,7 +71,7 @@ endif()
 target_include_directories(LauncherBase PUBLIC Code ${PROJECT_BINARY_DIR})
 
 # explicitly disable some stupid MSVC warnings
-target_compile_options(LauncherBase PUBLIC /D_CRT_SECURE_NO_WARNINGS /wd4351)
+target_compile_options(LauncherBase PUBLIC /D_CRT_SECURE_NO_WARNINGS /wd4100 /wd4201 /wd4351 /wd4481 /wd4512)
 
 # prevent modern MSVC from enabling ASLR, which breaks Crysis DLLs, and unlock memory above 2 GB
 target_link_options(LauncherBase PUBLIC /DYNAMICBASE:NO /LARGEADDRESSAWARE)
