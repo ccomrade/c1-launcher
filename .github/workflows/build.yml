@@ -27,6 +27,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ inputs.arch }}
+          vsversion: 2022
 
       - name: Configure
         run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
@@ -39,7 +40,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: c1-launcher-${{ inputs.arch }}-${{ github.ref_name }}-${{ github.sha }}
+          name: c1-launcher-${{ inputs.arch }}-vs2022-${{ github.ref_name }}-${{ github.sha }}
           path: |
             Build/*.exe
             Build/*.pdb
