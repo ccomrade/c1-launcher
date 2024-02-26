@@ -41,16 +41,14 @@ jobs:
         with:
           name: c1-launcher-${{ inputs.arch }}-${{ github.ref_name }}-${{ github.sha }}
           path: |
-            ${{ github.workspace }}\Build\*.exe
-            ${{ github.workspace }}\Build\*.pdb
-            ${{ github.workspace }}\Build\Wars\*.exe
-            ${{ github.workspace }}\Build\Wars\*.pdb
+            Build/*.exe
+            Build/*.pdb
+            Build/Wars/*.exe
+            Build/Wars/*.pdb
 
   msvc_vs2005:
     runs-on: ubuntu-latest
     container: ghcr.io/${{ github.repository }}/wine-msvc-vs2005
-    env:
-      WINEPREFIX: /root/.wine
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -68,7 +66,7 @@ jobs:
         with:
           name: c1-launcher-${{ inputs.arch }}-vs2005-${{ github.ref_name }}-${{ github.sha }}
           path: |
-            ${{ github.workspace }}/Build/*.exe
-            ${{ github.workspace }}/Build/*.pdb
-            ${{ github.workspace }}/Build/Wars/*.exe
-            ${{ github.workspace }}/Build/Wars/*.pdb
+            Build/*.exe
+            Build/*.pdb
+            Build/Wars/*.exe
+            Build/Wars/*.pdb
