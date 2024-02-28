@@ -477,4 +477,25 @@ void CrashLogger::Enable(CrashLogger::Handler handler)
 
 	_set_purecall_handler(&PureCallHandler);
 	_set_invalid_parameter_handler(&InvalidParameterHandler);
+
+#if defined(_MSC_VER) && _MSC_VER != 1400
+	// for non-VS2005 compilers
+	HMODULE msvcr80 = LoadLibraryA("msvcr80.dll");
+	if (msvcr80)
+	{
+		void* vs2005_set_purecall_handler = GetProcAddress(msvcr80, "_set_purecall_handler");
+		if (vs2005_set_purecall_handler)
+		{
+			static_cast<_purecall_handler(*)(_purecall_handler)>
+				(vs2005_set_purecall_handler)(&PureCallHandler);
+		}
+
+		void* vs2005_set_invalid_parameter_handler = GetProcAddress(msvcr80, "_set_invalid_parameter_handler");
+		if (vs2005_set_invalid_parameter_handler)
+		{
+			static_cast<_invalid_parameter_handler(*)(_invalid_parameter_handler)>
+				(vs2005_set_invalid_parameter_handler)(&InvalidParameterHandler);
+		}
+	}
+#endif
 }
