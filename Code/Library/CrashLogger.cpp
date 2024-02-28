@@ -478,7 +478,7 @@ void CrashLogger::Enable(CrashLogger::Handler handler)
 	_set_purecall_handler(&PureCallHandler);
 	_set_invalid_parameter_handler(&InvalidParameterHandler);
 
-#if defined(_MSC_VER) && _MSC_VER != 1400
+#if !defined(_MSC_VER) || _MSC_VER != 1400
 	// for non-VS2005 compilers
 	HMODULE msvcr80 = LoadLibraryA("msvcr80.dll");
 	if (msvcr80)
