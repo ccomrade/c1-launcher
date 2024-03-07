@@ -280,8 +280,8 @@ void Logger::RegisterConsoleVariables()
 
 	m_cvars.prefix = pConsole->RegisterString("log_Prefix", m_prefix.c_str(), VF_NOT_NET_SYNCED,
 		"Defines prefix of each message written to the log file.\n"
-		"Usage: log_Prefix FORMAT\n"
-		"The format string consists of normal characters and the following conversion specifiers:\n"
+		"Usage: log_Prefix PREFIX\n"
+		"The prefix consists of normal characters and the following special sequences:\n"
 		"  %% = %\n"
 		"  %d = Day of the month (01..31)\n"
 		"  %m = Month (01..12)\n"
