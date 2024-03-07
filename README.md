@@ -127,14 +127,6 @@ However, there is [CryMP Network](https://crymp.net) community providing their o
 
 For Crysis Wars take a look [here](https://crysiswarsmp.com) or [here](https://cryserv.de).
 
-### How can I run Crysis in DX9 mode instead of the default DX10 mode?
-
-Just launch the game with `-dx9` command line parameter.
-
-### Is it possible to disable automatic skipping of startup video ads?
-
-Yes, launch the game with `-splash` command line parameter.
-
 ### Does Crysis support screen resolutions higher than 1080p?
 
 Yes, it does. There is a scrollbar in the resolution list.
@@ -149,7 +141,7 @@ Yes, it does, but only 64-bit version. The reason is that CryGame and CryAction 
 Crysis Warhead. This means the original EXEs are still needed. 32-bit one is encrypted by SecuROM, which makes it
 basically unusable. Luckily, 64-bit one is clean. See below why.
 
-### Why does the Bin64 folder contain 2 executables?
+### Why does the Bin64 directory contain 2 executables?
 
 The original `Bin64/Crysis.exe` file is actually only a 32-bit SecuROM DRM launcher. It reads the `Bin64/Crysis.ini`
 config file and runs `Bin64/crysis64.exe`, which is the 64-bit game launcher. However, running the game launcher
@@ -158,6 +150,141 @@ with additional SecuROM garbage. It checks whether the game was launched using t
 crashes.
 
 All this nonsense is skipped by C1-Launcher. That means you can safely delete all the mentioned files.
+
+## Command line parameters
+
+Parameter names are not case sensitive.
+
+#### `-dx9` (vanilla, game only)
+
+Runs the game with DX9 renderer. This is the default if DX10 is not available (WinXP).
+
+#### `-dx10` (vanilla, game only)
+
+Runs the game with DX10 renderer. This is the default if DX10 is available (WinVista+).
+
+#### `-splash` (since v2.7, game only)
+
+Disables automatic skipping of startup video ads.
+
+#### `-language LANGUAGE` (since v4, game only)
+
+Sets game language. This overrides the default language set in `Game/Localized/Default.lng`.
+
+#### `-root PATH` (vanilla)
+
+Sets root directory, where log and config files are stored. Defaults to main directory.
+
+Used for running multiple instances within a single main directory. Mostly for servers.
+
+#### `-mod NAME` (vanilla)
+
+Loads a mod.
+
+#### `-dedicated` (vanilla, game only)
+
+Starts dedicated server instead of game.
+
+#### `-devmode` (vanilla)
+
+Enables developer features (DevMode).
+
+#### `-lvlres` (vanilla)
+
+Enables recording of startup and level resources (assets).
+
+The resulting list is saved on quit to a file in the current level directory.
+
+#### `-pakalias NAME,VALUE[,NAME,VALUE]...` (vanilla)
+
+Adds CryPak aliases.
+
+#### `-resetprofile` (vanilla)
+
+Resets user profile, including `game.cfg` in the user directory. Triggers automatic detection of quality settings.
+
+#### `-autodetect` (vanilla)
+
+Forces automatic detection of quality settings (Low, Medium, High, Very High) based on computer hardware.
+
+#### `-logfile NAME` (vanilla)
+
+Sets name of the log file. Defaults to either `Game.log` or `Server.log` or `Editor.log`.
+
+#### `-logprefix PREFIX` (since v3, headless server only)
+
+Sets prefix of each log message. This is the default value of the `log_Prefix` cvar. Defaults to nothing.
+
+The prefix consists of normal characters and the following special sequences:
+
+| Sequence | Meaning                                                         |
+| :------- | :-------------------------------------------------------------- |
+| `%%`     | %                                                               |
+| `%d`     | Day of the month (01..31)                                       |
+| `%m`     | Month (01..12)                                                  |
+| `%Y`     | Year (e.g. 2007)                                                |
+| `%H`     | Hour (00..23)                                                   |
+| `%M`     | Minute (00..59)                                                 |
+| `%S`     | Second (00..60)                                                 |
+| `%N`     | Millisecond (000..999)                                          |
+| `%z`     | Offset from UTC (time zone) in the ISO 8601 format (e.g. +0100) |
+| `%F`     | Equivalent to `%Y-%m-%d` (the ISO 8601 date format)             |
+| `%T`     | Equivalent to `%H:%M:%S` (the ISO 8601 time format)             |
+| `%t`     | Thread ID where the message was logged                          |
+
+#### `-verbosity NUMBER` (since v3, headless server only)
+
+Sets log verbosity. Defaults to `0` in headless server. In all other launchers, the default verbosity is always `1`.
+
+The following verbosity values are supported:
+
+| Verbosity | Meaning                             |
+| :-------- | :---------------------------------- |
+| `-1`      | Log disabled (headless server only) |
+| `0`       | Only *always* messages              |
+| `1`       | Additional errors                   |
+| `2`       | Additional warnings                 |
+| `3`       | Additional messages                 |
+| `4`       | Additional comments                 |
+
+#### `-userdirname NAME` (since v6)
+
+Sets name of user directory in `Documents/My Games/`. Overrides `Game/Config/Folders.ini`.
+
+| Example                     | User directory                        |
+| :---------------------------| :------------------------------------ |
+| `-userdirname Crysis`       | `Documents/My Games/Crysis` (default) |
+| `-userdirname Test`         | `Documents/My Games/Test`             |
+| `-userdirname "My New Mod"` | `Documents/My Games/My New Mod`       |
+
+#### `-userpath PATH` (since v6)
+
+Sets user directory path. Both `\` and `/` are supported. Overrides `-userdirname` and `Game/Config/Folders.ini`.
+
+| Example                           | User directory                                               |
+| :-------------------------------- | :----------------------------------------------------------- |
+| `-userpath .`                     | Crysis main directory                                        |
+| `-userpath Something\MyFolder`    | Crysis main directory + `Something\MyFolder` (relative path) |
+| `-userpath C:\Something\MyFolder` | `C:\Something\MyFolder` (absolute path)                      |
+
+#### `+CVAR VALUE` and `+CMD [ARG]...` (vanilla)
+
+Sets a console variable (cvar) value or executes a console command. Done after startup.
+
+This can be used to change certain settings from command line.
+Here is an example that disables restricted console and enables showing basic engine info (the default in DevMode):
+
+```
+Crysis.exe +con_restricted 0 +r_DisplayInfo 1
+```
+
+It is also used to execute server configs.
+Often in combination with loading a server-side mod (SSM) and changing root directory.
+For example:
+
+```
+CrysisDedicatedServer.exe -mod MySSM -root C:\Crysis\ServerFolder +exec server.cfg
+```
 
 ## Build instructions
 
