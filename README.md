@@ -169,7 +169,26 @@ Disables automatic skipping of startup video ads.
 
 #### `-language LANGUAGE` (since v4, game only)
 
-Sets game language. This overrides the default language set in `Game/Localized/Default.lng`.
+Sets game language. Overrides `Game/Localized/Default.lng` config file.
+
+Supported languages:
+
+| Language  | Crysis | Crysis Warhead | Crysis Wars |
+| :-------- | :----: | :------------: | :---------: |
+| English   | Y      | Y              | Y           |
+| Czech     | Y      | Y              | Y           |
+| French    | Y      | Y              | Y           |
+| German    | Y      | Y              | Y           |
+| Hungarian | Y      | Y              | Y           |
+| Italian   | Y      | Y              | Y           |
+| Japanese  | Y      | Y              | ?           |
+| Chinese   | ?      | Y              | ?           |
+| Korean    | ?      | N              | N           |
+| Polish    | Y      | Y              | Y           |
+| Russian   | Y      | Y              | Y           |
+| Spanish   | Y      | Y              | Y           |
+| Turkish   | Y      | N              | N           |
+| Thai      | ?      | ?              | ?           |
 
 #### `-root PATH` (vanilla)
 
@@ -259,7 +278,7 @@ Sets name of user directory in `Documents/My Games/`. Overrides `Game/Config/Fol
 
 #### `-userpath PATH` (since v6)
 
-Sets user directory path. Both `\` and `/` are supported. Overrides `-userdirname` and `Game/Config/Folders.ini`.
+Sets user directory path. Overrides `-userdirname` and `Game/Config/Folders.ini`. Both `\` and `/` are supported.
 
 | Example                           | User directory                                               |
 | :-------------------------------- | :----------------------------------------------------------- |
