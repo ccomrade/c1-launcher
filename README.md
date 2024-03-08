@@ -286,9 +286,9 @@ Sets user directory path. Overrides `-userdirname` and `Game/Config/Folders.ini`
 | `-userpath Something\MyFolder`    | Crysis main directory + `Something\MyFolder` (relative path) |
 | `-userpath C:\Something\MyFolder` | `C:\Something\MyFolder` (absolute path)                      |
 
-#### `+CVAR VALUE` and `+CMD [ARG]...` (vanilla)
+#### `+CVAR VALUE` (vanilla)
 
-Sets a console variable (cvar) value or executes a console command. Done after startup.
+Sets a console variable (cvar) value after startup.
 
 This can be used to change certain settings from command line.
 Here is an example that disables restricted console and enables showing basic engine info (the default in DevMode):
@@ -297,7 +297,11 @@ Here is an example that disables restricted console and enables showing basic en
 Crysis.exe +con_restricted 0 +r_DisplayInfo 1
 ```
 
-It is also used to execute server configs.
+#### `+CMD [ARG]...` (vanilla)
+
+Executes a console command after startup.
+
+This can be used to load a server config file.
 Often in combination with loading a server-side mod (SSM) and changing root directory.
 For example:
 
