@@ -74,8 +74,8 @@ It provides a better game and dedicated server launcher with additional features
 | [EA](https://www.ea.com/games/crysis/crysis)                      | 1.2.1   | 6156  | Y      | Y      | Y         |
 
 - The latest official version is 1.2.1 (6156).
-- If you have DVD version, install the [1.2](https://crysis.nullptr.one/Crysis_Patch_1_2.exe) and
-[1.2.1](https://crysis.nullptr.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version.
+- If you have DVD version, install the [1.2](https://comrade.one/Crysis_Patch_1_2.exe) and
+[1.2.1](https://comrade.one/Crysis_Patch_1_2_1.exe) official patches to get the latest version.
 
 ### Crysis Warhead (2008)
 
@@ -87,7 +87,7 @@ It provides a better game and dedicated server launcher with additional features
 | [EA](https://www.ea.com/games/crysis-warhead)                     | 1.1.1   | 711   | Y      | Y      | Y (64-bit) |
 
 - The latest official version is 1.1.1 (711).
-- If you have DVD version, install the [1.1.1](https://crysis.nullptr.one/CrysisWarhead_Patch1_1.exe) official patch
+- If you have DVD version, install the [1.1.1](https://comrade.one/CrysisWarhead_Patch1_1.exe) official patch
 to get the latest version and 64-bit files. C1-Launcher supports only 64-bit version of Crysis Warhead, so this step
 is necessary.
 
@@ -103,7 +103,7 @@ is necessary.
 
 - Bundled together with Crysis Warhead.
 - The latest official version is 1.5 (6729).
-- If you have DVD, Trial or EA version, install the [1.5](https://crysis.nullptr.one/CrysisWars_patch5.exe)
+- If you have DVD, Trial or EA version, install the [1.5](https://comrade.one/CrysisWars_patch5.exe)
 official patch to get the latest version and 64-bit files.
 
 ## FAQ
@@ -123,7 +123,7 @@ Yes, you can rename C1-Launcher executables to whatever you want and use them ne
 ### How can I play Crysis multiplayer?
 
 The official multiplayer no longer works due to [GameSpy shutdown](https://en.wikipedia.org/wiki/GameSpy#Shutdown).
-However, there is [CryMP Network](https://crymp.net) community providing their own multiplayer services.
+However, there is [CryMP](https://crymp.org) community providing their own multiplayer services.
 
 For Crysis Wars take a look [here](https://crysiswarsmp.com) or [here](https://cryserv.de).
 
