@@ -2,10 +2,9 @@
 
 #include <winver.h>
 
-#include "Launcher/Editor/Resources.h"
 #include "Project.h"
 
-RESOURCE_ICON ICON "Editor.ico"
+101 ICON "Editor.ico"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     PROJECT_VERSION, 0, 0, 0

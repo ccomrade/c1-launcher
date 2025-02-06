@@ -83,7 +83,6 @@ add_library(GameLauncher STATIC
 	Code/Launcher/Game/GameLauncher.h
 	Code/Launcher/Game/LanguageHook.cpp
 	Code/Launcher/Game/LanguageHook.h
-	Code/Launcher/Game/Resources.h
 )
 
 target_link_libraries(GameLauncher LauncherBase)
@@ -142,7 +141,6 @@ add_executable(CrysisDedicatedServer WIN32
 	Code/Launcher/DedicatedServer/DedicatedServerLauncher.cpp
 	Code/Launcher/DedicatedServer/DedicatedServerLauncher.h
 	Code/Launcher/DedicatedServer/Main.cpp
-	Code/Launcher/DedicatedServer/Resources.h
 	Resources/DedicatedServer.rc
 	Resources/Manifests/DpiAwareness.manifest
 	Resources/Manifests/EnableVisualStyles.manifest
@@ -174,7 +172,6 @@ add_executable(EditorLauncher WIN32
 	Code/Launcher/Editor/EditorLauncher.cpp
 	Code/Launcher/Editor/EditorLauncher.h
 	Code/Launcher/Editor/Main.cpp
-	Code/Launcher/Editor/Resources.h
 	Resources/Editor.rc
 	Resources/Manifests/DpiAwareness.manifest
 	Resources/Manifests/EnableVisualStyles.manifest
@@ -187,6 +184,9 @@ target_link_libraries(EditorLauncher LauncherBase)
 
 ################################################################################
 
+# dependencies of .rc files are not tracked automatically
+# https://gitlab.kitware.com/cmake/cmake/-/issues/16479
+
 set(CURSORS
 	${PROJECT_SOURCE_DIR}/Resources/CursorAmber.cur
 	${PROJECT_SOURCE_DIR}/Resources/CursorBlue.cur
@@ -195,11 +195,33 @@ set(CURSORS
 	${PROJECT_SOURCE_DIR}/Resources/CursorWhite.cur
 )
 
-set(CRYSIS_RESOURCES           ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/Crysis.ico)
-set(CRYSIS_WARHEAD_RESOURCES   ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWarhead.ico)
-set(CRYSIS_WARS_RESOURCES      ${CURSORS} ${PROJECT_SOURCE_DIR}/Resources/CrysisWars.ico)
-set(DEDICATED_SERVER_RESOURCES            ${PROJECT_SOURCE_DIR}/Resources/DedicatedServer.ico)
-set(EDITOR_RESOURCES                      ${PROJECT_SOURCE_DIR}/Resources/Editor.ico)
+set(CRYSIS_RESOURCES
+	${CURSORS}
+	${PROJECT_BINARY_DIR}/Project.h
+	${PROJECT_SOURCE_DIR}/Resources/Crysis.ico
+)
+
+set(CRYSIS_WARHEAD_RESOURCES
+	${CURSORS}
+	${PROJECT_BINARY_DIR}/Project.h
+	${PROJECT_SOURCE_DIR}/Resources/CrysisWarhead.ico
+)
+
+set(CRYSIS_WARS_RESOURCES
+	${CURSORS}
+	${PROJECT_BINARY_DIR}/Project.h
+	${PROJECT_SOURCE_DIR}/Resources/CrysisWars.ico
+)
+
+set(DEDICATED_SERVER_RESOURCES
+	${PROJECT_BINARY_DIR}/Project.h
+	${PROJECT_SOURCE_DIR}/Resources/DedicatedServer.ico
+)
+
+set(EDITOR_RESOURCES
+	${PROJECT_BINARY_DIR}/Project.h
+	${PROJECT_SOURCE_DIR}/Resources/Editor.ico
+)
 
 set_source_files_properties(Resources/Crysis.rc          PROPERTIES OBJECT_DEPENDS "${CRYSIS_RESOURCES}")
 set_source_files_properties(Resources/CrysisWarhead.rc   PROPERTIES OBJECT_DEPENDS "${CRYSIS_WARHEAD_RESOURCES}")

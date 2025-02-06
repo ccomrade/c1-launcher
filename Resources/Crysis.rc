@@ -2,16 +2,15 @@
 
 #include <winver.h>
 
-#include "Launcher/Game/Resources.h"
 #include "Project.h"
 
-RESOURCE_ICON ICON "Crysis.ico"
+101 ICON "Crysis.ico"
 
-RESOURCE_CURSOR_AMBER CURSOR "CursorAmber.cur"
-RESOURCE_CURSOR_BLUE  CURSOR "CursorBlue.cur"
-RESOURCE_CURSOR_GREEN CURSOR "CursorGreen.cur"
-RESOURCE_CURSOR_RED   CURSOR "CursorRed.cur"
-RESOURCE_CURSOR_WHITE CURSOR "CursorWhite.cur"
+103 CURSOR "CursorAmber.cur"
+104 CURSOR "CursorBlue.cur"
+105 CURSOR "CursorGreen.cur"
+106 CURSOR "CursorRed.cur"
+107 CURSOR "CursorWhite.cur"
 
 VS_VERSION_INFO VERSIONINFO
 FILEVERSION     PROJECT_VERSION, 0, 0, 0
