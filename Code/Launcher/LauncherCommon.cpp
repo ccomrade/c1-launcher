@@ -11,6 +11,7 @@
 #include "Library/StringView.h"
 #include "Project.h"
 
+#include "CrashTest.h"
 #include "CryRender.h"
 #include "LauncherCommon.h"
 
@@ -328,6 +329,8 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
 	CryLogAlways("Main directory: %s", mainDir.c_str());
 	CryLogAlways("Root directory: %s", rootDir.empty() ? mainDir.c_str() : rootDir.c_str());
 	CryLogAlways("User directory: %s", userDir.c_str());
+
+	CrashTest::Register();
 }
 
 void LauncherCommon::OnD3D9Info(CryRender_D3D9_AdapterInfo* info)
