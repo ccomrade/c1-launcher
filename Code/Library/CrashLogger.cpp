@@ -56,10 +56,11 @@ static const char* ExceptionCodeToName(unsigned int code)
 		case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "Integer divide by zero";
 		case EXCEPTION_INT_OVERFLOW:             return "Integer overflow";
 		case EXCEPTION_INVALID_DISPOSITION:      return "Invalid disposition";
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable exception";
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable";
 		case EXCEPTION_PRIV_INSTRUCTION:         return "Privileged instruction";
 		case EXCEPTION_SINGLE_STEP:              return "Single step";
 		case EXCEPTION_STACK_OVERFLOW:           return "Stack overflow";
+		case 0xE06D7363:                         return "C++ EH";
 	}
 
 	return "Unknown";
