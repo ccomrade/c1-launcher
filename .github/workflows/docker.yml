@@ -1,3 +1,7 @@
+################################################################################
+# Manual workflow to build the legacy VS2005 compiler Docker image
+################################################################################
+
 name: Build Docker image
 
 on: workflow_dispatch

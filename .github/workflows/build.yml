@@ -18,29 +18,25 @@ on:
 
 jobs:
   msvc_vs2022:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ inputs.arch }}
-          vsversion: 2022
-
-      - name: Configure
-        run: cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+      - name: Build
+        id: build
         env:
           CXXFLAGS: /W4 /WX
-
-      - name: Build
-        run: cmake --build Build
+        run: |
+          & 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1' `
+            -SkipAutomaticLocation -Arch ${{ inputs.arch == 'x64' && 'amd64' || inputs.arch }}
+          cmake -S . -B Build -G "NMake Makefiles" -D CMAKE_BUILD_TYPE=${{ inputs.type }}
+          cmake --build Build
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: c1-launcher-${{ inputs.arch }}-vs2022-${{ github.ref_name }}-${{ github.sha }}
+          name: c1-launcher-${{ inputs.arch }}-vs2022-${{ github.run_id }}
           path: |
             Build/*.exe
             Build/*.pdb
@@ -54,18 +50,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure
-        run: wine cmd /C "C:/SetEnv_${{ inputs.arch }}.bat && cmake -S . -B Build -D CMAKE_BUILD_TYPE=${{ inputs.type }}"
+      - name: Build
+        id: build
         env:
           CXXFLAGS: /W4 /WX
-
-      - name: Build
-        run: wine cmd /C "C:/SetEnv_${{ inputs.arch }}.bat && cmake --build Build"
+        run: |
+          wine cmd /C "C:/SetEnv_${{ inputs.arch }}.bat && cmake -S . -B Build -D CMAKE_BUILD_TYPE=${{ inputs.type }}"
+          wine cmd /C "C:/SetEnv_${{ inputs.arch }}.bat && cmake --build Build"
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: c1-launcher-${{ inputs.arch }}-vs2005-${{ github.ref_name }}-${{ github.sha }}
+          name: c1-launcher-${{ inputs.arch }}-vs2005-${{ github.run_id }}
           path: |
             Build/*.exe
             Build/*.pdb
