@@ -16,6 +16,10 @@
 #define ADDR_FMT "%08X"
 #endif
 
+#define CRASH_LOGGER_PURE_CALL 0xE0C1C101
+#define CRASH_LOGGER_INVALID_PARAM 0xE0C1C102
+#define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
+
 static void* ByteOffset(void* base, std::size_t offset)
 {
 	return static_cast<unsigned char*>(base) + offset;
@@ -56,14 +60,17 @@ static const char* ExceptionCodeToName(unsigned int code)
 		case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "Integer divide by zero";
 		case EXCEPTION_INT_OVERFLOW:             return "Integer overflow";
 		case EXCEPTION_INVALID_DISPOSITION:      return "Invalid disposition";
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable";
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable exception";
 		case EXCEPTION_PRIV_INSTRUCTION:         return "Privileged instruction";
 		case EXCEPTION_SINGLE_STEP:              return "Single step";
 		case EXCEPTION_STACK_OVERFLOW:           return "Stack overflow";
-		case 0xE06D7363:                         return "C++ EH";
+		case 0xE06D7363:                         return "C++ exception";
+		case CRASH_LOGGER_PURE_CALL:             return "Pure virtual function call";
+		case CRASH_LOGGER_INVALID_PARAM:         return "Invalid parameter detected by CRT";
+		case CRASH_LOGGER_ENGINE_ERROR:          return "Engine error";
 	}
 
-	return "Unknown";
+	return "Unknown exception";
 }
 
 static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
@@ -71,7 +78,7 @@ static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 	const unsigned int code = info->ExceptionCode;
 	const std::size_t address = reinterpret_cast<std::size_t>(info->ExceptionAddress);
 
-	std::fprintf(file, "%s exception (0x%08X) at 0x" ADDR_FMT "\n", ExceptionCodeToName(code), code, address);
+	std::fprintf(file, "%s (0x%08X) at 0x" ADDR_FMT "\n", ExceptionCodeToName(code), code, address);
 
 	if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 	{
@@ -343,42 +350,6 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 	WriteDumpFooter(file);
 }
 
-static void WriteGenericErrorDump(std::FILE* file, CONTEXT* context, const char* message)
-{
-	WriteDumpHeader(file);
-
-	std::fprintf(file, "%s\n", message);
-	std::fflush(file);
-
-	DumpMemoryUsage(file);
-	DumpRegisters(file, context);
-	DumpCallStack(file, context);
-	DumpLoadedModules(file);
-	DumpCommandLine(file);
-
-	WriteDumpFooter(file);
-}
-
-static void WriteEngineErrorDump(std::FILE* file, CONTEXT* context, const char* format, va_list args)
-{
-	WriteDumpHeader(file);
-
-	std::fprintf(file, "Engine error: ");
-	std::fflush(file);
-
-	std::vfprintf(file, format, args);
-	std::fputc('\n', file);
-	std::fflush(file);
-
-	DumpMemoryUsage(file);
-	DumpRegisters(file, context);
-	DumpCallStack(file, context);
-	DumpLoadedModules(file);
-	DumpCommandLine(file);
-
-	WriteDumpFooter(file);
-}
-
 static OS::Mutex g_mutex;
 static CrashLogger::Handler g_handler;
 
@@ -406,68 +377,27 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 
 static void PureCallHandler()
 {
-	CONTEXT context = {};
-	RtlCaptureContext(&context);
+	RaiseException(CRASH_LOGGER_PURE_CALL, EXCEPTION_NONCONTINUABLE, 0, NULL);
 
-	if (g_handler)
-	{
-		OS::LockGuard<OS::Mutex> lock(g_mutex);
-
-		std::FILE* file = g_handler();
-
-		if (file)
-		{
-			WriteGenericErrorDump(file, &context, "Pure function call");
-
-			std::fclose(file);
-		}
-	}
-
-	std::abort();
+	// just in case
+	std::exit(1);
 }
 
 static void InvalidParameterHandler(const wchar_t*, const wchar_t*, const wchar_t*, unsigned int, uintptr_t)
 {
-	CONTEXT context = {};
-	RtlCaptureContext(&context);
+	RaiseException(CRASH_LOGGER_INVALID_PARAM, EXCEPTION_NONCONTINUABLE, 0, NULL);
 
-	if (g_handler)
-	{
-		OS::LockGuard<OS::Mutex> lock(g_mutex);
-
-		std::FILE* file = g_handler();
-
-		if (file)
-		{
-			WriteGenericErrorDump(file, &context, "Invalid parameter detected by CRT");
-
-			std::fclose(file);
-		}
-	}
-
-	std::abort();
+	// just in case
+	std::exit(1);
 }
 
 void CrashLogger::OnEngineError(const char* format, va_list args)
 {
-	CONTEXT context = {};
-	RtlCaptureContext(&context);
+	// TODO: message
+	RaiseException(CRASH_LOGGER_ENGINE_ERROR, EXCEPTION_NONCONTINUABLE, 0, NULL);
 
-	if (g_handler)
-	{
-		OS::LockGuard<OS::Mutex> lock(g_mutex);
-
-		std::FILE* file = g_handler();
-
-		if (file)
-		{
-			WriteEngineErrorDump(file, &context, format, args);
-
-			std::fclose(file);
-		}
-	}
-
-	std::abort();
+	// just in case
+	std::exit(1);
 }
 
 void CrashLogger::Enable(CrashLogger::Handler handler)
