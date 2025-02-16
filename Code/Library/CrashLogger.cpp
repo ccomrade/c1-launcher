@@ -5,8 +5,6 @@
 #include <winternl.h>
 #include <dbghelp.h>
 
-#include "Project.h"
-
 #include "CrashLogger.h"
 
 #ifdef BUILD_64BIT
@@ -18,6 +16,9 @@
 #define CRASH_LOGGER_PURE_CALL 0xE0C1C101
 #define CRASH_LOGGER_INVALID_PARAM 0xE0C1C102
 #define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
+
+static CrashLogger::Handler g_handler;
+static const char* g_banner;
 
 static void* ByteOffset(void* base, std::size_t offset)
 {
@@ -325,7 +326,7 @@ static void DumpCommandLine(std::FILE* file)
 static void WriteDumpHeader(std::FILE* file)
 {
 	std::fprintf(file, "================================ CRASH DETECTED ================================\n");
-	std::fprintf(file, "%s\n", PROJECT_BANNER);
+	std::fprintf(file, "%s\n", g_banner);
 	std::fflush(file);
 }
 
@@ -348,8 +349,6 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 
 	WriteDumpFooter(file);
 }
-
-static CrashLogger::Handler g_handler;
 
 static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 {
@@ -396,9 +395,10 @@ void CrashLogger::OnEngineError(const char* format, va_list args)
 	std::exit(1);
 }
 
-void CrashLogger::Enable(CrashLogger::Handler handler)
+void CrashLogger::Enable(Handler handler, const char* banner)
 {
 	g_handler = handler;
+	g_banner = banner;
 
 	SetUnhandledExceptionFilter(&CrashHandler);
 

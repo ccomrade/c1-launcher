@@ -29,7 +29,7 @@ namespace LauncherCommon
 	IGameStartup* StartEngine(void* pCryGame, SSystemInitParams& params);
 
 	void OnChangeUserPath(ISystem* pSystem, const char* userPath);
-	void OnEarlyEngineInit(ISystem* pSystem);
+	void OnEarlyEngineInit(ISystem* pSystem, const char* banner);
 	void OnD3D9Info(CryRender_D3D9_AdapterInfo* info);
 	void OnD3D10Info(CryRender_D3D10_AdapterInfo* info);
 	bool OnD3D10Init(CryRender_D3D10_SystemAPI* api);

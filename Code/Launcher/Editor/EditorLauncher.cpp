@@ -1,6 +1,7 @@
 #include "Library/CrashLogger.h"
 #include "Library/OS.h"
 #include "Library/StringFormat.h"
+#include "Project.h"
 
 #include "../CPUInfo.h"
 #include "../LauncherCommon.h"
@@ -8,6 +9,7 @@
 
 #include "EditorLauncher.h"
 
+#define LAUNCHER_BANNER "C1-Launcher Editor " PROJECT_VERSION_STRING
 #define DEFAULT_LOG_FILE_NAME "Editor.log"
 
 static OS::DLL::Version g_version;
@@ -15,6 +17,13 @@ static OS::DLL::Version g_version;
 static std::FILE* OpenLogFile()
 {
 	return LauncherCommon::OpenLogFile(DEFAULT_LOG_FILE_NAME);
+}
+
+static void OnCPUDetect(CPUInfo* info, ISystem* pSystem)
+{
+	LauncherCommon::OnEarlyEngineInit(pSystem, LAUNCHER_BANNER);
+
+	CPUInfo::Detect(info);
 }
 
 static void OnVersionInit(MemoryPatch::Editor::Version* version)
@@ -98,7 +107,7 @@ EditorLauncher::~EditorLauncher()
 
 int EditorLauncher::Run(char* cmdLine)
 {
-	CrashLogger::Enable(&OpenLogFile);
+	CrashLogger::Enable(&OpenLogFile, LAUNCHER_BANNER);
 
 	this->LoadEngine();
 	this->PatchEngine();
@@ -139,7 +148,7 @@ void EditorLauncher::PatchEngine()
 		MemoryPatch::CrySystem::AllowDX9VeryHighSpec(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::FixCPUInfoOverflow(m_dlls.pCrySystem, m_dlls.gameBuild);
-		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
+		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &OnCPUDetect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);

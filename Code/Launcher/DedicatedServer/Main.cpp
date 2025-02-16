@@ -6,15 +6,8 @@
 #include <stdexcept>
 
 #include "Library/OS.h"
-#include "Project.h"
 
 #include "DedicatedServerLauncher.h"
-
-////////////////////////////////////////////////////////////////////////////////
-
-const char* const PROJECT_BANNER = "C1-Launcher Dedicated Server " PROJECT_VERSION_STRING;
-
-////////////////////////////////////////////////////////////////////////////////
 
 int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {

@@ -6,15 +6,8 @@
 #include <stdexcept>
 
 #include "Library/OS.h"
-#include "Project.h"
 
 #include "GameLauncher.h"
-
-////////////////////////////////////////////////////////////////////////////////
-
-const char* const PROJECT_BANNER = "C1-Launcher Game " PROJECT_VERSION_STRING;
-
-////////////////////////////////////////////////////////////////////////////////
 
 extern "C"
 {
@@ -24,8 +17,6 @@ extern "C"
 	// AMD
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 int __stdcall WinMain(void* instance, void* prevInstance, char* cmdLine, int cmdShow)
 {
