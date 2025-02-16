@@ -8,7 +8,6 @@
 #include "Project.h"
 
 #include "CrashLogger.h"
-#include "OS.h"
 
 #ifdef BUILD_64BIT
 #define ADDR_FMT "%016I64X"
@@ -350,7 +349,6 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 	WriteDumpFooter(file);
 }
 
-static OS::Mutex g_mutex;
 static CrashLogger::Handler g_handler;
 
 static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
@@ -360,8 +358,6 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 
 	if (g_handler)
 	{
-		OS::LockGuard<OS::Mutex> lock(g_mutex);
-
 		std::FILE* file = g_handler();
 
 		if (file)
