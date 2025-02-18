@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <winternl.h>
 #include <dbghelp.h>
+#include <psapi.h>
 
 #include "CrashLogger.h"
 
@@ -95,29 +96,70 @@ static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 	std::fflush(file);
 }
 
-static void DumpMemoryUsage(std::FILE* file)
+static void DumpGlobalMemoryUsage(std::FILE* file)
 {
 	MEMORYSTATUSEX status = {};
 	status.dwLength = sizeof(status);
-
-	if (GlobalMemoryStatusEx(&status))
-	{
-		std::fprintf(file, "Physical memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
-			static_cast<double>(status.ullTotalPhys) / (1024 * 1024),
-			static_cast<double>(status.ullAvailPhys) / (1024 * 1024),
-			(100.0 * (status.ullTotalPhys - status.ullAvailPhys)) / status.ullTotalPhys
-		);
-
-		std::fprintf(file, "Virtual memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
-			static_cast<double>(status.ullTotalVirtual) / (1024 * 1024),
-			static_cast<double>(status.ullAvailVirtual) / (1024 * 1024),
-			(100.0 * (status.ullTotalVirtual - status.ullAvailVirtual)) / status.ullTotalVirtual
-		);
-	}
-	else
+	if (!GlobalMemoryStatusEx(&status))
 	{
 		std::fprintf(file, "GlobalMemoryStatusEx failed with error code %u\n", GetLastError());
+		std::fflush(file);
+		return;
 	}
+
+	std::fprintf(file, "Physical memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
+		static_cast<double>(status.ullTotalPhys) / (1024 * 1024),
+		static_cast<double>(status.ullAvailPhys) / (1024 * 1024),
+		(100.0 * (status.ullTotalPhys - status.ullAvailPhys)) / status.ullTotalPhys
+	);
+
+	std::fprintf(file, "Virtual memory = %.1f MiB (%.1f MiB available, %.1f%% used)\n",
+		static_cast<double>(status.ullTotalVirtual) / (1024 * 1024),
+		static_cast<double>(status.ullAvailVirtual) / (1024 * 1024),
+		(100.0 * (status.ullTotalVirtual - status.ullAvailVirtual)) / status.ullTotalVirtual
+	);
+
+	std::fflush(file);
+}
+
+static void DumpProcessMemoryUsage(std::FILE* file)
+{
+	HMODULE psapi = LoadLibraryA("psapi.dll");
+	if (!psapi)
+	{
+		std::fprintf(file, "Loading psapi.dll failed with error code %u\n", GetLastError());
+		std::fflush(file);
+		return;
+	}
+
+	void* getProcessMemoryInfo = GetProcAddress(psapi, "GetProcessMemoryInfo");
+	if (!getProcessMemoryInfo)
+	{
+		std::fprintf(file, "Obtaining GetProcessMemoryInfo failed with error code %u\n", GetLastError());
+		std::fflush(file);
+		return;
+	}
+
+	HANDLE process = GetCurrentProcess();
+	PROCESS_MEMORY_COUNTERS info = {};
+	info.cb = sizeof(info);
+	if (!static_cast<BOOL(__stdcall *)(HANDLE, PPROCESS_MEMORY_COUNTERS, DWORD)>
+		(getProcessMemoryInfo)(process, &info, sizeof(info)))
+	{
+		std::fprintf(file, "GetProcessMemoryInfo failed with error code %u\n", GetLastError());
+		std::fflush(file);
+		return;
+	}
+
+	std::fprintf(file, "Commit charge = %.1f MiB (%.1f MiB peak)\n",
+		static_cast<double>(info.PagefileUsage) / (1024 * 1024),
+		static_cast<double>(info.PeakPagefileUsage) / (1024 * 1024)
+	);
+
+	std::fprintf(file, "Working set = %.1f MiB (%.1f MiB peak)\n",
+		static_cast<double>(info.WorkingSetSize) / (1024 * 1024),
+		static_cast<double>(info.PeakWorkingSetSize) / (1024 * 1024)
+	);
 
 	std::fflush(file);
 }
@@ -341,7 +383,8 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 	WriteDumpHeader(file);
 
 	DumpExceptionInfo(file, exception->ExceptionRecord);
-	DumpMemoryUsage(file);
+	DumpGlobalMemoryUsage(file);
+	DumpProcessMemoryUsage(file);
 	DumpRegisters(file, exception->ContextRecord);
 	DumpCallStack(file, exception->ContextRecord);
 	DumpLoadedModules(file);
@@ -358,7 +401,6 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 	if (g_handler)
 	{
 		std::FILE* file = g_handler();
-
 		if (file)
 		{
 			WriteCrashDump(file, exception);
