@@ -154,6 +154,11 @@ static void CrashTestHandler(IConsoleCmdArgs* pArgs)
 			StackOverflow();
 			break;
 		}
+		case 13:
+		{
+			exit(13);
+			break;
+		}
 		default:
 		{
 			CryLogWarningAlways("sys_crashtest %d is not supported", value);
@@ -169,5 +174,21 @@ void CrashTest::Register()
 	// disable the original cvar without removing it completely because CrySystem holds a pointer to it
 	pConsole->UnregisterVariable("sys_crashtest", false);
 
-	pConsole->AddCommand("sys_crashtest", &CrashTestHandler, 0, "Crash the game");
+	pConsole->AddCommand("sys_crashtest", &CrashTestHandler, 0,
+		"Crash the game.\n"
+		"Usage: sys_crashtest N\n"
+		"  1 = Null pointer access\n"
+		"  2 = Integer division by zero\n"
+		"  3 = Out-of-memory using big blocks\n"
+		"  4 = Engine error\n"
+		"  5 = Out-of-memory using small blocks\n"
+		"  6 = assert(0)\n"
+		"  7 = __debugbreak()\n"
+		"  8 = abort()\n"
+		"  9 = Invalid CRT argument\n"
+		" 10 = Pure virtual function call\n"
+		" 11 = Unhandled C++ exception\n"
+		" 12 = Stack overflow\n"
+		" 13 = exit(13)\n"
+	);
 }
