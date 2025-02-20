@@ -12,6 +12,7 @@
 
 #include "HeadlessServerLauncher.h"
 
+#define LAUNCHER_BANNER "C1-Launcher Headless Server " PROJECT_VERSION_STRING
 #define DEFAULT_LOG_FILE_NAME "Server.log"
 #define DEFAULT_LOG_VERBOSITY "0"
 
@@ -24,6 +25,13 @@ static void Print(const char* format, ...)
 
 	std::fputc('\n', stderr);
 	std::fflush(stderr);
+}
+
+static void OnCPUDetect(CPUInfo* info, ISystem* pSystem)
+{
+	LauncherCommon::OnEarlyEngineInit(pSystem, LAUNCHER_BANNER);
+
+	CPUInfo::Detect(info);
 }
 
 HeadlessServerLauncher* HeadlessServerLauncher::s_self;
@@ -45,7 +53,7 @@ HeadlessServerLauncher::~HeadlessServerLauncher()
 
 int HeadlessServerLauncher::Run()
 {
-	Print("%s", PROJECT_BANNER);
+	Print("%s", LAUNCHER_BANNER);
 	Print("Command line: [%s]", OS::CmdLine::GetOnlyArgs());
 
 	m_rootFolder = LauncherCommon::GetRootFolderPath();
@@ -64,7 +72,7 @@ int HeadlessServerLauncher::Run()
 
 	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
 
-	CrashLogger::Enable(&HeadlessServerLauncher::OpenLogFile);
+	CrashLogger::Enable(&HeadlessServerLauncher::OpenLogFile, LAUNCHER_BANNER);
 
 	this->LoadEngine();
 	this->PatchEngine();
@@ -133,7 +141,7 @@ void HeadlessServerLauncher::PatchEngine()
 	{
 		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::FixCPUInfoOverflow(m_dlls.pCrySystem, m_dlls.gameBuild);
-		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
+		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &OnCPUDetect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);

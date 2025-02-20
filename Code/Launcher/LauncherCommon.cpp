@@ -9,7 +9,6 @@
 #include "Library/PathTools.h"
 #include "Library/StringFormat.h"
 #include "Library/StringView.h"
-#include "Project.h"
 
 #include "CrashTest.h"
 #include "CryRender.h"
@@ -316,11 +315,11 @@ void LauncherCommon::OnChangeUserPath(ISystem* pSystem, const char* userPath)
 	SetUserDir(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
 }
 
-void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem)
+void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 {
 	gEnv = pSystem->GetGlobalEnvironment();
 
-	CryLogAlways("%s", PROJECT_BANNER);
+	CryLogAlways("%s", banner);
 
 	const std::string mainDir = PathTools::GetWorkingDirectory();
 	const std::string rootDir = PathTools::Prettify(pSystem->GetRootFolder());

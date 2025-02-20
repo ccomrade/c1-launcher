@@ -8,5 +8,5 @@ namespace CrashLogger
 
 	void OnEngineError(const char* format, va_list args);
 
-	void Enable(Handler handler);
+	void Enable(Handler handler, const char* banner);
 }

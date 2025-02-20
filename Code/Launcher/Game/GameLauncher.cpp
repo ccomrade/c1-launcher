@@ -1,5 +1,6 @@
 #include "Library/CrashLogger.h"
 #include "Library/OS.h"
+#include "Project.h"
 
 #include "../CPUInfo.h"
 #include "../LauncherCommon.h"
@@ -8,11 +9,19 @@
 #include "GameLauncher.h"
 #include "LanguageHook.h"
 
+#define LAUNCHER_BANNER "C1-Launcher Game " PROJECT_VERSION_STRING
 #define DEFAULT_LOG_FILE_NAME "Game.log"
 
 static std::FILE* OpenLogFile()
 {
 	return LauncherCommon::OpenLogFile(DEFAULT_LOG_FILE_NAME);
+}
+
+static void OnCPUDetect(CPUInfo* info, ISystem* pSystem)
+{
+	LauncherCommon::OnEarlyEngineInit(pSystem, LAUNCHER_BANNER);
+
+	CPUInfo::Detect(info);
 }
 
 GameLauncher::GameLauncher() : m_pGameStartup(NULL), m_params(), m_dlls()
@@ -34,7 +43,7 @@ int GameLauncher::Run()
 
 	LauncherCommon::SetParamsCmdLine(m_params, OS::CmdLine::Get());
 
-	CrashLogger::Enable(&OpenLogFile);
+	CrashLogger::Enable(&OpenLogFile, LAUNCHER_BANNER);
 
 	this->LoadEngine();
 	this->PatchEngine();
@@ -125,7 +134,7 @@ void GameLauncher::PatchEngine()
 		MemoryPatch::CrySystem::AllowMultipleInstances(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::DisableCrashHandler(m_dlls.pCrySystem, m_dlls.gameBuild);
 		MemoryPatch::CrySystem::FixCPUInfoOverflow(m_dlls.pCrySystem, m_dlls.gameBuild);
-		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &CPUInfo::Detect);
+		MemoryPatch::CrySystem::HookCPUDetect(m_dlls.pCrySystem, m_dlls.gameBuild, &OnCPUDetect);
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookLanguageInit(m_dlls.pCrySystem, m_dlls.gameBuild, &LanguageHook::OnInit);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,

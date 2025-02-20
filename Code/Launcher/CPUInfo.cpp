@@ -47,10 +47,8 @@ static unsigned int GetFeatures()
 	return features;
 }
 
-void CPUInfo::Detect(CPUInfo* self, ISystem* pSystem)
+void CPUInfo::Detect(CPUInfo* self)
 {
-	LauncherCommon::OnEarlyEngineInit(pSystem);
-
 	const unsigned int coreCount = GetCoreCount();
 	const unsigned int features = GetFeatures();
 
