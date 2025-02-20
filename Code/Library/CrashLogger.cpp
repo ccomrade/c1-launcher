@@ -79,7 +79,7 @@ static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 	const unsigned int code = info->ExceptionCode;
 	const std::size_t address = reinterpret_cast<std::size_t>(info->ExceptionAddress);
 
-	std::fprintf(file, "%s (0x%08X) at 0x" ADDR_FMT "\n", ExceptionCodeToName(code), code, address);
+	std::fprintf(file, "%s (0x%08X) at 0x" ADDR_FMT, ExceptionCodeToName(code), code, address);
 
 	if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 	{
@@ -87,12 +87,19 @@ static void DumpExceptionInfo(std::FILE* file, const EXCEPTION_RECORD* info)
 
 		switch (info->ExceptionInformation[0])
 		{
-			case 0: std::fprintf(file, "Read from 0x"  ADDR_FMT " failed\n", dataAddress); break;
-			case 1: std::fprintf(file, "Write to 0x"   ADDR_FMT " failed\n", dataAddress); break;
-			case 8: std::fprintf(file, "Execute at 0x" ADDR_FMT " failed\n", dataAddress); break;
+			case 0: std::fprintf(file, ": Read from 0x"  ADDR_FMT " failed", dataAddress); break;
+			case 1: std::fprintf(file, ": Write to 0x"   ADDR_FMT " failed", dataAddress); break;
+			case 8: std::fprintf(file, ": Execute at 0x" ADDR_FMT " failed", dataAddress); break;
 		}
 	}
+	else if (code == CRASH_LOGGER_ENGINE_ERROR)
+	{
+		const char* message = reinterpret_cast<const char*>(info->ExceptionInformation[0]);
 
+		std::fprintf(file, ": %s", message);
+	}
+
+	std::fprintf(file, "\n");
 	std::fflush(file);
 }
 
@@ -361,7 +368,6 @@ static void DumpCommandLine(std::FILE* file)
 {
 	std::fprintf(file, "Command line:\n");
 	std::fprintf(file, "%s\n", GetCommandLineA());
-
 	std::fflush(file);
 }
 
@@ -415,26 +421,27 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 static void PureCallHandler()
 {
 	RaiseException(CRASH_LOGGER_PURE_CALL, EXCEPTION_NONCONTINUABLE, 0, NULL);
-
-	// just in case
-	std::exit(1);
+	ExitProcess(1);
 }
 
 static void InvalidParameterHandler(const wchar_t*, const wchar_t*, const wchar_t*, unsigned int, uintptr_t)
 {
 	RaiseException(CRASH_LOGGER_INVALID_PARAM, EXCEPTION_NONCONTINUABLE, 0, NULL);
-
-	// just in case
-	std::exit(1);
+	ExitProcess(1);
 }
 
 void CrashLogger::OnEngineError(const char* format, va_list args)
 {
-	// TODO: message
-	RaiseException(CRASH_LOGGER_ENGINE_ERROR, EXCEPTION_NONCONTINUABLE, 0, NULL);
+	char buffer[256];
+	// std::vsnprintf is not supported by VS2005
+	_vsnprintf(buffer, sizeof(buffer), format, args);
+	buffer[sizeof(buffer) - 1] = '\0';
 
-	// just in case
-	std::exit(1);
+	const ULONG_PTR params[] = { reinterpret_cast<ULONG_PTR>(buffer) };
+	const DWORD paramCount = 1;
+
+	RaiseException(CRASH_LOGGER_ENGINE_ERROR, EXCEPTION_NONCONTINUABLE, paramCount, params);
+	ExitProcess(1);
 }
 
 void CrashLogger::Enable(Handler handler, const char* banner)
