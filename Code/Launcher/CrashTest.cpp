@@ -189,6 +189,6 @@ void CrashTest::Register()
 		" 10 = Pure virtual function call\n"
 		" 11 = Unhandled C++ exception\n"
 		" 12 = Stack overflow\n"
-		" 13 = exit(13)\n"
+		" 13 = exit(13)"
 	);
 }
