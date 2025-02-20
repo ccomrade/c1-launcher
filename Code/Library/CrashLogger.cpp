@@ -131,7 +131,12 @@ static void DumpGlobalMemoryUsage(std::FILE* file)
 
 static void DumpProcessMemoryUsage(std::FILE* file)
 {
-	HMODULE psapi = LoadLibraryA("psapi.dll");
+	HMODULE psapi = GetModuleHandleA("psapi.dll");
+	if (!psapi)
+	{
+		psapi = LoadLibraryA("psapi.dll");
+	}
+
 	if (!psapi)
 	{
 		std::fprintf(file, "Loading psapi.dll failed with error code %u\n", GetLastError());
