@@ -2407,7 +2407,7 @@ void MemoryPatch::CrySystem::HookChangeUserPath(void* pCrySystem, int gameBuild,
  * Hooks D3D9 adapter information logging.
  */
 void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameBuild,
-	void (*handler)(CryRender_D3D9_AdapterInfo* info))
+	void (*handler)(MemoryPatch::CryRenderD3D9::AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
 	unsigned char code[] = {
@@ -2697,7 +2697,7 @@ void MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(void* pCryRenderD3D10, in
  * It also fixes crash of 64-bit DX10 renderer on nVidia driver version 545.92 and possibly others.
  */
 void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gameBuild,
-	void (*handler)(CryRender_D3D10_AdapterInfo* info))
+	void (*handler)(MemoryPatch::CryRenderD3D10::AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
 	unsigned char codeA[] = {
@@ -2893,7 +2893,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
  * This patch is used to load these DLLs normally, so placing them next to CryRenderD3D10.dll works as expected.
  */
 void MemoryPatch::CryRenderD3D10::HookInitAPI(void* pCryRenderD3D10, int gameBuild,
-	bool (*handler)(CryRender_D3D10_SystemAPI* api))
+	bool (*handler)(MemoryPatch::CryRenderD3D10::SystemAPI* api))
 {
 #ifdef BUILD_64BIT
 	unsigned char code[] = {

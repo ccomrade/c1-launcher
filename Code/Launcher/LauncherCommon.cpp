@@ -11,8 +11,8 @@
 #include "Library/StringView.h"
 
 #include "CrashTest.h"
-#include "CryRender.h"
 #include "LauncherCommon.h"
+#include "MemoryPatch.h"
 
 std::string LauncherCommon::GetMainFolderPath()
 {
@@ -332,13 +332,13 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 	CrashTest::Register();
 }
 
-void LauncherCommon::OnD3D9Info(CryRender_D3D9_AdapterInfo* info)
+void LauncherCommon::OnD3D9Info(MemoryPatch::CryRenderD3D9::AdapterInfo* info)
 {
 	CryLogAlways("D3D9 Adapter: %s", info->description);
 	CryLogAlways("D3D9 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
 }
 
-void LauncherCommon::OnD3D10Info(CryRender_D3D10_AdapterInfo* info)
+void LauncherCommon::OnD3D10Info(MemoryPatch::CryRenderD3D10::AdapterInfo* info)
 {
 	CryLogAlways("D3D10 Adapter: %ls", info->description);
 	CryLogAlways("D3D10 Adapter: PCI %04x:%04x (rev %02x)", info->vendor_id, info->device_id, info->revision);
@@ -348,7 +348,7 @@ void LauncherCommon::OnD3D10Info(CryRender_D3D10_AdapterInfo* info)
 	LogBytes("D3D10 Adapter: Shared system memory = ", info->shared_system_memory);
 }
 
-bool LauncherCommon::OnD3D10Init(CryRender_D3D10_SystemAPI* api)
+bool LauncherCommon::OnD3D10Init(MemoryPatch::CryRenderD3D10::SystemAPI* api)
 {
 	void* d3d10 = OS::DLL::Load("d3d10.dll");
 	if (!d3d10)

@@ -42,7 +42,6 @@ add_library(LauncherBase STATIC
 	Code/Launcher/CPUInfo.h
 	Code/Launcher/CrashTest.cpp
 	Code/Launcher/CrashTest.h
-	Code/Launcher/CryRender.h
 	Code/Launcher/LauncherCommon.cpp
 	Code/Launcher/LauncherCommon.h
 	Code/Launcher/MemoryPatch.cpp

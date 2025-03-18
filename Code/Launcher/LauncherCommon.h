@@ -3,12 +3,23 @@
 #include <cstdio>
 #include <string>
 
-struct CryRender_D3D9_AdapterInfo;
-struct CryRender_D3D10_AdapterInfo;
-struct CryRender_D3D10_SystemAPI;
 struct IGameStartup;
 struct ISystem;
 struct SSystemInitParams;
+
+namespace MemoryPatch
+{
+	namespace CryRenderD3D9
+	{
+		struct AdapterInfo;
+	}
+
+	namespace CryRenderD3D10
+	{
+		struct AdapterInfo;
+		struct SystemAPI;
+	}
+}
 
 namespace LauncherCommon
 {
@@ -30,9 +41,9 @@ namespace LauncherCommon
 
 	void OnChangeUserPath(ISystem* pSystem, const char* userPath);
 	void OnEarlyEngineInit(ISystem* pSystem, const char* banner);
-	void OnD3D9Info(CryRender_D3D9_AdapterInfo* info);
-	void OnD3D10Info(CryRender_D3D10_AdapterInfo* info);
-	bool OnD3D10Init(CryRender_D3D10_SystemAPI* api);
+	void OnD3D9Info(MemoryPatch::CryRenderD3D9::AdapterInfo* info);
+	void OnD3D10Info(MemoryPatch::CryRenderD3D10::AdapterInfo* info);
+	bool OnD3D10Init(MemoryPatch::CryRenderD3D10::SystemAPI* api);
 
 	void LogBytes(const char* message, std::size_t bytes);
 
