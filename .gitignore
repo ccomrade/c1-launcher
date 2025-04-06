@@ -1,8 +1,14 @@
+/[Bb]uild*/
+
+/build.sh
+/build.bat
+
+/Tools/DLLs
+
+# Python
+__pycache__/
+
+# Visual Studio
 .vs/
 out/
-[Bb]uild*/
-
-build.sh
-build.bat
-
 CMakeSettings.json
