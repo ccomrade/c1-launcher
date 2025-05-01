@@ -13,6 +13,9 @@ namespace MemoryPatch
 	{
 		void AllowDX9ImmersiveMultiplayer(void* pCryAction, int gameBuild);
 		void DisableGameplayStats(void* pCryAction, int gameBuild);
+		void HookGameWarning(void* pCryAction, int gameBuild, void (*handler)(const char* format, ...));
+		void HookCryWarning(void* pCryAction, int gameBuild,
+			void (*handler)(int, int, const char* format, ...));
 	}
 
 	namespace CryGame
@@ -20,6 +23,9 @@ namespace MemoryPatch
 		void DisableIntros(void* pCryGame, int gameBuild);
 		void CanJoinDX10Servers(void* pCryGame, int gameBuild);
 		void EnableDX10Menu(void* pCryGame, int gameBuild);
+		void HookGameWarning(void* pCryGame, int gameBuild, void (*handler)(const char* format, ...));
+		void HookCryWarning(void* pCryGame, int gameBuild,
+			void (*handler)(int, int, const char* format, ...));
 	}
 
 	namespace CryNetwork
@@ -29,6 +35,8 @@ namespace MemoryPatch
 		void FixInternetConnect(void* pCryNetwork, int gameBuild);
 		void FixFileCheckCrash(void* pCryNetwork, int gameBuild);
 		void DisableServerProfile(void* pCryNetwork, int gameBuild);
+		void HookCryWarning(void* pCryNetwork, int gameBuild,
+			void (*handler)(int, int, const char* format, ...));
 	}
 
 	namespace CrySystem
@@ -44,6 +52,8 @@ namespace MemoryPatch
 			void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager));
 		void HookChangeUserPath(void* pCrySystem, int gameBuild,
 			void (*handler)(ISystem* pSystem, const char* userPath));
+		void HookCryWarning(void* pCrySystem, int gameBuild,
+			void (*handler)(int, int, const char* format, ...));
 	}
 
 	namespace CryRenderD3D9
@@ -64,6 +74,7 @@ namespace MemoryPatch
 		};
 
 		void HookAdapterInfo(void* pCryRenderD3D9, int gameBuild, void (*handler)(AdapterInfo* info));
+		void HookLogWarning(void* pCryRenderD3D9, int gameBuild, void (*handler)(const char* format, ...));
 	}
 
 	namespace CryRenderD3D10
@@ -103,6 +114,7 @@ namespace MemoryPatch
 		void FixLowRefreshRateBug(void* pCryRenderD3D10, int gameBuild);
 		void HookAdapterInfo(void* pCryRenderD3D10, int gameBuild, void (*handler)(AdapterInfo* info));
 		void HookInitAPI(void* pCryRenderD3D10, int gameBuild, bool (*handler)(SystemAPI* api));
+		void HookLogWarning(void* pCryRenderD3D10, int gameBuild, void (*handler)(const char* format, ...));
 	}
 
 	namespace CryRenderNULL
