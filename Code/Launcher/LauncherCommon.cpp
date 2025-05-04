@@ -371,6 +371,32 @@ bool LauncherCommon::OnD3D10Init(MemoryPatch::CryRenderD3D10::SystemAPI* api)
 	return true;
 }
 
+void LauncherCommon::OnCryWarning(int, int, const char* format, ...)
+{
+	// the original buffer size
+	char buffer[4096];
+
+	va_list args;
+	va_start(args, format);
+	StringFormatToBufferV(buffer, sizeof(buffer), format, args);
+	va_end(args);
+
+	CryLogWarning("%s", buffer);
+}
+
+void LauncherCommon::OnGameWarning(const char* format, ...)
+{
+	// the original buffer size
+	char buffer[4096];
+
+	va_list args;
+	va_start(args, format);
+	StringFormatToBufferV(buffer, sizeof(buffer), format, args);
+	va_end(args);
+
+	CryLogWarning("%s", buffer);
+}
+
 void LauncherCommon::LogBytes(const char* message, std::size_t bytes)
 {
 	const char* unit = "";

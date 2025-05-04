@@ -125,6 +125,18 @@ void EditorLauncher::LoadEngine()
 	m_dlls.editorBuild = GetEditorBuild(m_dlls.pEditor);
 	VerifyEditorBuild(m_dlls.editorBuild);
 
+	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
+	{
+		m_dlls.pWarheadExe = LauncherCommon::LoadCrysisWarheadEXE();
+	}
+	else
+	{
+		m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+		m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
+	}
+
+	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
+
 	if (LauncherCommon::IsDX10())
 	{
 		m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
@@ -143,6 +155,36 @@ void EditorLauncher::PatchEngine()
 		MemoryPatch::Editor::HookVersionInit(m_dlls.pEditor, m_dlls.editorBuild, &OnVersionInit);
 	}
 
+	if (m_dlls.pWarheadExe)
+	{
+		MemoryPatch::WarheadEXE::HookCryWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::WarheadEXE::HookGameWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryGame)
+	{
+		MemoryPatch::CryGame::HookCryWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryGame::HookGameWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryAction)
+	{
+		MemoryPatch::CryAction::HookCryWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryAction::HookGameWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryNetwork)
+	{
+		MemoryPatch::CryNetwork::HookCryWarning(m_dlls.pCryNetwork, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+	}
+
 	if (m_dlls.pCrySystem)
 	{
 		MemoryPatch::CrySystem::AllowDX9VeryHighSpec(m_dlls.pCrySystem, m_dlls.gameBuild);
@@ -152,6 +194,8 @@ void EditorLauncher::PatchEngine()
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);
+		MemoryPatch::CrySystem::HookCryWarning(m_dlls.pCrySystem, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
 	}
 
 	if (m_dlls.pCryRenderD3D9)

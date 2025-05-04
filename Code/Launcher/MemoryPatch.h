@@ -124,6 +124,12 @@ namespace MemoryPatch
 
 	namespace WarheadEXE
 	{
+		using CryAction::AllowDX9ImmersiveMultiplayer;
+		using CryAction::DisableGameplayStats;
+		using CryAction::HookCryWarning;
+		using CryAction::HookGameWarning;
+		using CryGame::DisableIntros;
+
 		void FixHInstance(void* pEXE, int gameBuild);
 	}
 

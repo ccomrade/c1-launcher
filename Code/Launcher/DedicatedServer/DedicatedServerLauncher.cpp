@@ -48,7 +48,8 @@ int DedicatedServerLauncher::Run()
 	this->LoadEngine();
 	this->PatchEngine();
 
-	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.isWarhead ? m_dlls.pEXE : m_dlls.pCryGame, m_params);
+	void* pCryGame = m_dlls.pWarheadExe ? m_dlls.pWarheadExe : m_dlls.pCryGame;
+	m_pGameStartup = LauncherCommon::StartEngine(pCryGame, m_params);
 
 	return m_pGameStartup->Run(NULL);
 }
@@ -56,19 +57,17 @@ int DedicatedServerLauncher::Run()
 void DedicatedServerLauncher::LoadEngine()
 {
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
-
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
-	m_dlls.isWarhead = LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild);
-
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	if (m_dlls.isWarhead)
+	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
 	{
-		m_dlls.pEXE = LauncherCommon::LoadCrysisWarheadEXE();
+		m_dlls.pWarheadExe = LauncherCommon::LoadCrysisWarheadEXE();
 	}
 	else
 	{
 		m_dlls.pCryGame = LauncherCommon::LoadDLL("CryGame.dll");
+		m_dlls.pCryAction = LauncherCommon::LoadDLL("CryAction.dll");
 	}
 
 	m_dlls.pCryNetwork = LauncherCommon::LoadDLL("CryNetwork.dll");
@@ -76,12 +75,38 @@ void DedicatedServerLauncher::LoadEngine()
 
 void DedicatedServerLauncher::PatchEngine()
 {
+	if (m_dlls.pWarheadExe)
+	{
+		MemoryPatch::WarheadEXE::HookCryWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::WarheadEXE::HookGameWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryGame)
+	{
+		MemoryPatch::CryGame::HookCryWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryGame::HookGameWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryAction)
+	{
+		MemoryPatch::CryAction::HookCryWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryAction::HookGameWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
 	if (m_dlls.pCryNetwork)
 	{
 		MemoryPatch::CryNetwork::EnablePreordered(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::AllowSameCDKeys(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::FixFileCheckCrash(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::HookCryWarning(m_dlls.pCryNetwork, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
 	}
 
 	if (m_dlls.pCrySystem)
@@ -92,5 +117,7 @@ void DedicatedServerLauncher::PatchEngine()
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);
+		MemoryPatch::CrySystem::HookCryWarning(m_dlls.pCrySystem, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
 	}
 }

@@ -85,7 +85,8 @@ int HeadlessServerLauncher::Run()
 	m_logger.SetPrefix(logPrefix);
 
 	Print("Starting CryEngine...");
-	m_pGameStartup = LauncherCommon::StartEngine(m_dlls.isWarhead ? m_dlls.pEXE : m_dlls.pCryGame, m_params);
+	void* pCryGame = m_dlls.pWarheadExe ? m_dlls.pWarheadExe : m_dlls.pCryGame;
+	m_pGameStartup = LauncherCommon::StartEngine(pCryGame, m_params);
 
 	Print("Ready");
 
@@ -95,16 +96,13 @@ int HeadlessServerLauncher::Run()
 void HeadlessServerLauncher::LoadEngine()
 {
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
-
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
-	m_dlls.isWarhead = LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild);
 	Print("Game build: %d", m_dlls.gameBuild);
-
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
-	if (m_dlls.isWarhead)
+	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
 	{
-		m_dlls.pEXE = LauncherCommon::LoadCrysisWarheadEXE();
+		m_dlls.pWarheadExe = LauncherCommon::LoadCrysisWarheadEXE();
 	}
 	else
 	{
@@ -118,14 +116,30 @@ void HeadlessServerLauncher::LoadEngine()
 
 void HeadlessServerLauncher::PatchEngine()
 {
-	if (m_dlls.isWarhead && m_dlls.pEXE)
+	if (m_dlls.pWarheadExe)
 	{
-		MemoryPatch::CryAction::DisableGameplayStats(m_dlls.pEXE, m_dlls.gameBuild);
+		MemoryPatch::WarheadEXE::DisableGameplayStats(m_dlls.pWarheadExe, m_dlls.gameBuild);
+		MemoryPatch::WarheadEXE::HookCryWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::WarheadEXE::HookGameWarning(m_dlls.pWarheadExe, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
+	}
+
+	if (m_dlls.pCryGame)
+	{
+		MemoryPatch::CryGame::HookCryWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryGame::HookGameWarning(m_dlls.pCryGame, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
 	}
 
 	if (m_dlls.pCryAction)
 	{
 		MemoryPatch::CryAction::DisableGameplayStats(m_dlls.pCryAction, m_dlls.gameBuild);
+		MemoryPatch::CryAction::HookCryWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
+		MemoryPatch::CryAction::HookGameWarning(m_dlls.pCryAction, m_dlls.gameBuild,
+			&LauncherCommon::OnGameWarning);
 	}
 
 	if (m_dlls.pCryNetwork)
@@ -135,6 +149,8 @@ void HeadlessServerLauncher::PatchEngine()
 		MemoryPatch::CryNetwork::FixInternetConnect(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::FixFileCheckCrash(m_dlls.pCryNetwork, m_dlls.gameBuild);
 		MemoryPatch::CryNetwork::DisableServerProfile(m_dlls.pCryNetwork, m_dlls.gameBuild);
+		MemoryPatch::CryNetwork::HookCryWarning(m_dlls.pCryNetwork, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
 	}
 
 	if (m_dlls.pCrySystem)
@@ -145,6 +161,8 @@ void HeadlessServerLauncher::PatchEngine()
 		MemoryPatch::CrySystem::HookError(m_dlls.pCrySystem, m_dlls.gameBuild, &CrashLogger::OnEngineError);
 		MemoryPatch::CrySystem::HookChangeUserPath(m_dlls.pCrySystem, m_dlls.gameBuild,
 			&LauncherCommon::OnChangeUserPath);
+		MemoryPatch::CrySystem::HookCryWarning(m_dlls.pCrySystem, m_dlls.gameBuild,
+			&LauncherCommon::OnCryWarning);
 	}
 
 	if (m_dlls.pCryRenderNULL)

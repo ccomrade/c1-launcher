@@ -92,6 +92,32 @@ void StringFormatToV(std::string& result, const char* format, va_list args)
 	va_end(argsCopy);
 }
 
+void StringFormatToBuffer(char* buffer, std::size_t bufferSize, const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	StringFormatToBufferV(buffer, bufferSize, format, args);
+	va_end(args);
+}
+
+void StringFormatToBufferV(char* buffer, std::size_t bufferSize, const char* format, va_list args)
+{
+	int status = _vsnprintf(buffer, bufferSize, format, args);
+
+	// make sure the buffer is always null-terminated
+	if (bufferSize > 0)
+	{
+		if (status < 0)
+		{
+			buffer[0] = '\0';
+		}
+		else if (static_cast<std::size_t>(status) >= bufferSize)
+		{
+			buffer[bufferSize - 1] = '\0';
+		}
+	}
+}
+
 std::runtime_error StringFormat_Error(const char* format, ...)
 {
 	va_list args;

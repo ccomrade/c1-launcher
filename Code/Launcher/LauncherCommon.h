@@ -44,6 +44,8 @@ namespace LauncherCommon
 	void OnD3D9Info(MemoryPatch::CryRenderD3D9::AdapterInfo* info);
 	void OnD3D10Info(MemoryPatch::CryRenderD3D10::AdapterInfo* info);
 	bool OnD3D10Init(MemoryPatch::CryRenderD3D10::SystemAPI* api);
+	void OnCryWarning(int, int, const char* format, ...);
+	void OnGameWarning(const char* format, ...);
 
 	void LogBytes(const char* message, std::size_t bytes);
 
