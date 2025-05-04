@@ -5,6 +5,10 @@ class EditorLauncher
 	struct DLLs
 	{
 		void* pEditor;
+		void* pWarheadExe;
+		void* pCryGame;
+		void* pCryAction;
+		void* pCryNetwork;
 		void* pCrySystem;
 		void* pCryRenderD3D9;
 		void* pCryRenderD3D10;
