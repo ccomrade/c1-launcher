@@ -4,7 +4,7 @@ Notable changes in each release.
 
 ## [Unreleased]
 - Fix startup crash when `profile.xml` is corrupted ([#59](https://github.com/ccomrade/c1-launcher/pull/59)).
-- Fix startup crash of Warhead launcher when Logitech G15 keyboard is connected
+- Fix startup crash of Warhead launcher when Logitech Gaming Software is installed
 ([#39](https://github.com/ccomrade/c1-launcher/issues/39)).
 - Improve crash logger ([#53](https://github.com/ccomrade/c1-launcher/pull/53),
 [#55](https://github.com/ccomrade/c1-launcher/pull/55)).
