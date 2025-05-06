@@ -137,8 +137,8 @@ bool OS::DLL::GetVersion(void* dll, Version& result)
 
 	result.major = HIWORD(fileInfo->dwProductVersionMS);
 	result.minor = LOWORD(fileInfo->dwProductVersionMS);
-	result.tweak = HIWORD(fileInfo->dwProductVersionLS);
-	result.patch = LOWORD(fileInfo->dwProductVersionLS);
+	result.patch = HIWORD(fileInfo->dwProductVersionLS);
+	result.tweak = LOWORD(fileInfo->dwProductVersionLS);
 
 	return true;
 }

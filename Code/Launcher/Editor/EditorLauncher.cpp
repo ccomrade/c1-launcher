@@ -30,13 +30,13 @@ static void OnVersionInit(MemoryPatch::Editor::Version* version)
 {
 	version->file_major = g_version.major;
 	version->file_minor = g_version.minor;
-	version->file_tweak = g_version.tweak;
 	version->file_patch = g_version.patch;
+	version->file_tweak = g_version.tweak;
 
 	version->product_major = g_version.major;
 	version->product_minor = g_version.minor;
-	version->product_tweak = g_version.tweak;
 	version->product_patch = g_version.patch;
+	version->product_tweak = g_version.tweak;
 }
 
 static int GetEditorBuild(void* pEditor)
@@ -46,7 +46,7 @@ static int GetEditorBuild(void* pEditor)
 		throw StringFormat_SysError("Failed to get the editor version!");
 	}
 
-	return g_version.patch;
+	return g_version.tweak;
 }
 
 static void VerifyEditorBuild(int editorBuild)

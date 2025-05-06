@@ -137,13 +137,13 @@ namespace MemoryPatch
 	{
 		struct Version
 		{
-			int file_patch;
 			int file_tweak;
+			int file_patch;
 			int file_minor;
 			int file_major;
 
-			int product_patch;
 			int product_tweak;
+			int product_patch;
 			int product_minor;
 			int product_major;
 		};

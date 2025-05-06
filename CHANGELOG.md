@@ -3,6 +3,7 @@
 Notable changes in each release.
 
 ## [Unreleased]
+- Add real Windows version to the log. CrySystem cannot see beyond Windows 8 (6.2.9200).
 - Fix startup crash when `profile.xml` is corrupted ([#59](https://github.com/ccomrade/c1-launcher/pull/59)).
 - Fix startup crash of Warhead launcher when Logitech Gaming Software is installed
 ([#39](https://github.com/ccomrade/c1-launcher/issues/39)).
