@@ -104,7 +104,7 @@ int LauncherCommon::GetGameBuild(void* pCrySystem)
 		throw StringFormat_SysError("Failed to get the game version!");
 	}
 
-	return version.patch;
+	return version.tweak;
 }
 
 void LauncherCommon::VerifyGameBuild(int gameBuild)
@@ -315,6 +315,23 @@ void LauncherCommon::OnChangeUserPath(ISystem* pSystem, const char* userPath)
 	SetUserDir(PathTools::Join(PathTools::GetDocumentsPath(), userPath).c_str());
 }
 
+static void LogRealWindowsBuild()
+{
+	void* kernel32 = OS::DLL::Get("kernel32.dll");
+	if (!kernel32)
+	{
+		return;
+	}
+
+	OS::DLL::Version ver;
+	if (!OS::DLL::GetVersion(kernel32, ver))
+	{
+		return;
+	}
+
+	CryLogAlways("Windows build: %hu.%hu.%hu (real)", ver.major, ver.minor, ver.patch);
+}
+
 void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 {
 	gEnv = pSystem->GetGlobalEnvironment();
@@ -328,6 +345,8 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 	CryLogAlways("Main directory: %s", mainDir.c_str());
 	CryLogAlways("Root directory: %s", rootDir.empty() ? mainDir.c_str() : rootDir.c_str());
 	CryLogAlways("User directory: %s", userDir.c_str());
+
+	LogRealWindowsBuild();
 
 	CrashTest::Register();
 }

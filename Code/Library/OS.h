@@ -135,10 +135,10 @@ namespace OS
 		{
 			unsigned short major;
 			unsigned short minor;
-			unsigned short tweak;
 			unsigned short patch;
+			unsigned short tweak;
 
-			Version() : major(), minor(), tweak(), patch() {}
+			Version() : major(), minor(), patch(), tweak() {}
 		};
 
 		bool GetVersion(void* dll, Version& result);
