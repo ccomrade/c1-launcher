@@ -145,6 +145,12 @@ void EditorLauncher::LoadEngine()
 	{
 		m_dlls.pCryRenderD3D9 = LauncherCommon::LoadDLL("CryRenderD3D9.dll");
 	}
+
+#ifdef BUILD_64BIT
+	m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex64.dll");
+#else
+	m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex.dll");
+#endif
 }
 
 void EditorLauncher::PatchEngine()
@@ -211,5 +217,10 @@ void EditorLauncher::PatchEngine()
 			&LauncherCommon::OnD3D10Info);
 		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
 			&LauncherCommon::OnD3D10Init);
+	}
+
+	if (m_dlls.pFMODEx && LauncherCommon::IsFMODExVersionCorrect(m_dlls.pFMODEx, m_dlls.gameBuild))
+	{
+		MemoryPatch::FMODEx::Fix64BitHeapAddressTruncation(m_dlls.pFMODEx, m_dlls.gameBuild);
 	}
 }

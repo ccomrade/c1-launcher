@@ -12,6 +12,7 @@ class EditorLauncher
 		void* pCrySystem;
 		void* pCryRenderD3D9;
 		void* pCryRenderD3D10;
+		void* pFMODEx;
 
 		int editorBuild;
 		int gameBuild;

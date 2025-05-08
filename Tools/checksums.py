@@ -17,6 +17,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '87368d38ef0bc6a0fe1c74fd54243a65780a0f496676b159ee0805f3b1825f86',
             'CrySoundSystem.dll': '71fc1e911296cf32c27aa3bde69935601cb6abe7143810d1effe6c5bc10d2aab',
             'CrySystem.dll': '47543e926881b6beffa62987440920f40741796c68bb2a5e71f7b455c0d3d671',
+            'fmod_event.dll': 'bb0d665ca481c6dfd64c1eed2ed7694aea6ab836152f76f72af8e2933507467c',
+            'fmod_event_net.dll': 'ad22163eedc458905cc176af583e8ca45e29fdb2c4528d077d9c98f19619b564',
+            'fmodex.dll': '1e5b4872f9e7f13c5715eb0898d6ccb9172e9fd027789be350f7625b0826d4c6',
         },
     },
     710: {
@@ -35,6 +38,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '2537438d322323fe877efef39e5404f3f67aa995018223431b46d90fadaad84e',
             'CrySoundSystem.dll': '3b7c24e26b168ea6ec68b10b6830da33593626efb05fd6223e2278e03b92c8e4',
             'CrySystem.dll': 'e50357f6c0aab92bcd90b429ae9410bdff6a5dbe7bd964f05087425ebfe3ecf7',
+            'fmod_event.dll': 'bb0d665ca481c6dfd64c1eed2ed7694aea6ab836152f76f72af8e2933507467c',
+            'fmod_event_net.dll': 'ad22163eedc458905cc176af583e8ca45e29fdb2c4528d077d9c98f19619b564',
+            'fmodex.dll': '1e5b4872f9e7f13c5715eb0898d6ccb9172e9fd027789be350f7625b0826d4c6',
         },
         64: {
             'Cry3DEngine.dll': '24efb138abad66660ccf18531ff8e3fe8d99088f395b782ccc69edfa31061c2a',
@@ -52,6 +58,9 @@ CRY_CHECKSUMS = {
             'CrySoundSystem.dll': 'd9aaa8681bd4a51051ed63091cdd1d8f86a78f727e5509593dd95fbc4e2183b2',
             'CrySystem.dll': '5040863b8b17f3ff923e5f9cfc672d335b4199b9decadf22c6b68e5068d1f2c1',
             'Crysis64.exe': '94e4990db04ec94aa2c49373c15d1ec8868b6d3a2139c233cc0c170b5b9895b1',
+            'fmod_event64.dll': '89df3771a0dd6ee8e1d686db9dca89b338d3eff583e88fa975a760557d621cc0',
+            'fmod_event_net64.dll': '7a26d94cb388ae3d216dee53b8cff8d362e1aa9b4569f575819ddd718c3bc078',
+            'fmodex64.dll': '0165cf71f6ded8d5c7fbba88fee7af40235975497b7222ebeb51e913d760a81b',
         },
     },
     711: {
@@ -70,6 +79,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'c2a298dbb6f1b5882dec8f20ef39b68eeaf1a8b9d1e9f84e57ff0e88e1986d75',
             'CrySoundSystem.dll': '2ef09b1e6126e7f2600be96f0632b0ebb066d237fc4cd6c63f75a6f5ccba1717',
             'CrySystem.dll': 'a3fbd87d16fee0f8baba053a103b94f310bc0e4c8a3506b0e29570501ef1e539',
+            'fmod_event.dll': 'bb0d665ca481c6dfd64c1eed2ed7694aea6ab836152f76f72af8e2933507467c',
+            'fmod_event_net.dll': 'ad22163eedc458905cc176af583e8ca45e29fdb2c4528d077d9c98f19619b564',
+            'fmodex.dll': '1e5b4872f9e7f13c5715eb0898d6ccb9172e9fd027789be350f7625b0826d4c6',
         },
         64: {
             'Cry3DEngine.dll': '49e3a4e0c70beea45cb5e8216b5bb7b0068f48db5fddcbd620c8b19dd58c7852',
@@ -87,6 +99,9 @@ CRY_CHECKSUMS = {
             'CrySoundSystem.dll': 'f0432f50c7e4935805132cb29bf5eb60e36106f61cb4ce8be44812c95e271a73',
             'CrySystem.dll': '03d1563fb1747f0a446116a24e376b9a577eeb80b3a254a963b041c4715e395e',
             'Crysis64.exe': '308bbb0e3e82f7378ce8e7718b61a7bd4dded936bc3de0112af14ff264053a4b',
+            'fmod_event64.dll': 'e55ca39974044ae968a796924e9e79b8ab059c471c5ec6eaedfbca54446b4e25',
+            'fmod_event_net64.dll': '4159297a3b36eef9d268f7862eba47c07a09a82f44ac5114d6621f5106a6a77e',
+            'fmodex64.dll': 'f7a9dd2ab13d55f1d3cfa26b0c5fbc3d0f01fee83318158a3bc4e312103938c6',
         },
     },
     5767: {
@@ -108,6 +123,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '9baa68cfa6c963a926e929acd0828b7a1c9c6fcfbab9f3506d06227a0607884e',
             'CrySoundSystem.dll': '542f6e55ce9bd03fd38144caab950eaf72844a56b17e2678bb0edf703a826928',
             'CrySystem.dll': '6ccaa44808fc0e198f40dcfcdefefaf2cc3402672fb71ac5784f20d8a9c82974',
+            'fmod_event.dll': 'd921ae6f02d3a84afd668677f019aff47092899947c39faad9ee353f348a1fc7',
+            'fmod_event_net.dll': 'a6c4023ece64ca9c0098e4faba00949eff710d1dbe3df0c2a155744c413a2cca',
+            'fmodex.dll': '2ac3e23c017c815651f331980eaacd855634cd8a842937d1169c276b23f2ce06',
         },
         64: {
             'Cry3DEngine.dll': '0b94463552f480f702816e0ace03cb66bd6956de68548277c2f9b51efc9d0a15',
@@ -127,6 +145,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '34dc2ce6ded9ad5cc6b51709b614b1c80876e32c85faa694156d1642611af32a',
             'CrySoundSystem.dll': '0c9a0f0cc7f06174381f0c1044b3b1fb7c4775c79edc1015d333cf488c647070',
             'CrySystem.dll': 'c6f7f98ff933bcb219f212a310bdda5470d4e9e35a04c90c7407efdb30af436c',
+            'fmod_event64.dll': '01aa2d523e867a329eec5c1ede4f697f2b79d1c5f13fbd74132a764f9d0e37aa',
+            'fmod_event_net64.dll': '4d2155278a157ae8b1d6fb409d82ca511d81ec191c2ddf2bbf8871efd63d73c2',
+            'fmodex64.dll': '8deb2834f804ad5da1d31e0c070e368845e3ed34a746b3c172bbf7f6da003490',
         },
     },
     5879: {
@@ -148,6 +169,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '8744b32ba2afb7ed11096387edf2bbf78f08f2ebc971881551ed0422d810cc69',
             'CrySoundSystem.dll': '6a4073b1560876d38158b2c66caa48a0a14b1754f82d0278d7f945074e6d83c5',
             'CrySystem.dll': '0fc1d3fb41a95bdbb358f1352ee238b55a762bf53139edd13cef95d3fd253a97',
+            'fmod_event.dll': 'd921ae6f02d3a84afd668677f019aff47092899947c39faad9ee353f348a1fc7',
+            'fmod_event_net.dll': 'a6c4023ece64ca9c0098e4faba00949eff710d1dbe3df0c2a155744c413a2cca',
+            'fmodex.dll': '2ac3e23c017c815651f331980eaacd855634cd8a842937d1169c276b23f2ce06',
         },
         64: {
             'Cry3DEngine.dll': '7c6af99b730874fead2944b76ce123ccd5fab8dde8e66b9cd9c84fe85f74c212',
@@ -167,6 +191,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '32e08dc0152b67fd26a188a6bf2b65b240ddb7331c8cecb9be7eff435ee071b2',
             'CrySoundSystem.dll': '9d0a218235c8cc17fb6b6105ff338e683cfb3b7d2e2d851b5a8c8b083306276c',
             'CrySystem.dll': '1513dae75d57981408b969f7ca80cfa1ede6ea47fc5ce6caa368692b70ab6cbe',
+            'fmod_event64.dll': '01aa2d523e867a329eec5c1ede4f697f2b79d1c5f13fbd74132a764f9d0e37aa',
+            'fmod_event_net64.dll': '4d2155278a157ae8b1d6fb409d82ca511d81ec191c2ddf2bbf8871efd63d73c2',
+            'fmodex64.dll': '8deb2834f804ad5da1d31e0c070e368845e3ed34a746b3c172bbf7f6da003490',
         },
     },
     6115: {
@@ -188,6 +215,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'f9857eebfd9855acc230e06e90b98e65ba09d906b91fe33706f7c919afde2f2e',
             'CrySoundSystem.dll': 'b139d31d8d033201277c9a860024791b165ad15b3767e2b45cf065f9bddaee7d',
             'CrySystem.dll': 'ec076c038a8db336fc0f6ced619b08208bdcd09a02866ab380be63cb628fe2fb',
+            'fmod_event.dll': 'd921ae6f02d3a84afd668677f019aff47092899947c39faad9ee353f348a1fc7',
+            'fmod_event_net.dll': 'a6c4023ece64ca9c0098e4faba00949eff710d1dbe3df0c2a155744c413a2cca',
+            'fmodex.dll': '2ac3e23c017c815651f331980eaacd855634cd8a842937d1169c276b23f2ce06',
         },
         64: {
             'Cry3DEngine.dll': '20f100e928a14a0464363d1b2dd3a84aa12b1869f8edcd2ddecf2dd0ae94fbcb',
@@ -207,6 +237,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'ebf72f1505a77768b003fee9dd22b56289ca11c3e86b80b8a94093821912c40f',
             'CrySoundSystem.dll': '1a51102eda3b3fb2b3090fe86fb98d5afbc491c5719bb0d63fa2505305697a0e',
             'CrySystem.dll': 'cf7dd1b47863b452048b2ca29e02b63ae7be4f08f34f189fbf69a4c5b3dbccf3',
+            'fmod_event64.dll': '01aa2d523e867a329eec5c1ede4f697f2b79d1c5f13fbd74132a764f9d0e37aa',
+            'fmod_event_net64.dll': '4d2155278a157ae8b1d6fb409d82ca511d81ec191c2ddf2bbf8871efd63d73c2',
+            'fmodex64.dll': '8deb2834f804ad5da1d31e0c070e368845e3ed34a746b3c172bbf7f6da003490',
         },
     },
     6156: {
@@ -228,6 +261,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '8d26ac2dd0199feefa692f0ba6050ddda9413c4d20d1d4f16601a1a195a42a98',
             'CrySoundSystem.dll': '4042954fbc451f1ed889a5f67733e04f55b263a710d513897ec45d1c5ee0d841',
             'CrySystem.dll': '89872ef3d86debd8a189ef703150ef775ed45ca16041ff8df76734b7ae9c29c8',
+            'fmod_event.dll': 'd921ae6f02d3a84afd668677f019aff47092899947c39faad9ee353f348a1fc7',
+            'fmod_event_net.dll': 'a6c4023ece64ca9c0098e4faba00949eff710d1dbe3df0c2a155744c413a2cca',
+            'fmodex.dll': '2ac3e23c017c815651f331980eaacd855634cd8a842937d1169c276b23f2ce06',
         },
         64: {
             'Cry3DEngine.dll': 'afa321aa307535149bbc08abf8814c826dd720069dad6d81837005bb1a84ec60',
@@ -247,6 +283,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '5d1820720e90ba86c6ae13a9bbf90189fee6c75f7ad20180b65f347c73c48826',
             'CrySoundSystem.dll': 'abe76e9faba8212a9ab93fac3f7fb772aefad82318b90db9490e891d53b1ad21',
             'CrySystem.dll': 'f54900b261705ecc27f25f9310add669599a3ad2ad722919472da45b6a621dab',
+            'fmod_event64.dll': '01aa2d523e867a329eec5c1ede4f697f2b79d1c5f13fbd74132a764f9d0e37aa',
+            'fmod_event_net64.dll': '4d2155278a157ae8b1d6fb409d82ca511d81ec191c2ddf2bbf8871efd63d73c2',
+            'fmodex64.dll': '8deb2834f804ad5da1d31e0c070e368845e3ed34a746b3c172bbf7f6da003490',
         },
     },
     6527: {
@@ -268,6 +307,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '892edf4de322a6efa064ad9d252aa64b13682876dcdce2ddce4a926acdd0bb08',
             'CrySoundSystem.dll': 'bed5582ee117d2ce11e09992daa7047488b6a7ffd22687a0cee52afaf04d4881',
             'CrySystem.dll': '8b9c0a1fa8c77338533f5c566cefc4388cb2f2857e39b771f598f7546fa6ca65',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
     },
     6566: {
@@ -289,6 +331,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'ccce90a2ab3d49ec063793fca2071b00471432af4afc6ca839fe1f5ba6806b07',
             'CrySoundSystem.dll': 'e9c20cba7eea386029813b6426652229d29ac8bdcb38a1e7089a657488151856',
             'CrySystem.dll': '95b1a6dd8fad8a5ce25914f94f6aa680df3dc68a4cab80ab2d2f35ed8ed4e4d5',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
         64: {
             'Cry3DEngine.dll': '36c21f3d9b0746ac61a358902d0e91a97e6d3cefebb26a9355df94697bb7bfe5',
@@ -308,6 +353,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '2a8ba5456f2ab8520d3cd1e5be1bb02661b1eae09dfb9148508b3c1fcd04e4d5',
             'CrySoundSystem.dll': '0273fb637310224c673f2dcc7d9913144d71a0369cfb299ec3d72d8970ee84bd',
             'CrySystem.dll': '721332699a3ee835cbd06bb81189150af122f9c7d46115b3bbd2a77083ad5f7a',
+            'fmod_event64.dll': '6d84f5fbbbc29119bc1a13bc1610411cff9469850003d0bf1ae514ec31e4bbb4',
+            'fmod_event_net64.dll': 'bbbb0402f8be2451cd2693417e5f23f201901fc095ead96e32934fa356cfc9ea',
+            'fmodex64.dll': '7ac651ccf2c5d1addc2f69a4c57faec4f553305ea323126b0eeb5feea0b2b6c3',
         },
     },
     6586: {
@@ -329,6 +377,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'ba2104e610e958047cd7ca0595977eabdfb669c8ec78a934b46d72e78c141248',
             'CrySoundSystem.dll': 'c78836015c186fb6390de2aff5509ddbbd204fc5734a51aaf497a459808e748c',
             'CrySystem.dll': 'ffb1109d3ebd82a3eafe782ffdfb70e50ad238718948ee196947a854e22de8bb',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
         64: {
             'Cry3DEngine.dll': '1a26e3bada3d7938d0549e214b07cc55028cc1cee774a8ae1d1540066d6e8127',
@@ -348,6 +399,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '5f73825b72c48b8f105d702ed947a424dc9cab347fca4a7ae3f08bae8f946f84',
             'CrySoundSystem.dll': 'e0d903a04bc09d88d0db3dcbd58cf20756b293cd942fb3444dd9a1d522d80a9d',
             'CrySystem.dll': 'f6e3d1d916f4b52bcfcdcee004d74986bc8e9dd839e6e102719d736c60593bac',
+            'fmod_event64.dll': '6d84f5fbbbc29119bc1a13bc1610411cff9469850003d0bf1ae514ec31e4bbb4',
+            'fmod_event_net64.dll': 'bbbb0402f8be2451cd2693417e5f23f201901fc095ead96e32934fa356cfc9ea',
+            'fmodex64.dll': '7ac651ccf2c5d1addc2f69a4c57faec4f553305ea323126b0eeb5feea0b2b6c3',
         },
     },
     6627: {
@@ -369,6 +423,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'c07bfd1d2ce18f4ae4491581de105dc1d3482c09b88b762d8e058596f760ba24',
             'CrySoundSystem.dll': 'fb1575c87b9f32c3f9ce1abf26174fd5f849b0c10d7b65b3bf3c30e7c725a482',
             'CrySystem.dll': '9549b8b562168ec61f87c0f163fe4576749a1db1566ca4b2f95b500b5e604e59',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
         64: {
             'Cry3DEngine.dll': 'e79e487b99c8e5b78c956999a615aaece1cee0ab9eb9919520470af06c6c0e91',
@@ -388,6 +445,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'd003fca26101d0c6a235777fe08ce848b7bacffb39b954aba861f2c1c89e30c5',
             'CrySoundSystem.dll': 'e16e90c16262abb51191ceef43db4dcdffabd573a834945cce2667060d3b469e',
             'CrySystem.dll': 'b5f7de5f725e46e076e866bcc619ed03ba0663677e69e321e5f1a52799a96e64',
+            'fmod_event64.dll': '6d84f5fbbbc29119bc1a13bc1610411cff9469850003d0bf1ae514ec31e4bbb4',
+            'fmod_event_net64.dll': 'bbbb0402f8be2451cd2693417e5f23f201901fc095ead96e32934fa356cfc9ea',
+            'fmodex64.dll': '7ac651ccf2c5d1addc2f69a4c57faec4f553305ea323126b0eeb5feea0b2b6c3',
         },
     },
     6670: {
@@ -409,6 +469,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'edf17df38137b13c36060d8edde8522de847fbd108d9ba7c206509255786489d',
             'CrySoundSystem.dll': '2359a635d2ab7b7ac68768e5338b857209384addc949e2b06ae0ead3017c3dcf',
             'CrySystem.dll': '23376bc3e616d07aef15c8dbd66793fd8011f6efc0990a7265745b9be4acb183',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
         64: {
             'Cry3DEngine.dll': 'c4256728b2d026f965a55d842d270495c6a5f5ebb7b6f5e6dde8c19b2498bcef',
@@ -428,6 +491,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '3b7b3665ef62d6dd791dddc144a7e3258d95c83268d4ad2ca3bf4138e5e34b9f',
             'CrySoundSystem.dll': 'c4f7210e1e97bcee30dcb1845e29ec2f6bc38b3f929051bbad3e08a74296fdfd',
             'CrySystem.dll': '48f8a2940eb61906b2a7c37700b5936ba4aa19a070a164c409c04dcefa745bf7',
+            'fmod_event64.dll': '6d84f5fbbbc29119bc1a13bc1610411cff9469850003d0bf1ae514ec31e4bbb4',
+            'fmod_event_net64.dll': 'bbbb0402f8be2451cd2693417e5f23f201901fc095ead96e32934fa356cfc9ea',
+            'fmodex64.dll': '7ac651ccf2c5d1addc2f69a4c57faec4f553305ea323126b0eeb5feea0b2b6c3',
         },
     },
     6729: {
@@ -449,6 +515,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': '3744edd56404b229beb73b4d85ee7279db140281257c3d561134b0d0940a85bb',
             'CrySoundSystem.dll': 'e73a4c64615727e2f92c377b8f8ac6bcba523e9a0280e979558b3810eb49511b',
             'CrySystem.dll': '840276d4be5f4f755c3e91d157b6ead719239d518c7bb79346ff1e5edc075e5a',
+            'fmod_event.dll': '26726830826a2be8be8fa2da08f0941c5147f0b38700ec64e2fde5eebe0e863d',
+            'fmod_event_net.dll': '99112790e0620e6f5f9acd7227c530086d2c8552dad493e2512603a9b0a56230',
+            'fmodex.dll': 'fb4e6687e46100e93a2570a221cdfe0de25ed780060b4c44b16cc44aefeaf205',
         },
         64: {
             'Cry3DEngine.dll': '63a1de9c675feff3aa053fbca924876727ecaa1d149fccfc02f07c1d89e0549b',
@@ -468,6 +537,9 @@ CRY_CHECKSUMS = {
             'CryScriptSystem.dll': 'db4ef5be6c41a03ab3b8f79964817e3324cb082d61d4908ae5da4d65b4b6b493',
             'CrySoundSystem.dll': '34a88a7a8fc8c6833cf01eaed5870e4ea776c1ebd5219c7484a2c1405a63d623',
             'CrySystem.dll': 'ae3bbe9f21e915a4b27fdec23a382efdfe9c27cbb1d4815e93e16dd783156b52',
+            'fmod_event64.dll': '6d84f5fbbbc29119bc1a13bc1610411cff9469850003d0bf1ae514ec31e4bbb4',
+            'fmod_event_net64.dll': 'bbbb0402f8be2451cd2693417e5f23f201901fc095ead96e32934fa356cfc9ea',
+            'fmodex64.dll': '7ac651ccf2c5d1addc2f69a4c57faec4f553305ea323126b0eeb5feea0b2b6c3',
         },
     },
 }
