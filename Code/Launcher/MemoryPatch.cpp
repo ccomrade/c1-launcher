@@ -4081,3 +4081,52 @@ void MemoryPatch::CrySystem::HookCryWarning(void* pCrySystem, int gameBuild,
 #endif
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// FMODEx
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Fixes truncation of 64-bit heap buffer addresses inside FMOD.
+ */
+void MemoryPatch::FMODEx::Fix64BitHeapAddressTruncation(void* pFMODEx, int gameBuild)
+{
+#ifdef BUILD_64BIT
+	const unsigned char code[] = {
+		0x48, 0x8d, 0x40, 0x0f,              // lea rax, ds:[rax+0xf]
+		0x48, 0x83, 0xe0, 0xf0,              // and rax, 0xfffffffffffffff0
+		0x90,                                // nop
+		0x90,                                // nop
+		0x90,                                // nop
+		0x41, 0xb9, 0x3c, 0x00, 0x00, 0x00,  // mov r9d, 0x3c
+	};
+
+	switch (gameBuild)
+	{
+		case 710:
+		case 711:
+		{
+			// already fixed in newer FMOD used by Crysis Warhead
+			break;
+		}
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		{
+			FillMem(pFMODEx, 0x482da, &code, sizeof(code) - 6);
+			FillMem(pFMODEx, 0x486b7, &code, sizeof(code));
+			break;
+		}
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// already fixed in newer FMOD used by Crysis Wars
+			break;
+		}
+	}
+#endif
+}

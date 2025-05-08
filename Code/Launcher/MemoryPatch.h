@@ -151,4 +151,9 @@ namespace MemoryPatch
 		void FixBrokenPanels(void* pEditor, int editorBuild);
 		void HookVersionInit(void* pEditor, int editorBuild, void (*handler)(Version* version));
 	}
+
+	namespace FMODEx
+	{
+		void Fix64BitHeapAddressTruncation(void* pFMODEx, int gameBuild);
+	}
 }

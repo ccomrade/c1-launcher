@@ -33,6 +33,7 @@ namespace LauncherCommon
 	int GetGameBuild(void* pCrySystem);
 	void VerifyGameBuild(int gameBuild);
 	bool IsCrysisWarhead(int gameBuild);
+	bool IsFMODExVersionCorrect(void* pFMODEx, int gameBuild);
 	bool IsDX10();
 
 	void SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine);
