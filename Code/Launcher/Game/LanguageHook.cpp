@@ -131,12 +131,12 @@ static const char* ChooseLanguage(const char* defaultLanguage, ICVar* pLanguageC
 			"This is a known issue in the Steam version of Crysis.\n"
 			"\n"
 			"You can try the following:\n"
-			"    1. Go to Game/Localized\n"
-			"    2. Choose a suitable *.lng file\n"
-			"    3. Make a copy of that file\n"
-			"    4. Rename the copy to Default.lng\n"
+			"    1. Go to \"Game/Localized\".\n"
+			"    2. Choose a suitable \".lng\" file.\n"
+			"    3. Make a copy of that file.\n"
+			"    4. Rename the copy to \"Default.lng\".\n"
 			"\n"
-			"One or more *.pak files of the chosen language must exist!"
+			"One or more \".pak\" files of the chosen language must exist!"
 		);
 
 		// throwing an exception through the engine is undefined behavior
