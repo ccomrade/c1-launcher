@@ -93,6 +93,7 @@ set(GAME_LAUNCHER_MANIFESTS
 	${PROJECT_SOURCE_DIR}/Resources/Manifests/EnableVisualStyles.manifest
 	${PROJECT_SOURCE_DIR}/Resources/Manifests/TrustInfo.manifest
 	${PROJECT_SOURCE_DIR}/Resources/Manifests/VC80_CRT.manifest
+	${PROJECT_SOURCE_DIR}/Resources/Manifests/UTF-8.manifest
 )
 
 ################################################################################
@@ -147,6 +148,7 @@ add_executable(CrysisDedicatedServer WIN32
 	Resources/Manifests/EnableVisualStyles.manifest
 	Resources/Manifests/TrustInfo.manifest
 	Resources/Manifests/VC80_CRT.manifest
+	Resources/Manifests/UTF-8.manifest
 )
 
 target_link_libraries(CrysisDedicatedServer LauncherBase)
@@ -163,6 +165,7 @@ add_executable(CrysisHeadlessServer
 	Resources/HeadlessServer.rc
 	Resources/Manifests/TrustInfo.manifest
 	Resources/Manifests/VC80_CRT.manifest
+	Resources/Manifests/UTF-8.manifest
 )
 
 target_link_libraries(CrysisHeadlessServer LauncherBase)
@@ -179,6 +182,7 @@ add_executable(EditorLauncher WIN32
 	Resources/Manifests/TrustInfo.manifest
 	Resources/Manifests/VC80_CRT.manifest
 	Resources/Manifests/VC80_MFC.manifest
+	Resources/Manifests/UTF-8.manifest
 )
 
 target_link_libraries(EditorLauncher LauncherBase)

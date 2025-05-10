@@ -3,6 +3,8 @@
 Notable changes in each release.
 
 ## [Unreleased]
+- Add support for Unicode paths ([#62](https://github.com/ccomrade/c1-launcher/pull/62)).
+This fixes inaccessible user directory due to Unicode characters in Documents path.
 - Add real Windows version to the log. CrySystem cannot see beyond Windows 8 (6.2.9200).
 - Fix 64-bit memory allocator in FMOD ([#61](https://github.com/ccomrade/c1-launcher/pull/61)).
 - Fix startup crash when `profile.xml` is corrupted ([#59](https://github.com/ccomrade/c1-launcher/pull/59)).
