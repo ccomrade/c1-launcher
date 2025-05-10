@@ -6,7 +6,6 @@ It provides a better game and dedicated server launcher with additional features
 ## Features
 
 - Supports all game versions in one executable.
-- Provides additional headless server executable optimized for running Crysis servers on Linux.
 - Completely DRM-free launcher.
 - No compatibility mode is required to make the game work on modern systems.
 - Fixes all startup issues, including the well-known crash of 32-bit Crysis on modern AMD processors.
@@ -23,7 +22,8 @@ It provides a better game and dedicated server launcher with additional features
 - The `connect [IP] [PORT]` console command works without a GameSpy account.
 - Language detection to workaround incomplete localization files in
 [Crysis from Steam](https://store.steampowered.com/app/17300/Crysis/).
-- Fixes [the two broken panels in Editor](https://github.com/ccomrade/c1-launcher/pull/38).
+- Fixes [two broken panels in Editor](https://github.com/ccomrade/c1-launcher/pull/38).
+- New headless server launcher optimized for running Crysis servers on Linux.
 
 ## Supported game versions
 
@@ -139,7 +139,7 @@ No, it does not.
 
 Yes, it does, but only 64-bit version. The reason is that CryGame and CryAction DLLs are integrated into the EXE in
 Crysis Warhead. This means the original EXEs are still needed. 32-bit one is encrypted by SecuROM, which makes it
-basically unusable. Luckily, 64-bit one is clean. See below why.
+essentially unusable. Luckily, 64-bit one is clean. See below why.
 
 ### Why does the Bin64 directory contain 2 executables?
 
