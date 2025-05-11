@@ -2,7 +2,7 @@
 
 Notable changes in each release.
 
-## [Unreleased]
+## [v7] - 2025-05-11
 - Add support for Unicode paths ([#62](https://github.com/ccomrade/c1-launcher/pull/62)).
 This fixes inaccessible user directory due to Unicode characters in Documents path.
 - Add real Windows version to the log ([#60](https://github.com/ccomrade/c1-launcher/pull/60)).

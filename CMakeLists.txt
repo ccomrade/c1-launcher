@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 ################################################################################
 
-project(C1-Launcher VERSION 6 LANGUAGES CXX RC)
+project(C1-Launcher VERSION 7 LANGUAGES CXX RC)
 
 ################################################################################
 
