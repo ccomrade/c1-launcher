@@ -115,6 +115,7 @@ void GameLauncher::PatchEngine()
 	{
 		MemoryPatch::CryGame::CanJoinDX10Servers(m_dlls.pCryGame, m_dlls.gameBuild);
 		MemoryPatch::CryGame::EnableDX10Menu(m_dlls.pCryGame, m_dlls.gameBuild);
+		MemoryPatch::CryGame::FixModLoad(m_dlls.pCryGame, m_dlls.gameBuild);
 		MemoryPatch::CryGame::HookCryWarning(m_dlls.pCryGame, m_dlls.gameBuild,
 			&LauncherCommon::OnCryWarning);
 		MemoryPatch::CryGame::HookGameWarning(m_dlls.pCryGame, m_dlls.gameBuild,

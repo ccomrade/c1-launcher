@@ -23,6 +23,7 @@ namespace MemoryPatch
 		void DisableIntros(void* pCryGame, int gameBuild);
 		void CanJoinDX10Servers(void* pCryGame, int gameBuild);
 		void EnableDX10Menu(void* pCryGame, int gameBuild);
+		void FixModLoad(void* pCryGame, int gameBuild);
 		void HookGameWarning(void* pCryGame, int gameBuild, void (*handler)(const char* format, ...));
 		void HookCryWarning(void* pCryGame, int gameBuild,
 			void (*handler)(int, int, const char* format, ...));

@@ -661,6 +661,100 @@ void MemoryPatch::CryGame::EnableDX10Menu(void* pCryGame, int gameBuild)
 	}
 }
 
+/**
+ * Fixes loading mods via in-game Mods menu.
+ *
+ * The issue is that mod name from info.xml is used instead of mod directory name when loading a mod via Mods menu.
+ */
+void MemoryPatch::CryGame::FixModLoad(void* pCryGame, int gameBuild)
+{
+	const unsigned char code[] = {
+#ifdef BUILD_64BIT
+		0x4C, 0x8D, 0x8C, 0x24, 0xB0, 0x00, 0x00, 0x00,  // lea r9, qword ptr ss:[rsp+0xB0]
+		0xB8, 0x06, 0x00, 0x00, 0x00,                    // mov eax, 0x6
+		0x41, 0x89, 0x01,                                // mov dword ptr ds:[r9], eax
+		0x41, 0x89, 0x41, 0x10,                          // mov dword ptr ds:[r9+0x10], eax
+		0x41, 0x89, 0x41, 0x20,                          // mov dword ptr ds:[r9+0x20], eax
+		0x4D, 0x89, 0x41, 0x18,                          // mov qword ptr ds:[r9+0x18], r8
+		0x4D, 0x89, 0x41, 0x28,                          // mov qword ptr ds:[r9+0x28], r8
+		0x4C, 0x8D, 0x84, 0x24, 0x64, 0x01, 0x00, 0x00,  // lea r8, qword ptr ss:[rsp+0x164]
+		0x4D, 0x89, 0x41, 0x08,                          // mov qword ptr ds:[r9+0x8], r8
+#else
+		0xB8, 0x70, 0x00, 0x00, 0x00,                    // mov eax, 0x70
+		0x89, 0x7C, 0x04, 0x44,                          // mov dword ptr ss:[esp+eax+0x44], edi <--+
+		0x83, 0xE8, 0x10,                                // sub eax, 0x10                           |
+		0x75, 0xF7,                                      // jne ------------------------------------+
+		0x8D, 0x84, 0x24, 0xF8, 0x00, 0x00, 0x00,        // lea eax, dword ptr ss:[esp+0xF8]
+		0x89, 0x44, 0x24, 0x5C,                          // mov dword ptr ss:[esp+0x5C], eax
+		0x90,                                            // nop
+		0x90,                                            // nop
+#endif
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+		0x90,                                            // nop
+	};
+
+	switch (gameBuild)
+	{
+		case 687:
+		case 710:
+		case 711:
+		{
+			// no Mods menu in Crysis Warhead
+			break;
+		}
+		case 5767:
+		case 5879:
+		{
+			// no Mods menu in Crysis 1.0 and 1.1
+			break;
+		}
+#ifdef BUILD_64BIT
+		case 6115:
+		{
+			FillMem(pCryGame, 0x30326A, code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCryGame, 0x30385A, code, sizeof(code));
+			break;
+		}
+#else
+		case 6115:
+		{
+			FillMem(pCryGame, 0x228B8A, code, sizeof(code));
+			break;
+		}
+		case 6156:
+		{
+			FillMem(pCryGame, 0x228C2A, code, sizeof(code));
+			break;
+		}
+#endif
+		case 6527:
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// already fixed in Crysis Wars
+			break;
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CryNetwork
 ////////////////////////////////////////////////////////////////////////////////
