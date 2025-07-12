@@ -2,6 +2,9 @@
 
 Notable changes in each release.
 
+## [Unreleased]
+- Fix loading mods via in-game Mods menu ([#69](https://github.com/ccomrade/c1-launcher/pull/69)).
+
 ## [v7] - 2025-05-11
 - Add support for Unicode paths ([#62](https://github.com/ccomrade/c1-launcher/pull/62)).
 This fixes inaccessible user directory due to Unicode characters in Documents path.
