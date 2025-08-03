@@ -10,7 +10,6 @@
 #include "Library/StringFormat.h"
 #include "Library/StringView.h"
 
-#include "CrashTest.h"
 #include "LauncherCommon.h"
 #include "MemoryPatch.h"
 
@@ -391,8 +390,6 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 	CryLogAlways("User directory: %s", userDir.c_str());
 
 	LogRealWindowsBuild();
-
-	CrashTest::Register();
 }
 
 void LauncherCommon::OnD3D9Info(MemoryPatch::CryRenderD3D9::AdapterInfo* info)
