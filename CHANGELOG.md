@@ -4,6 +4,7 @@ Notable changes in each release.
 
 ## [Unreleased]
 - Fix loading mods via in-game Mods menu ([#69](https://github.com/ccomrade/c1-launcher/pull/69)).
+- Revert sys_crashtest improvements ([#71](https://github.com/ccomrade/c1-launcher/pull/71)).
 
 ## [v7] - 2025-05-11
 - Add support for Unicode paths ([#62](https://github.com/ccomrade/c1-launcher/pull/62)).
