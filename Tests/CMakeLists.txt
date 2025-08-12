@@ -1,0 +1,10 @@
+add_executable(CrashLoggerTests CrashLoggerTests.cpp)
+target_link_libraries(CrashLoggerTests PUBLIC LauncherBase)
+
+add_test(NAME CrashLoggerTests_SegFault COMMAND $<TARGET_FILE:CrashLoggerTests> SegFault)
+add_test(NAME CrashLoggerTests_IntDivisionByZero COMMAND $<TARGET_FILE:CrashLoggerTests> IntDivisionByZero)
+add_test(NAME CrashLoggerTests_InvalidCrtArgument COMMAND $<TARGET_FILE:CrashLoggerTests> InvalidCrtArgument)
+add_test(NAME CrashLoggerTests_PureVirtualCall COMMAND $<TARGET_FILE:CrashLoggerTests> PureVirtualCall)
+add_test(NAME CrashLoggerTests_EngineError COMMAND $<TARGET_FILE:CrashLoggerTests> EngineError)
+add_test(NAME CrashLoggerTests_DebugBreak COMMAND $<TARGET_FILE:CrashLoggerTests> DebugBreak)
+add_test(NAME CrashLoggerTests_UnhandledCppException COMMAND $<TARGET_FILE:CrashLoggerTests> UnhandledCppException)

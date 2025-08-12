@@ -18,7 +18,7 @@
 #define CRASH_LOGGER_INVALID_PARAM 0xE0C1C102
 #define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
 
-static CrashLogger::Handler g_handler;
+static CrashLogger::LogFileProvider g_logFileProvider;
 static const char* g_banner;
 
 static void* ByteOffset(void* base, std::size_t offset)
@@ -409,13 +409,12 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 	// avoid recursive calls
 	SetUnhandledExceptionFilter(NULL);
 
-	if (g_handler)
+	if (g_logFileProvider)
 	{
-		std::FILE* file = g_handler();
+		std::FILE* file = g_logFileProvider();
 		if (file)
 		{
 			WriteCrashDump(file, exception);
-
 			std::fclose(file);
 		}
 	}
@@ -449,9 +448,9 @@ void CrashLogger::OnEngineError(const char* format, va_list args)
 	ExitProcess(1);
 }
 
-void CrashLogger::Enable(Handler handler, const char* banner)
+void CrashLogger::Enable(LogFileProvider logFileProvider, const char* banner)
 {
-	g_handler = handler;
+	g_logFileProvider = logFileProvider;
 	g_banner = banner;
 
 	SetUnhandledExceptionFilter(&CrashHandler);

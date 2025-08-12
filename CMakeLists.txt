@@ -233,3 +233,9 @@ set_source_files_properties(Resources/DedicatedServer.rc PROPERTIES OBJECT_DEPEN
 set_source_files_properties(Resources/Editor.rc          PROPERTIES OBJECT_DEPENDS "${EDITOR_RESOURCES}")
 
 ################################################################################
+
+include(CTest)
+
+if(BUILD_TESTING)
+	add_subdirectory(Tests)
+endif()

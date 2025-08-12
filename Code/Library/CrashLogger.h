@@ -4,9 +4,9 @@
 
 namespace CrashLogger
 {
-	typedef std::FILE* (*Handler)();
+	typedef std::FILE* (*LogFileProvider)();
 
 	void OnEngineError(const char* format, va_list args);
 
-	void Enable(Handler handler, const char* banner);
+	void Enable(LogFileProvider logFileProvider, const char* banner);
 }
