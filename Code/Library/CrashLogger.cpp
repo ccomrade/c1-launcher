@@ -1,4 +1,5 @@
-#include <cstdlib>
+#include <signal.h>
+#include <stdlib.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -14,6 +15,7 @@
 #define ADDR_FMT "%08X"
 #endif
 
+#define CRASH_LOGGER_ABORT 0xE0C1C100
 #define CRASH_LOGGER_PURE_CALL 0xE0C1C101
 #define CRASH_LOGGER_INVALID_PARAM 0xE0C1C102
 #define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
@@ -66,6 +68,7 @@ static const char* ExceptionCodeToName(unsigned int code)
 		case EXCEPTION_SINGLE_STEP:              return "Single step";
 		case EXCEPTION_STACK_OVERFLOW:           return "Stack overflow";
 		case 0xE06D7363:                         return "C++ exception";
+		case CRASH_LOGGER_ABORT:                 return "Abnormal program termination";
 		case CRASH_LOGGER_PURE_CALL:             return "Pure virtual function call";
 		case CRASH_LOGGER_INVALID_PARAM:         return "Invalid parameter detected by CRT";
 		case CRASH_LOGGER_ENGINE_ERROR:          return "Engine error";
@@ -422,6 +425,12 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+static void AbortHandler(int)
+{
+	RaiseException(CRASH_LOGGER_ABORT, EXCEPTION_NONCONTINUABLE, 0, NULL);
+	ExitProcess(1);
+}
+
 static void PureCallHandler()
 {
 	RaiseException(CRASH_LOGGER_PURE_CALL, EXCEPTION_NONCONTINUABLE, 0, NULL);
@@ -455,6 +464,9 @@ void CrashLogger::Enable(LogFileProvider logFileProvider, const char* banner)
 
 	SetUnhandledExceptionFilter(&CrashHandler);
 
+	signal(SIGABRT, &AbortHandler);
+	_set_abort_behavior(0, _WRITE_ABORT_MSG);  // suppress abort message (console) and dialog (GUI)
+
 	_set_purecall_handler(&PureCallHandler);
 	_set_invalid_parameter_handler(&InvalidParameterHandler);
 
@@ -463,17 +475,31 @@ void CrashLogger::Enable(LogFileProvider logFileProvider, const char* banner)
 	HMODULE msvcr80 = LoadLibraryA("msvcr80.dll");
 	if (msvcr80)
 	{
+		void* vs2005_signal = GetProcAddress(msvcr80, "signal");
+		if (vs2005_signal)
+		{
+			reinterpret_cast<void(*(*)(int, void(*)(int)))(int)>
+				(vs2005_signal)(SIGABRT, &AbortHandler);
+		}
+
+		void* vs2005_set_abort_behavior = GetProcAddress(msvcr80, "_set_abort_behavior");
+		if (vs2005_set_abort_behavior)
+		{
+			reinterpret_cast<unsigned int(*)(unsigned int, unsigned int)>
+				(vs2005_set_abort_behavior)(0, _WRITE_ABORT_MSG);
+		}
+
 		void* vs2005_set_purecall_handler = GetProcAddress(msvcr80, "_set_purecall_handler");
 		if (vs2005_set_purecall_handler)
 		{
-			static_cast<_purecall_handler(*)(_purecall_handler)>
+			reinterpret_cast<_purecall_handler(*)(_purecall_handler)>
 				(vs2005_set_purecall_handler)(&PureCallHandler);
 		}
 
 		void* vs2005_set_invalid_parameter_handler = GetProcAddress(msvcr80, "_set_invalid_parameter_handler");
 		if (vs2005_set_invalid_parameter_handler)
 		{
-			static_cast<_invalid_parameter_handler(*)(_invalid_parameter_handler)>
+			reinterpret_cast<_invalid_parameter_handler(*)(_invalid_parameter_handler)>
 				(vs2005_set_invalid_parameter_handler)(&InvalidParameterHandler);
 		}
 	}

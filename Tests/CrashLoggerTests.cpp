@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
+#include <intrin.h>
 
 #include "Library/CrashLogger.h"
 
@@ -69,9 +71,24 @@ static void Test_DebugBreak()
 	__debugbreak();
 }
 
+static void Test_Halt()
+{
+	__halt();
+}
+
 static void Test_UnhandledCppException()
 {
 	throw 666;
+}
+
+static void Test_StdAbort()
+{
+	std::abort();
+}
+
+static void Test_StdTerminate()
+{
+	std::terminate();
 }
 
 static const struct { const char* name; void (*func)(); } TESTS[] = {
@@ -81,7 +98,10 @@ static const struct { const char* name; void (*func)(); } TESTS[] = {
 	{ "PureVirtualCall", &Test_PureVirtualCall },
 	{ "EngineError", &Test_EngineError },
 	{ "DebugBreak", &Test_DebugBreak },
+	{ "Halt", &Test_Halt },
 	{ "UnhandledCppException", &Test_UnhandledCppException },
+	{ "StdAbort", &Test_StdAbort },
+	{ "StdTerminate", &Test_StdTerminate },
 };
 
 static std::FILE* MockLogFileProvider()
@@ -103,7 +123,7 @@ int main(int argc, char** argv)
 	// initialize crash logger
 	CrashLogger::Enable(&MockLogFileProvider, "Test banner");
 
-	for (unsigned int i = 0; i < ARRAY_SIZE(TESTS); i++)
+	for (std::size_t i = 0; i < ARRAY_SIZE(TESTS); i++)
 	{
 		if (std::strcmp(TESTS[i].name, test) == 0)
 		{

@@ -7,4 +7,7 @@ add_test(NAME CrashLoggerTests_InvalidCrtArgument COMMAND $<TARGET_FILE:CrashLog
 add_test(NAME CrashLoggerTests_PureVirtualCall COMMAND $<TARGET_FILE:CrashLoggerTests> PureVirtualCall)
 add_test(NAME CrashLoggerTests_EngineError COMMAND $<TARGET_FILE:CrashLoggerTests> EngineError)
 add_test(NAME CrashLoggerTests_DebugBreak COMMAND $<TARGET_FILE:CrashLoggerTests> DebugBreak)
+add_test(NAME CrashLoggerTests_Halt COMMAND $<TARGET_FILE:CrashLoggerTests> Halt)
 add_test(NAME CrashLoggerTests_UnhandledCppException COMMAND $<TARGET_FILE:CrashLoggerTests> UnhandledCppException)
+add_test(NAME CrashLoggerTests_StdAbort COMMAND $<TARGET_FILE:CrashLoggerTests> StdAbort)
+add_test(NAME CrashLoggerTests_StdTerminate COMMAND $<TARGET_FILE:CrashLoggerTests> StdTerminate)
