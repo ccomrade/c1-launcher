@@ -58,6 +58,7 @@ void GameLauncher::LoadEngine()
 {
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
+	const bool isCryisMPBeta4804 = m_dlls.gameBuild == 4804;
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
 	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
@@ -74,7 +75,7 @@ void GameLauncher::LoadEngine()
 
 	if (!m_params.isDedicatedServer && !OS::CmdLine::HasArg("-dedicated"))
 	{
-		if (LauncherCommon::IsDX10())
+		if (!isCryisMPBeta4804 && LauncherCommon::IsDX10())
 		{
 			m_dlls.pCryRenderD3D10 = LauncherCommon::LoadDLL("CryRenderD3D10.dll");
 		}
@@ -86,7 +87,7 @@ void GameLauncher::LoadEngine()
 #ifdef BUILD_64BIT
 		m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex64.dll");
 #else
-		m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex.dll");
+		m_dlls.pFMODEx = LauncherCommon::LoadDLL(isCryisMPBeta4804 ? "fmodexL.dll" : "fmodex.dll");
 #endif
 	}
 }
