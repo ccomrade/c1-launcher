@@ -190,7 +190,7 @@ void MemoryPatch::CryAction::AllowDX9ImmersiveMultiplayer(void* pCryAction, int 
 void MemoryPatch::CryAction::DisableGameplayStats(void* pCryAction, int gameBuild)
 {
 #ifdef BUILD_64BIT
-	const unsigned char code[] = {
+	static const unsigned char code[] = {
 		0xC3,  // ret
 		0x90,  // nop
 		0x90,  // nop
@@ -527,7 +527,7 @@ void MemoryPatch::CryGame::CanJoinDX10Servers(void* pCryGame, int gameBuild)
  */
 void MemoryPatch::CryGame::EnableDX10Menu(void* pCryGame, int gameBuild)
 {
-	const unsigned char code[] = {
+	static const unsigned char code[] = {
 		0xB0, 0x01,  // mov al, 0x1
 		0x90         // nop
 	};
@@ -668,7 +668,7 @@ void MemoryPatch::CryGame::EnableDX10Menu(void* pCryGame, int gameBuild)
  */
 void MemoryPatch::CryGame::FixModLoad(void* pCryGame, int gameBuild)
 {
-	const unsigned char code[] = {
+	static const unsigned char code[] = {
 #ifdef BUILD_64BIT
 		0x4C, 0x8D, 0x8C, 0x24, 0xB0, 0x00, 0x00, 0x00,  // lea r9, qword ptr ss:[rsp+0xB0]
 		0xB8, 0x06, 0x00, 0x00, 0x00,                    // mov eax, 0x6
@@ -766,7 +766,7 @@ void MemoryPatch::CryGame::FixModLoad(void* pCryGame, int gameBuild)
  */
 void MemoryPatch::CryNetwork::EnablePreordered(void* pCryNetwork, int gameBuild)
 {
-	unsigned char code[] = {
+	static unsigned char code[] = {
 #ifdef BUILD_64BIT
 		0xC6, 0x83, 0x70, 0xFA, 0x00, 0x00, 0x01  // mov byte ptr ds:[rbx+0xFA70], 0x1
 #else
@@ -1045,23 +1045,23 @@ void MemoryPatch::CryNetwork::FixInternetConnect(void* pCryNetwork, int gameBuil
 void MemoryPatch::CryNetwork::FixFileCheckCrash(void* pCryNetwork, int gameBuild)
 {
 #ifdef BUILD_64BIT
-	const unsigned char codeA[] = {
+	static const unsigned char codeA[] = {
 		0x48, 0x89, 0x0A,  // mov qword ptr ds:[rdx], rcx
 		0x90               // nop
 	};
 
-	const unsigned char codeB[] = {
+	static const unsigned char codeB[] = {
 		0x48, 0x89, 0x4A, 0x08  // mov qword ptr ds:[rdx+0x8], rcx
 	};
 #else
-	const unsigned char clientCode[] = {
+	static const unsigned char clientCode[] = {
 		0x8B, 0x4D, 0xC0,  // mov ecx, dword ptr ss:[ebp-0x40]
 		0xFF, 0x49, 0xF4,  // dec dword ptr ds:[ecx-0xC]
 		0x8B, 0x4D, 0xBC,  // mov ecx, dword ptr ss:[ebp-0x44]
 		0x89, 0x4D, 0xC0   // mov dword ptr ss:[ebp-0x40], ecx
 	};
 
-	const unsigned char serverCode[] = {
+	static const unsigned char serverCode[] = {
 		0x90,              // nop
 		0x90,              // nop
 		0xEB, 0x02,        // jmp -------------------------------+
@@ -1849,7 +1849,7 @@ void MemoryPatch::CrySystem::FixCPUInfoOverflow(void* pCrySystem, int gameBuild)
 void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,
 	void (*handler)(CPUInfo* info, ISystem* pSystem))
 {
-	unsigned char code[] = {
+	static unsigned char code[] = {
 #ifdef BUILD_64BIT
 		0x48, 0x89, 0x85, 0x28, 0x06, 0x00, 0x00,                    // mov qword ptr ss:[rbp+0x628], rax
 		0x48, 0x8B, 0xC8,                                            // mov rcx, rax
@@ -2022,7 +2022,7 @@ void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild,
 	// convert thiscall into a normal function call
 	// and call our handler
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0x89, 0x54, 0x24, 0x10,                                // mov qword ptr ss:[rsp+0x10], rdx
 		0x4C, 0x89, 0x44, 0x24, 0x18,                                // mov qword ptr ss:[rsp+0x18], r8
 		0x4C, 0x89, 0x4C, 0x24, 0x20,                                // mov qword ptr ss:[rsp+0x20], r9
@@ -2037,7 +2037,7 @@ void MemoryPatch::CrySystem::HookError(void* pCrySystem, int gameBuild,
 
 	std::memcpy(&code[29], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x8B, 0x4C, 0x24, 0x08,        // mov ecx, dword ptr ss:[esp+0x8]
 		0x8D, 0x44, 0x24, 0x0C,        // lea eax, dword ptr ss:[esp+0xC]
 		0x50,                          // push eax
@@ -2172,7 +2172,7 @@ void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
 	void (*handler)(const char* defaultLanguage, ILocalizationManager* pLocalizationManager))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		// call ISystem::GetLocalizationManager
 		0x49, 0x8B, 0x45, 0x00,                                      // mov rax, qword ptr ds:[r13]
 		0x49, 0x8B, 0xCD,                                            // mov rcx, r13
@@ -2196,7 +2196,7 @@ void MemoryPatch::CrySystem::HookLanguageInit(void* pCrySystem, int gameBuild,
 		code[9] = 0x60;
 	}
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		// call ISystem::GetLocalizationManager
 		0x8B, 0x07,                          // mov eax, dword ptr ds:[edi]
 		0x8B, 0x90, 0xA4, 0x01, 0x00, 0x00,  // mov edx, dword ptr ds:[eax+0x1A4]
@@ -2362,14 +2362,14 @@ void MemoryPatch::CrySystem::HookChangeUserPath(void* pCrySystem, int gameBuild,
 	void (*handler)(ISystem* pSystem, const char* userPath))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
 		0xFF, 0xE0,                                                  // jmp rax
 	};
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
 		0xFF, 0x74, 0x24, 0x04,        // push dword ptr ss:[esp+0x4]
 		0x51,                          // push ecx
@@ -2504,7 +2504,7 @@ void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameB
 	void (*handler)(MemoryPatch::CryRenderD3D9::AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0x8B, 0xCE,                                            // mov rcx, rsi
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
 		0xFF, 0xD0,                                                  // call rax
@@ -2513,7 +2513,7 @@ void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameB
 
 	std::memcpy(&code[5], &handler, 8);
 
-	unsigned char code_Warhead[] = {
+	static unsigned char code_Warhead[] = {
 		0x48, 0x8B, 0xC8,                                            // mov rcx, rax
 		0x4C, 0x8B, 0xE0,                                            // mov r12, rax
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
@@ -2524,7 +2524,7 @@ void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameB
 #else
 	// TODO: 32-bit Crysis Warhead
 
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x55,                               // push ebp
 		0xB8, 0x00, 0x00, 0x00, 0x00,       // mov eax, 0x0
 		0xFF, 0xD0,                         // call eax
@@ -2663,7 +2663,7 @@ void MemoryPatch::CryRenderD3D9::HookAdapterInfo(void* pCryRenderD3D9, int gameB
 void MemoryPatch::CryRenderD3D10::FixLowRefreshRateBug(void* pCryRenderD3D10, int gameBuild)
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x31, 0xC0,              // xor eax, eax
 		0x90,                    // nop
 		0x90,                    // nop
@@ -2794,7 +2794,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
 	void (*handler)(MemoryPatch::CryRenderD3D10::AdapterInfo* info))
 {
 #ifdef BUILD_64BIT
-	unsigned char codeA[] = {
+	static unsigned char codeA[] = {
 		0x48, 0x8B, 0xF0,                                            // mov rsi, rax
 		0x48, 0x8B, 0xC8,                                            // mov rcx, rax
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
@@ -2804,7 +2804,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
 	};
 
 	// avoid using RSI register with value corrupted by nVidia driver
-	unsigned char codeB[] = {
+	static unsigned char codeB[] = {
 		0x4C, 0x8B, 0x9F, 0x78, 0x8A, 0x02, 0x00,  // mov r11, qword ptr ds:[rdi+0x28A78]
 		0x90,                                      // nop
 		0x90,                                      // nop
@@ -2817,7 +2817,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
 
 	std::memcpy(&codeA[8], &handler, 8);
 
-	unsigned char codeA_Warhead[] = {
+	static unsigned char codeA_Warhead[] = {
 		0x48, 0x8D, 0x48, 0xF8,                                      // lea rcx, qword ptr ds:[rax-0x8]
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
 		0xFF, 0xD0                                                   // call rax
@@ -2825,7 +2825,7 @@ void MemoryPatch::CryRenderD3D10::HookAdapterInfo(void* pCryRenderD3D10, int gam
 
 	std::memcpy(&codeA_Warhead[6], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x50,                          // push eax
 		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
 		0xFF, 0xD0,                    // call eax
@@ -2990,7 +2990,7 @@ void MemoryPatch::CryRenderD3D10::HookInitAPI(void* pCryRenderD3D10, int gameBui
 	bool (*handler)(MemoryPatch::CryRenderD3D10::SystemAPI* api))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0x8D, 0x0D, 0xF3, 0xFF, 0xFF, 0xFF,                    // lea rcx, qword ptr ds:[rip-0xD]
 		0x03, 0x0D, 0xE8, 0xFF, 0xFF, 0xFF,                          // add ecx, dword ptr ds:[rip-0x18]
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
@@ -3003,7 +3003,7 @@ void MemoryPatch::CryRenderD3D10::HookInitAPI(void* pCryRenderD3D10, int gameBui
 
 	std::memcpy(&code[15], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xE8, 0x12, 0x00, 0x00, 0x00,        // call get_pc -----------------------+
 		0x8B, 0x40, 0xF0,                    // mov eax, dword ptr ds:[eax-0x10]   |
 		0x50,                                // push eax                           |
@@ -3132,7 +3132,7 @@ void MemoryPatch::CryRenderD3D10::HookInitAPI(void* pCryRenderD3D10, int gameBui
  */
 void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int gameBuild)
 {
-	const unsigned char code[] = {
+	static const unsigned char code[] = {
 		0xC3,  // ret
 #ifdef BUILD_64BIT
 		0x90,  // nop
@@ -3381,18 +3381,18 @@ void MemoryPatch::WarheadEXE::FixHInstance(void* pEXE, int gameBuild)
 void MemoryPatch::Editor::FixBrokenPanels(void* pEditor, int editorBuild)
 {
 #ifdef BUILD_64BIT
-	const unsigned char codeA[] = {
+	static const unsigned char codeA[] = {
 		0x48, 0xC7, 0x44, 0x24, 0x58, 0x00, 0x00, 0x00, 0x00,  // mov qword ptr ss:[rsp+0x58], 0x0
 	};
 
-	const unsigned char codeB[] = {
+	static const unsigned char codeB[] = {
 		0x83, 0xC9, 0xFF,              // or ecx, 0xFFFFFFFF
 		0x48, 0x83, 0xC1, 0x02,        // add rcx, 0x2
 		0x48, 0x89, 0x4C, 0x24, 0x60,  // mov qword ptr ss:[rsp+0x60], rcx
 		0x90,                          // nop
 	};
 #else
-	const unsigned char codeA[] = {
+	static const unsigned char codeA[] = {
 		0x33, 0xFF,        // xor edi, edi
 		0x33, 0xC0,        // xor eax, eax
 		0xB0, 0x01,        // mov al, 0x1
@@ -3400,7 +3400,7 @@ void MemoryPatch::Editor::FixBrokenPanels(void* pEditor, int editorBuild)
 		0x89, 0x45, 0xEC,  // mov dword ptr ss:[ebp-0x14], eax
 	};
 
-	const unsigned char codeB[] = {
+	static const unsigned char codeB[] = {
 		0x83, 0x65, 0xE0, 0x00,  // and dword ptr ss:[ebp-0x20], 0x0
 		0x83, 0x65, 0xE4, 0x00,  // and dword ptr ss:[ebp-0x1C], 0x0
 	};
@@ -3448,7 +3448,7 @@ void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 	void (*handler)(MemoryPatch::Editor::Version* version))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
 		0x48, 0x81, 0xC1, 0x10, 0x01, 0x00, 0x00,                    // add rcx, 0x110
 		0xFF, 0xE0,                                                  // jmp rax
@@ -3456,7 +3456,7 @@ void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xB8, 0x00, 0x00, 0x00, 0x00,        // mov eax, 0x0
 		0x81, 0xC1, 0xE4, 0x00, 0x00, 0x00,  // add ecx, 0xE4
 		0x51,                                // push ecx
@@ -3510,7 +3510,7 @@ void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 void MemoryPatch::CryAction::HookGameWarning(void* pCryAction, int gameBuild, void (*handler)(const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 		0x90,                                                        // nop
@@ -3520,7 +3520,7 @@ void MemoryPatch::CryAction::HookGameWarning(void* pCryAction, int gameBuild, vo
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -3646,14 +3646,14 @@ void MemoryPatch::CryAction::HookCryWarning(void* pCryAction, int gameBuild,
 	void (*handler)(int, int, const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 	};
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -3722,7 +3722,7 @@ void MemoryPatch::CryAction::HookCryWarning(void* pCryAction, int gameBuild,
 void MemoryPatch::CryGame::HookGameWarning(void* pCryGame, int gameBuild, void (*handler)(const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 		0x90,                                                        // nop
@@ -3732,7 +3732,7 @@ void MemoryPatch::CryGame::HookGameWarning(void* pCryGame, int gameBuild, void (
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -3866,14 +3866,14 @@ void MemoryPatch::CryGame::HookCryWarning(void* pCryGame, int gameBuild,
 	void (*handler)(int, int, const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 	};
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -3971,14 +3971,14 @@ void MemoryPatch::CryNetwork::HookCryWarning(void* pCryNetwork, int gameBuild,
 	void (*handler)(int, int, const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 	};
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -4098,14 +4098,14 @@ void MemoryPatch::CrySystem::HookCryWarning(void* pCrySystem, int gameBuild,
 	void (*handler)(int, int, const char* format, ...))
 {
 #ifdef BUILD_64BIT
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0x48, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0
 		0xff, 0xe0,                                                  // jmp rax
 	};
 
 	std::memcpy(&code[2], &handler, 8);
 #else
-	unsigned char code[] = {
+	static unsigned char code[] = {
 		0xb8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0
 		0xff, 0xe0,                    // jmp eax
 		0x90,                          // nop
@@ -4186,7 +4186,7 @@ void MemoryPatch::CrySystem::HookCryWarning(void* pCrySystem, int gameBuild,
 void MemoryPatch::FMODEx::Fix64BitHeapAddressTruncation(void* pFMODEx, int gameBuild)
 {
 #ifdef BUILD_64BIT
-	const unsigned char code[] = {
+	static const unsigned char code[] = {
 		0x48, 0x8d, 0x40, 0x0f,              // lea rax, ds:[rax+0xf]
 		0x48, 0x83, 0xe0, 0xf0,              // and rax, 0xfffffffffffffff0
 		0x90,                                // nop
