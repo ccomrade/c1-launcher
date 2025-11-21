@@ -1959,6 +1959,11 @@ void MemoryPatch::CrySystem::HookCPUDetect(void* pCrySystem, int gameBuild,
 			// TODO: 32-bit Crysis Warhead
 			break;
 		}
+		case 4804:
+		{
+			FillMem(pCrySystem, 0x56e9e, &code, sizeof(code));
+			break;
+		}
 		case 5767:
 		{
 			FillMem(pCrySystem, 0x59CD7, &code, sizeof(code));

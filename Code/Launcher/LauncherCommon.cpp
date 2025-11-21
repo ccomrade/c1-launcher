@@ -97,19 +97,26 @@ void* LauncherCommon::LoadCrysisWarheadEXE()
 
 int LauncherCommon::GetGameBuild(void* pCrySystem)
 {
+	static int c_GameBuild = 0;
+	if (c_GameBuild && !pCrySystem)
+	{
+		return c_GameBuild;
+	}
 	OS::DLL::Version version;
 	if (!OS::DLL::GetVersion(pCrySystem, version))
 	{
 		throw StringFormat_SysError("Failed to get the game version!");
 	}
 
-	return version.tweak;
+	c_GameBuild = version.tweak;
+	return c_GameBuild;
 }
 
 void LauncherCommon::VerifyGameBuild(int gameBuild)
 {
 	switch (gameBuild)
 	{
+		case 4804: // MP Beta
 		case 5767:
 		case 5879:
 		case 6115:
@@ -380,6 +387,15 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 	gEnv = pSystem->GetGlobalEnvironment();
 
 	CryLogAlways("%s", banner);
+
+#if !defined(BUILD_64BIT)
+	// something in `pSystem->GetRootFolder()` gives access violation, skip for now
+	if (GetGameBuild(0) == 4804)
+	{
+		LogRealWindowsBuild();
+		return;
+	}
+#endif
 
 	const std::string mainDir = PathTools::GetWorkingDirectory();
 	const std::string rootDir = PathTools::Prettify(pSystem->GetRootFolder());
