@@ -388,12 +388,14 @@ void LauncherCommon::OnEarlyEngineInit(ISystem* pSystem, const char* banner)
 
 	CryLogAlways("%s", banner);
 
+#if !defined(BUILD_64BIT)
 	// something in `pSystem->GetRootFolder()` gives access violation, skip for now
 	if (GetGameBuild(0) == 4804)
 	{
 		LogRealWindowsBuild();
 		return;
 	}
+#endif
 
 	const std::string mainDir = PathTools::GetWorkingDirectory();
 	const std::string rootDir = PathTools::Prettify(pSystem->GetRootFolder());
