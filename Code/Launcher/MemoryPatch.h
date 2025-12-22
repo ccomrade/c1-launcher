@@ -157,4 +157,9 @@ namespace MemoryPatch
 	{
 		void Fix64BitHeapAddressTruncation(void* pFMODEx, int gameBuild);
 	}
+
+	namespace XToolkitPro
+	{
+		void FixAccessibleObjectFromWindow(void* pXToolkitPro);
+	}
 }

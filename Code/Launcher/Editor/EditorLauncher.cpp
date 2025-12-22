@@ -151,6 +151,12 @@ void EditorLauncher::LoadEngine()
 #else
 	m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex.dll");
 #endif
+
+#ifdef BUILD_64BIT
+	m_dlls.pXToolkitPro = LauncherCommon::LoadDLL("ToolkitPro1042vc80x64.dll");
+#else
+	m_dlls.pXToolkitPro = LauncherCommon::LoadDLL("ToolkitPro1042vc80.dll");
+#endif
 }
 
 void EditorLauncher::PatchEngine()
@@ -222,5 +228,10 @@ void EditorLauncher::PatchEngine()
 	if (m_dlls.pFMODEx && LauncherCommon::IsFMODExVersionCorrect(m_dlls.pFMODEx, m_dlls.gameBuild))
 	{
 		MemoryPatch::FMODEx::Fix64BitHeapAddressTruncation(m_dlls.pFMODEx, m_dlls.gameBuild);
+	}
+
+	if (m_dlls.pXToolkitPro && LauncherCommon::IsXToolkitProVersionCorrect(m_dlls.pXToolkitPro, m_dlls.gameBuild))
+	{
+		MemoryPatch::XToolkitPro::FixAccessibleObjectFromWindow(m_dlls.pXToolkitPro);
 	}
 }

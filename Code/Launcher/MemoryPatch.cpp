@@ -3502,6 +3502,33 @@ void MemoryPatch::Editor::HookVersionInit(void* pEditor, int editorBuild,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// XToolkitPro
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Fixes the oleacc.AccessibleObjectFromWindow crash in the Xtreme Toolkit Pro library.
+ *
+ * The issue was that the oleacc.AccessibleObjectFromWindow address was stored in the wrong place where the
+ * user32.NotifyWinEvent address is supposed to be stored.
+ */
+void MemoryPatch::XToolkitPro::FixAccessibleObjectFromWindow(void* pXToolkitPro)
+{
+	static const unsigned char code[] = {
+#ifdef BUILD_64BIT
+		0x48, 0x8D, 0x53, 0x20,  // lea rdx, qword ptr ds:[rbx+0x20]
+#else
+		0x8D, 0x46, 0x10,        // lea eax, dword ptr ds:[esi+0x10]
+#endif
+	};
+
+#ifdef BUILD_64BIT
+	FillMem(pXToolkitPro, 0x283FE, &code, sizeof(code));
+#else
+	FillMem(pXToolkitPro, 0x1E5A3, &code, sizeof(code));
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // GENERATED MEMORY PATCHES
 ////////////////////////////////////////////////////////////////////////////////
 
