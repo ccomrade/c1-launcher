@@ -34,6 +34,7 @@ namespace LauncherCommon
 	void VerifyGameBuild(int gameBuild);
 	bool IsCrysisWarhead(int gameBuild);
 	bool IsFMODExVersionCorrect(void* pFMODEx, int gameBuild);
+	bool IsXToolkitProVersionCorrect(void* pXToolkitPro, int gameBuild);
 	bool IsDX10();
 
 	void SetParamsCmdLine(SSystemInitParams& params, const char* cmdLine);

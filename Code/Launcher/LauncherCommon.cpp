@@ -217,6 +217,50 @@ bool LauncherCommon::IsFMODExVersionCorrect(void* pFMODEx, int gameBuild)
 	return false;
 }
 
+bool LauncherCommon::IsXToolkitProVersionCorrect(void* pXToolkitPro, int gameBuild)
+{
+	OS::DLL::Version ver;
+	if (!OS::DLL::GetVersion(pXToolkitPro, ver))
+	{
+		return false;
+	}
+
+	switch (gameBuild)
+	{
+#ifdef BUILD_64BIT
+		// 64-bit binaries are missing in the first build of Crysis Warhead
+#else
+		case 687:
+#endif
+		case 710:
+		case 711:
+		{
+			// no editor in Crysis Warhead
+			return false;
+		}
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+#ifdef BUILD_64BIT
+		// 64-bit binaries are missing in the first build of Crysis Wars
+#else
+		case 6527:
+#endif
+		case 6566:
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			// Crysis and Crysis Wars
+			return ver.major == 10 && ver.minor == 4 && ver.patch == 2 && ver.tweak == 0;
+		}
+	}
+
+	return false;
+}
+
 bool LauncherCommon::IsDX10()
 {
 	return !OS::CmdLine::HasArg("-dx9") && (OS::CmdLine::HasArg("-dx10") || OS::IsVistaOrLater());
