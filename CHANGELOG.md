@@ -3,6 +3,9 @@
 Notable changes in each release.
 
 ## [Unreleased]
+- Add support for Crysis MP Beta ([#77](https://github.com/ccomrade/c1-launcher/pull/77) by
+[illusion0001](https://github.com/illusion0001)).
+- Fix editor crash in `oleacc.AccessibleObjectFromWindow` ([#79](https://github.com/ccomrade/c1-launcher/pull/79)).
 - Fix loading mods via in-game Mods menu ([#69](https://github.com/ccomrade/c1-launcher/pull/69)).
 - Revert sys_crashtest improvements ([#71](https://github.com/ccomrade/c1-launcher/pull/71)).
 - Crash logger can catch aborts now ([#72](https://github.com/ccomrade/c1-launcher/pull/72)).
