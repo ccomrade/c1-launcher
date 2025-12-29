@@ -175,7 +175,6 @@ add_executable(EditorLauncher WIN32
 	Code/Launcher/Editor/EditorLauncher.h
 	Code/Launcher/Editor/Main.cpp
 	Resources/Editor.rc
-	Resources/Manifests/DpiAwareness.manifest
 	Resources/Manifests/EnableVisualStyles.manifest
 	Resources/Manifests/TrustInfo.manifest
 	Resources/Manifests/VC80_CRT.manifest
