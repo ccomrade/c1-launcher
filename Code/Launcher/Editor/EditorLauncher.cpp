@@ -4,6 +4,7 @@
 #include "Project.h"
 
 #include "../CPUInfo.h"
+#include "../CryMallocHook.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -120,6 +121,8 @@ void EditorLauncher::LoadEngine()
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	CryMallocHook::Init(m_dlls.pCrySystem);
 
 	m_dlls.pEditor = LauncherCommon::LoadEXE("Editor.exe");
 	m_dlls.editorBuild = GetEditorBuild(m_dlls.pEditor);

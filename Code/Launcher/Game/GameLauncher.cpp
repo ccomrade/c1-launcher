@@ -3,6 +3,7 @@
 #include "Project.h"
 
 #include "../CPUInfo.h"
+#include "../CryMallocHook.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -60,6 +61,8 @@ void GameLauncher::LoadEngine()
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 	const bool isCryisMPBeta4804 = m_dlls.gameBuild == 4804;
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	CryMallocHook::Init(m_dlls.pCrySystem);
 
 	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
 	{
