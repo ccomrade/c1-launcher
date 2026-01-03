@@ -86,7 +86,7 @@ public:
 	SafePool() : m_pool(NULL), m_blockCount(0), m_freeList(NULL), m_freeListLast(NULL), m_mutex()
 	{
 		// use 0x80000000 .. 0xc0000000 for the pool to avoid interfering with DLL placement
-		void* hint = reinterpret_cast<void*>(0x80000000UL);
+		void* hint = reinterpret_cast<void*>(0x80000000ULL);
 
 		void* pool = VirtualAlloc(hint, SAFE_BLOCK_SIZE * SAFE_BLOCK_COUNT, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		if (!pool)
