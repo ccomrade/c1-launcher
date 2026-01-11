@@ -20,9 +20,11 @@
 #define CRASH_LOGGER_INVALID_PARAM 0xE0C1C102
 #define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
 
+static LPTOP_LEVEL_EXCEPTION_FILTER g_userExceptionFilter = NULL;
 static CrashLogger::ExtraProvider* g_extraProvider = NULL;
-static CrashLogger::LogFileProvider g_logFileProvider;
-static const char* g_banner;
+static CrashLogger::LogFileProvider g_logFileProvider = NULL;
+static const char* g_banner = NULL;
+static int g_crashed = 0;
 
 static void* ByteOffset(void* base, std::size_t offset)
 {
@@ -418,7 +420,12 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 {
 	// avoid recursive calls
-	SetUnhandledExceptionFilter(NULL);
+	if (g_crashed)
+	{
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	g_crashed = 1;
 
 	if (g_logFileProvider)
 	{
@@ -430,7 +437,73 @@ static LONG __stdcall CrashHandler(EXCEPTION_POINTERS* exception)
 		}
 	}
 
+	if (g_userExceptionFilter)
+	{
+		return g_userExceptionFilter(exception);
+	}
+
 	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+static LPTOP_LEVEL_EXCEPTION_FILTER __stdcall SetUnhandledExceptionFilter_Hook(LPTOP_LEVEL_EXCEPTION_FILTER filter)
+{
+	LPTOP_LEVEL_EXCEPTION_FILTER previous = g_userExceptionFilter;
+	g_userExceptionFilter = filter;
+	return previous;
+}
+
+static void HookWithJump(void* address, void* newFunc)
+{
+	if (!address)
+	{
+		return;
+	}
+
+#ifdef BUILD_64BIT
+	unsigned char code[] = {
+		0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // mov rax, 0x0
+		0xFF, 0xE0                                                   // jmp rax
+	};
+
+	memcpy(&code[2], &newFunc, 8);
+#else
+	unsigned char code[] = {
+		0xB8, 0x00, 0x00, 0x00, 0x00,  // mov eax, 0x0
+		0xFF, 0xE0                     // jmp eax
+	};
+
+	memcpy(&code[1], &newFunc, 4);
+#endif
+
+	DWORD oldProtection;
+	if (!VirtualProtect(address, sizeof(code), PAGE_EXECUTE_READWRITE, &oldProtection))
+	{
+		return;
+	}
+
+	memcpy(address, &code, sizeof(code));
+
+	if (!VirtualProtect(address, sizeof(code), oldProtection, &oldProtection))
+	{
+		return;
+	}
+}
+
+static void Hook_SetUnhandledExceptionFilter()
+{
+	HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
+	if (!kernel32)
+	{
+		return;
+	}
+
+	void* pSetUnhandledExceptionFilter = GetProcAddress(kernel32, "SetUnhandledExceptionFilter");
+	if (!pSetUnhandledExceptionFilter)
+	{
+		return;
+	}
+
+	HookWithJump(pSetUnhandledExceptionFilter, &SetUnhandledExceptionFilter_Hook);
 }
 
 static void AbortHandler(int)
@@ -471,6 +544,7 @@ void CrashLogger::Enable(LogFileProvider logFileProvider, const char* banner)
 	g_banner = banner;
 
 	SetUnhandledExceptionFilter(&CrashHandler);
+	Hook_SetUnhandledExceptionFilter();  // prevent the engine and mods from disabling us
 
 	signal(SIGABRT, &AbortHandler);
 	_set_abort_behavior(0, _WRITE_ABORT_MSG);  // suppress abort message (console) and dialog (GUI)

@@ -7,6 +7,8 @@ Notable changes in each release.
 [illusion0001](https://github.com/illusion0001)).
 - Disable DPI awareness for editor ([#83](https://github.com/ccomrade/c1-launcher/pull/83)).
 - Fix 64-bit crashes due to high memory usage ([#84](https://github.com/ccomrade/c1-launcher/pull/84)).
+- Fix crash logger not working with [MWLL](https://mechlivinglegends.net/)
+([#85](https://github.com/ccomrade/c1-launcher/pull/85)).
 - Fix editor crash in `oleacc.AccessibleObjectFromWindow` ([#79](https://github.com/ccomrade/c1-launcher/pull/79)).
 - Fix loading mods via in-game Mods menu ([#69](https://github.com/ccomrade/c1-launcher/pull/69)).
 - Revert sys_crashtest improvements ([#71](https://github.com/ccomrade/c1-launcher/pull/71)).
