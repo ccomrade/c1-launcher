@@ -123,6 +123,11 @@ namespace MemoryPatch
 		void DisableDebugRenderer(void* pCryRenderNULL, int gameBuild);
 	}
 
+	namespace CrySoundSystem
+	{
+		void FixAllocForFmod(void* pCrySoundSystem, int gameBuild);
+	}
+
 	namespace WarheadEXE
 	{
 		using CryAction::AllowDX9ImmersiveMultiplayer;

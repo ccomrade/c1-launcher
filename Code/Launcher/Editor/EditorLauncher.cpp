@@ -155,6 +155,8 @@ void EditorLauncher::LoadEngine()
 	m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex.dll");
 #endif
 
+	m_dlls.pCrySoundSystem = LauncherCommon::LoadDLL("CrySoundSystem.dll");
+
 #ifdef BUILD_64BIT
 	m_dlls.pXToolkitPro = LauncherCommon::LoadDLL("ToolkitPro1042vc80x64.dll");
 #else
@@ -226,6 +228,11 @@ void EditorLauncher::PatchEngine()
 			&LauncherCommon::OnD3D10Info);
 		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
 			&LauncherCommon::OnD3D10Init);
+	}
+
+	if (m_dlls.pCrySoundSystem)
+	{
+		MemoryPatch::CrySoundSystem::FixAllocForFmod(m_dlls.pCrySoundSystem, m_dlls.gameBuild);
 	}
 
 	if (m_dlls.pFMODEx && LauncherCommon::IsFMODExVersionCorrect(m_dlls.pFMODEx, m_dlls.gameBuild))

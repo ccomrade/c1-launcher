@@ -92,6 +92,8 @@ void GameLauncher::LoadEngine()
 #else
 		m_dlls.pFMODEx = LauncherCommon::LoadDLL(isCryisMPBeta4804 ? "fmodexL.dll" : "fmodex.dll");
 #endif
+
+		m_dlls.pCrySoundSystem = LauncherCommon::LoadDLL("CrySoundSystem.dll");
 	}
 }
 
@@ -179,6 +181,11 @@ void GameLauncher::PatchEngine()
 			&LauncherCommon::OnD3D10Info);
 		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
 			&LauncherCommon::OnD3D10Init);
+	}
+
+	if (m_dlls.pCrySoundSystem)
+	{
+		MemoryPatch::CrySoundSystem::FixAllocForFmod(m_dlls.pCrySoundSystem, m_dlls.gameBuild);
 	}
 
 	if (m_dlls.pFMODEx && LauncherCommon::IsFMODExVersionCorrect(m_dlls.pFMODEx, m_dlls.gameBuild))
