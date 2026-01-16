@@ -3340,6 +3340,133 @@ void MemoryPatch::CryRenderNULL::DisableDebugRenderer(void* pCryRenderNULL, int 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// CrySoundSystem
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * A fix for the FMOD allocator in CrySoundSystem.
+ *
+ * The allocator implements malloc-like, realloc-like and free-like functions that are passed to FMOD_Memory_Initialize
+ * as functions pointers. FMOD uses them to allocate memory. This allocator is also based on the broken node_alloc
+ * (CryMemoryAllocator.h), so it suffers from the 64-bit pointer truncation bug too. There are two additional issues.
+ *
+ * The first issue is that instead of using CryMalloc as its upstream allocator (like essentially everything else), it
+ * uses directly malloc (msvcr80.dll). This alone isn't a big deal. As a result, FMOD is missing in the engine memory
+ * statistics, but that's about it. However, our fix for the 64-bit pointer truncation bug is built around CryMalloc,
+ * so this bypasses the fix and causes crashes (see CryMallocHook.cpp for more info). This function simply replaces
+ * malloc with CryMalloc in the allocator.
+ *
+ * The second issue is more serious. The realloc-like function first calls the malloc-like function to allocate a new
+ * chunk, which is completely fine, but then it uses _msize (msvcr80.dll) to get the size of the allocated chunk. This
+ * cannot work correctly of course. The whole point of this allocator is to split large blocks allocated via CryMalloc
+ * (or malloc) into smaller chunks. It even uses the correct approach a few instructions below to get the size of the
+ * old chunk. This allocator stores the chunk size right before each chunk. Maybe _msize (RtlSizeHeap under the hood)
+ * actually did the same in older versions of Windows, so it somehow worked there. However, it's certainly not the case
+ * in modern Windows. At least FMOD seems to call the realloc-like function only rarely. This function simply replaces
+ * the _msize call with reading the value stored before the chunk.
+ *
+ * Interestingly, only Crysis Wars is affected. In Crysis and Crysis Warhead, the only issue here is the 64-bit pointer
+ * truncation bug, which is a common problem in the engine due to node_alloc being used at various places.
+ */
+void MemoryPatch::CrySoundSystem::FixAllocForFmod(void* pCrySoundSystem, int gameBuild)
+{
+#ifdef BUILD_64BIT
+	static const unsigned char msizeCode[] = {
+		0x48, 0x8B, 0xF8,  // mov rdi, rax
+		0x8B, 0x43, 0xFC,  // mov eax, dword ptr ds:[rbx-0x4]
+		0x90,              // nop
+		0x90,              // nop
+		0x90,              // nop
+		0x90,              // nop
+		0x90,              // nop
+	};
+#else
+	static const unsigned char msizeCode[] = {
+		0x8D, 0x78, 0x04,  // lea edi, dword ptr ds:[eax+0x4]
+		0x8B, 0x46, 0xFC,  // mov eax, dword ptr ds:[esi-0x4]
+		0x90,              // nop
+		0x90,              // nop
+		0x90,              // nop
+	};
+#endif
+
+	switch (gameBuild)
+	{
+		case 687:
+		case 710:
+		case 711:
+		{
+			// no issue in Crysis Warhead
+			break;
+		}
+		case 5767:
+		case 5879:
+		case 6115:
+		case 6156:
+		{
+			// no issue in Crysis
+			break;
+		}
+#ifdef BUILD_64BIT
+		case 6566:
+		{
+			static const unsigned char mallocCode[] = {
+				0xE8, 0xE9, 0x93, 0x00, 0x00,  // call <crysoundsystem.sub_3600B620>
+				0x90,                          // nop
+			};
+
+			FillMem(pCrySoundSystem, 0x2232, &mallocCode, sizeof(mallocCode));
+			FillMem(pCrySoundSystem, 0x7819, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+		case 6586:
+		{
+			static const unsigned char mallocCode[] = {
+				0xE8, 0x69, 0x88, 0x00, 0x00,  // call <crysoundsystem.sub_3600AD80>
+				0x90,                          // nop
+			};
+
+			FillMem(pCrySoundSystem, 0x2512, &mallocCode, sizeof(mallocCode));
+			FillMem(pCrySoundSystem, 0x7AC9, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			static const unsigned char mallocCode[] = {
+				0xE8, 0x39, 0x8A, 0x00, 0x00,  // call <crysoundsystem.sub_3600AF50>
+				0x90,                          // nop
+			};
+
+			FillMem(pCrySoundSystem, 0x2512, &mallocCode, sizeof(mallocCode));
+			FillMem(pCrySoundSystem, 0x7C89, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+#else
+		case 6527:
+		{
+			FillMem(pCrySoundSystem, 0x4BF7, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+		case 6566:
+		{
+			FillMem(pCrySoundSystem, 0x4D07, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+		case 6586:
+		case 6627:
+		case 6670:
+		case 6729:
+		{
+			FillMem(pCrySoundSystem, 0x4BF7, &msizeCode, sizeof(msizeCode));
+			break;
+		}
+#endif
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // WarheadEXE
 ////////////////////////////////////////////////////////////////////////////////
 

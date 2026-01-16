@@ -18,7 +18,7 @@ on:
 
 jobs:
   msvc_vs2022:
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4

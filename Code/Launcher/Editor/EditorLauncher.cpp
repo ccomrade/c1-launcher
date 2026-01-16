@@ -4,6 +4,7 @@
 #include "Project.h"
 
 #include "../CPUInfo.h"
+#include "../CryMallocHook.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -121,6 +122,8 @@ void EditorLauncher::LoadEngine()
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
 
+	CryMallocHook::Init(m_dlls.pCrySystem);
+
 	m_dlls.pEditor = LauncherCommon::LoadEXE("Editor.exe");
 	m_dlls.editorBuild = GetEditorBuild(m_dlls.pEditor);
 	VerifyEditorBuild(m_dlls.editorBuild);
@@ -151,6 +154,8 @@ void EditorLauncher::LoadEngine()
 #else
 	m_dlls.pFMODEx = LauncherCommon::LoadDLL("fmodex.dll");
 #endif
+
+	m_dlls.pCrySoundSystem = LauncherCommon::LoadDLL("CrySoundSystem.dll");
 
 #ifdef BUILD_64BIT
 	m_dlls.pXToolkitPro = LauncherCommon::LoadDLL("ToolkitPro1042vc80x64.dll");
@@ -223,6 +228,11 @@ void EditorLauncher::PatchEngine()
 			&LauncherCommon::OnD3D10Info);
 		MemoryPatch::CryRenderD3D10::HookInitAPI(m_dlls.pCryRenderD3D10, m_dlls.gameBuild,
 			&LauncherCommon::OnD3D10Init);
+	}
+
+	if (m_dlls.pCrySoundSystem)
+	{
+		MemoryPatch::CrySoundSystem::FixAllocForFmod(m_dlls.pCrySoundSystem, m_dlls.gameBuild);
 	}
 
 	if (m_dlls.pFMODEx && LauncherCommon::IsFMODExVersionCorrect(m_dlls.pFMODEx, m_dlls.gameBuild))

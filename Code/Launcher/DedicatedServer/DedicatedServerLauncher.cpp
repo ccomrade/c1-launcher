@@ -3,6 +3,7 @@
 #include "Project.h"
 
 #include "../CPUInfo.h"
+#include "../CryMallocHook.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -59,6 +60,8 @@ void DedicatedServerLauncher::LoadEngine()
 	m_dlls.pCrySystem = LauncherCommon::LoadDLL("CrySystem.dll");
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	CryMallocHook::Init(m_dlls.pCrySystem);
 
 	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
 	{

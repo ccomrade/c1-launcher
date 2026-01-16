@@ -7,6 +7,7 @@
 #include "Project.h"
 
 #include "../CPUInfo.h"
+#include "../CryMallocHook.h"
 #include "../LauncherCommon.h"
 #include "../MemoryPatch.h"
 
@@ -99,6 +100,8 @@ void HeadlessServerLauncher::LoadEngine()
 	m_dlls.gameBuild = LauncherCommon::GetGameBuild(m_dlls.pCrySystem);
 	Print("Game build: %d", m_dlls.gameBuild);
 	LauncherCommon::VerifyGameBuild(m_dlls.gameBuild);
+
+	CryMallocHook::Init(m_dlls.pCrySystem);
 
 	if (LauncherCommon::IsCrysisWarhead(m_dlls.gameBuild))
 	{

@@ -21,6 +21,7 @@
 #define CRASH_LOGGER_ENGINE_ERROR 0xE0C1C103
 
 static LPTOP_LEVEL_EXCEPTION_FILTER g_userExceptionFilter = NULL;
+static CrashLogger::ExtraProvider* g_extraProvider = NULL;
 static CrashLogger::LogFileProvider g_logFileProvider = NULL;
 static const char* g_banner = NULL;
 static int g_crashed = 0;
@@ -406,6 +407,13 @@ static void WriteCrashDump(std::FILE* file, EXCEPTION_POINTERS* exception)
 	DumpLoadedModules(file);
 	DumpCommandLine(file);
 
+	CrashLogger::ExtraProvider* extra = g_extraProvider;
+	while (extra)
+	{
+		extra->OnCrash(file);
+		extra = extra->next;
+	}
+
 	WriteDumpFooter(file);
 }
 
@@ -578,4 +586,21 @@ void CrashLogger::Enable(LogFileProvider logFileProvider, const char* banner)
 		}
 	}
 #endif
+}
+
+void CrashLogger::AddExtraProvider(ExtraProvider* provider)
+{
+	if (!g_extraProvider)
+	{
+		g_extraProvider = provider;
+		return;
+	}
+
+	ExtraProvider* current = g_extraProvider;
+	while (current->next)
+	{
+		current = current->next;
+	}
+
+	current->next = provider;
 }

@@ -40,6 +40,8 @@ add_library(LauncherBase STATIC
 	Code/CryCommon/CrySystem/IValidator.h
 	Code/Launcher/CPUInfo.cpp
 	Code/Launcher/CPUInfo.h
+	Code/Launcher/CryMallocHook.cpp
+	Code/Launcher/CryMallocHook.h
 	Code/Launcher/LauncherCommon.cpp
 	Code/Launcher/LauncherCommon.h
 	Code/Launcher/MemoryPatch.cpp
