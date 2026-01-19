@@ -2,7 +2,7 @@
 
 Notable changes in each release.
 
-## [Unreleased]
+## [v8] - 2026-01-19
 - Add support for Crysis MP Beta ([#77](https://github.com/ccomrade/c1-launcher/pull/77) by
 [illusion0001](https://github.com/illusion0001)).
 - Disable DPI awareness for editor ([#83](https://github.com/ccomrade/c1-launcher/pull/83)).
