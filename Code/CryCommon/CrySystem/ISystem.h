@@ -7,9 +7,7 @@
 struct I3DEngine;
 struct IAISystem;
 struct IAnimationGraphSystem;
-struct IBudgetingSystem;
 struct ICharacterManager;
-class  ICmdLine;
 struct IConsole;
 struct ICryFont;
 struct ICryPak;
@@ -23,7 +21,6 @@ struct IHardwareMouse;
 struct IInput;
 struct ILog;
 struct ILogCallback;
-struct IMemoryManager;
 struct IMovieSystem;
 struct IMusicSystem;
 struct INameTable;
@@ -32,7 +29,6 @@ struct IPhysicalWorld;
 struct IRenderer;
 struct IScriptSystem;
 struct ISoundSystem;
-struct IStreamEngine;
 struct ISystem;
 struct ISystemUserCallback;
 struct ITimer;
@@ -97,8 +93,8 @@ struct SSystemGlobalEnvironment
 	IAnimationGraphSystem* pAnimationGraphSystem;
 	IDialogSystem*         pDialogSystem;
 	IHardwareMouse*        pHardwareMouse;
-	// everything is the same in Crysis and Crysis Wars up to here
-	// the following stuff cannot be used because we support both Crysis and Crysis Wars
+	// everything is the same in Crysis, Crysis Warhead, and Crysis Wars up to here
+	// the following stuff cannot be used because we support all three games
 	// ...
 };
 
@@ -143,75 +139,8 @@ struct ISystem
 	// Retrieve the name of the user currently logged in to the computer
 	virtual const char* GetUserName() = 0;
 
-	// Gets current supported CPU features flags (CPUF_SSE, CPUF_SSE2, CPUF_3DNOW, CPUF_MMX)
-	virtual int GetCPUFlags() = 0;
-
-	// Get seconds per processor tick
-	virtual double GetSecondsPerCycle() = 0;
-
-	// dumps the memory usage statistics to the log, default MB (can be KB)
-	virtual void DumpMemoryUsageStatistics(bool useKB = false) = 0;
-
-	// Quit the application
-	virtual void Quit() = 0;
-	// Tells the system if it is relaunching or not
-	virtual void Relaunch(bool relaunch) = 0;
-	virtual bool IsRelaunch() const = 0;
-	// Tells the system in which way we are using the serialization system.
-	virtual void SerializingFile(int mode) = 0;
-	virtual int IsSerializingFile() const = 0;
-	// return true if the application is in the shutdown phase
-	virtual bool IsQuitting() = 0;
-
-	// Display error message.
-	// Logs it to console and file and error message box.
-	// Then terminates execution.
-	virtual void Error(const char* format, ...) = 0;
-
-	// Report warning to current Validator object.
-	// Not terminates execution.
-	virtual void Warning(int subsystem, int severity, int flags, const char* file, const char* format, ...) = 0;
-
-	// Compare specified verbosity level to the one currently set.
-	virtual bool CheckLogVerbosity(int verbosity) = 0;
-
-	// returns true if this is dedicated server application
-	virtual bool IsDedicated() = 0;
-
-	// returns true if this is editor application
-	virtual bool IsEditor() = 0;
-
-	// returns true if this is editor application and not in game mode
-	virtual bool IsEditorMode() = 0;
-
-	// return the related subsystem interface
-	virtual IConsole* GetIConsole() = 0;
-	virtual IScriptSystem* GetIScriptSystem() = 0;
-	virtual I3DEngine* GetI3DEngine() = 0;
-	virtual ISoundSystem* GetISoundSystem() = 0;
-	virtual IMusicSystem* GetIMusicSystem() = 0;
-	virtual IPhysicalWorld* GetIPhysicalWorld() = 0;
-	virtual IMovieSystem* GetIMovieSystem() = 0;
-	virtual IAISystem* GetAISystem() = 0;
-	virtual IMemoryManager* GetIMemoryManager() = 0;
-	virtual IEntitySystem* GetIEntitySystem() = 0;
-	virtual ICryFont* GetICryFont() = 0;
-	virtual ICryPak* GetIPak() = 0;
-	virtual ILog* GetILog() = 0;
-	virtual ICmdLine* GetICmdLine() = 0;
-	virtual IStreamEngine* GetStreamEngine() = 0;
-	virtual ICharacterManager* GetIAnimationSystem() = 0;
-	virtual IValidator* GetIValidator() = 0;
-	virtual IFrameProfileSystem* GetIProfileSystem() = 0;
-	virtual INameTable* GetINameTable() = 0;
-	virtual IBudgetingSystem* GetIBudgetingSystem() = 0;
-	virtual IFlowSystem* GetIFlowSystem() = 0;
-	virtual IAnimationGraphSystem* GetIAnimationGraphSystem() = 0;
-	virtual IDialogSystem* GetIDialogSystem() = 0;
-	virtual IHardwareMouse* GetIHardwareMouse() = 0;
-
-	// everything is the same in Crysis and Crysis Wars up to here
-	// the following stuff cannot be used because we support both Crysis and Crysis Wars
+	// everything is the same in Crysis, Crysis Warhead, and Crysis Wars up to here
+	// the following stuff cannot be used because we support all three games
 	// ...
 };
 
